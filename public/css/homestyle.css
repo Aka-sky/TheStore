@@ -1,0 +1,83 @@
+.navbar {
+  height: 90px;
+  padding: 0% 5%;
+}
+.navbar-brand {
+  background-color: #0062e6;
+  border-radius: 20px;
+  font-size: 230%;
+  padding: 5px;
+  color: white;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.cart {
+  color: #0062e6;
+}
+.nav-item {
+  font-size: 110%;
+}
+.custom-toggler.navbar-toggler {
+  border-color: #0062e6;
+}
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+#head {
+  padding: 50px 7% 2.5%;
+  background-color: white;
+}
+.search-bar-1 {
+  display: none;
+}
+.describe {
+  text-align: center;
+  padding: 2%;
+  font-family: monospace;
+  font-weight: bolder;
+  font-size: 50px;
+}
+#carouselExampleCaptions {
+  margin: 0% 15%;
+}
+.carousel-item img {
+  height: 490px;
+  width: 100%;
+  object-fit: cover;
+}
+.carousel-caption {
+  margin-top: 300px;
+}
+
+#products {
+  padding: 0.5% 14.5% 2%;
+}
+#products h1 {
+  padding: 0% 0% 1%;
+}
+#products .card {
+  margin: 2% 1%;
+}
+
+@media (max-width: 991px) {
+  .fixed-top {
+    top: -0px;
+    position: static;
+  }
+  .collapse {
+    background-color: white;
+    padding: 0% 6% 0%;
+    z-index: 1;
+  }
+  .search-bar {
+    display: none;
+  }
+  .search-bar-1 {
+    display: block;
+    text-align: center;
+  }
+  #head {
+    text-align: center;
+  }
+}
