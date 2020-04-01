@@ -51,23 +51,7 @@
   padding: 2%;
   margin-bottom: 6%;
 }
-.buy-button {
-  text-align: center;
-  margin: 2% 0% 0%;
-}
-@media (max-width: 768px) {
-  .product-info,
-  .pict {
-    padding: 0%;
-    margin: 0%;
-  }
-  .content {
-    margin: 3% 2% 2%;
-  }
-  .buy-button {
-    margin: 0% 0% 2%;
-  }
-}
+
 .footer {
   position: fixed;
   left: 0;
@@ -78,4 +62,30 @@
   color: white;
   padding-left: 20%;
   font-size: 120%;
+}
+@media (min-width: 991px) {
+  .buy-button {
+    margin: auto;
+  }
+}
+@media (max-width: 991px) {
+  .buy-button {
+    margin: 1% 1%;
+  }
+  .product-info {
+    margin-bottom: 10%;
+  }
+}
+@media (max-width: 768px) {
+  .product-info,
+  .pict {
+    padding: 0%;
+    margin: 0%;
+  }
+  .product-info {
+    margin-bottom: 13%;
+  }
+  .content {
+    margin: 3% 2% 2%;
+  }
 }
