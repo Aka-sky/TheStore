@@ -1,120 +1,548 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/sellstyle.css">
-    <title>TheVStore | Sell Product </title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://kit.fontawesome.com/7cd5bd2715.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="../css/sellstyle.css" />
+    <title>TheVStore | Sell Product</title>
   </head>
   <body>
-        <nav class="navbar navbar-expand-lg fixed-top bg-light">
-            <p class="navbar-brand">TheVStore</p>
-            <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                  <a class="nav-link" href="#">Home  </a>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Username  <i class="fas fa-user-circle"></i>  
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Profile</a>
-                    <a class="dropdown-item" href="#">BuyList</a>
-                    <a class="dropdown-item" href="#">SellList</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Log Out</a>
-                  </div>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link cart" href="#"><i class="fas fa-shopping-cart"></i> Cart</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light">
+      <p class="navbar-brand">TheVStore</p>
+      <button
+        class="navbar-toggler custom-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-          <div class="container">
-            <h1>Sell Product</h1>
-              <hr>
-            <div class="row">
-              <!-- left column -->
-              <div class="col-md-3">
-                <div class="text-center">
-                  <img src="images/sellicon.svg" class="avatar img-circle" alt="avatar">
-                  <h6>Upload a different photo...</h6>
-                  
-                  <input type="file" class="form-control">
-                </div>
-              </div>
-              
-              <!-- edit form column -->
-              <div class="col-md-9 personal-info">
-                <div class="alert alert-info alert-dismissable">
-                  <a class="panel-close close" data-dismiss="alert">×</a> 
-                  <i class="fa fa-coffee"></i>
-                  This is an <strong>.alert</strong>. Use this to show important messages to the user.
-                </div>
-                <h3>Personal info</h3>
-                
-                <form class="form-horizontal" role="form">
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Product Name:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="text" placeholder="name">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Years of Usage:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="number" placeholder="usage">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Condition:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="text" placeholder="condition">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-lg-3 control-label">Price:</label>
-                    <div class="col-lg-8">
-                      <input class="form-control" type="number" placeholder="price">
-                    </div>
-                  </div>
-                  <div class="dropdown form-group">
-                    <label class="dropdown-toggle col-lg-3 control-label" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Chose Category  
-                    </label>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="#">Books</a>
-                      <a class="dropdown-item" href="#">Notes</a>
-                      <a class="dropdown-item" href="#">Clothing</a>
-                      <a class="dropdown-item" href="#">Electronics</a>
-                      <a class="dropdown-item" href="#">Others</a>
-                    </div>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
-                      <input type="button" class="btn btn-primary" value="Add Product">
-                    </div>
-                  </div>
-                  
-                </form>
-              </div>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Username <i class="fas fa-user-circle"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Profile</a>
+              <a class="dropdown-item" href="#">BuyList</a>
+              <a class="dropdown-item" href="#">SellList</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Log Out</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link cart" href="#"
+              ><i class="fas fa-shopping-cart"></i> Cart</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1>Sell Product</h1>
+      <hr />
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-3">
+          <div class="text-center">
+            <img
+              src="../images/sellicon.svg"
+              class="avatar img-circle"
+              alt="avatar"
+            />
+            <h6>Upload a different photo...</h6>
+
+            <input type="file" class="form-control" />
           </div>
         </div>
-        <hr>
-                    
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <!-- edit form column -->
+        <div class="col-md-9 personal-info">
+          <div class="alert alert-info alert-dismissable">
+            <a class="panel-close close" data-dismiss="alert">×</a>
+            <i class="fa fa-coffee"></i>
+            This is an <strong>.alert</strong>. Use this to show important
+            messages to the user.
+          </div>
+          <h3>Product info</h3>
+
+          <form class="form-horizontal" role="form" method="POST">
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Product Name:</label>
+              <div class="col-lg-8">
+                <input class="form-control" type="text" placeholder="name" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Years of Usage:</label>
+              <div class="col-lg-8">
+                <input class="form-control" type="number" placeholder="usage" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Condition:</label>
+              <div class="col-lg-8">
+                <input
+                  class="form-control"
+                  type="text"
+                  placeholder="condition"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Price:</label>
+              <div class="col-lg-8">
+                <input class="form-control" type="number" placeholder="price" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="category" class="col-lg-3 control-label"
+                >Choose Category</label
+              >
+              <div class="col-lg-8">
+                <select
+                  class="form-control"
+                  onchange="changeOptions(this)"
+                  name="category-options"
+                >
+                  <option value="books">Books</option>
+                  <option value="notes">Notes</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+            </div>
+
+            <form
+              class="form-horizontal form-books category"
+              role="form"
+            ></form>
+
+            <form
+              class="form-horizontal form-books category"
+              role="form"
+              name="books"
+              style="display:block"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Author Name:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Author name"
+                    id="author_name"
+                    name="author_name"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Publication:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="publication"
+                    id="publication"
+                    name="publication"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Edition:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="edition"
+                    id="edition"
+                    name="edition"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Subject:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="subject"
+                    id="subject"
+                    name="subject"
+                  />
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-notes category"
+              role="form"
+              name="notes"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Professor:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="Professor"
+                    id="professor"
+                    name="professor"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Subject:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="subject"
+                    id="n_subject"
+                    name="n_subject"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Topic:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="topic"
+                    id="topic"
+                    name="topic"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Year:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="number"
+                    placeholder="year"
+                    id="year"
+                    name="year"
+                  />
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-clothing category"
+              role="form"
+              name="clothing"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Type:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="type"
+                    id="type"
+                    name="type"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Size:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="number"
+                    placeholder="size"
+                    id="size"
+                    name="size"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Color:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="color"
+                    id="color"
+                    name="color"
+                  />
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-others category"
+              role="form"
+              name="others"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Category:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="category"
+                    id="cate"
+                    name="cate"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Description:</label>
+                <div class="col-lg-8">
+                  <textarea
+                    rows="3"
+                    class="form-control"
+                    type="text"
+                    placeholder="description"
+                    id="description"
+                    name="description"
+                  ></textarea>
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-electronics category"
+              role="form"
+              name="electronics"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label for="category-electronics" class="col-lg-3 control-label"
+                  >Elecronics Category</label
+                >
+                <div class="col-lg-8">
+                  <select
+                    id="category"
+                    class="form-control"
+                    onchange="changeOptionsSub(this)"
+                  >
+                    <option value="calculators">Calculators</option>
+                    <option value="pcs">PCs</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Description:</label>
+                <div class="col-lg-8">
+                  <textarea
+                    rows="3"
+                    class="form-control"
+                    type="text"
+                    placeholder="description"
+                    id="e_description"
+                    name="e_description"
+                  ></textarea>
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-calculators electronics"
+              role="form"
+              name="calculators"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Model:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="model"
+                    id="model"
+                    name="model"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Brand:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="brand"
+                    id="brand"
+                    name="brand"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Features:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="features"
+                    id="features"
+                    name="features"
+                  />
+                </div>
+              </div>
+            </form>
+
+            <form
+              class="form-horizontal form-laptops electronics"
+              role="form"
+              name="pcs"
+              style="display:none"
+            >
+              <div class="form-group">
+                <label class="col-lg-3 control-label">OS:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="os"
+                    id="os"
+                    name="os"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Storage:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="storage"
+                    id="storage"
+                    name="storage"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Processor:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="processor"
+                    id="processor"
+                    name="processor"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">RAM:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="RAM"
+                    id="ram"
+                    name="ram"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-lg-3 control-label">Brand:</label>
+                <div class="col-lg-8">
+                  <input
+                    class="form-control"
+                    type="text"
+                    placeholder="brand"
+                    id="brand"
+                    name="brand"
+                  />
+                </div>
+              </div>
+            </form>
+            <div class="form-group">
+              <label class="col-md-3 control-label"></label>
+              <div class="col-md-8">
+                <input
+                  type="submit"
+                  class="btn btn-primary"
+                  value="Add Product"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <hr />
+
+    <script>
+      function changeOptions(selectEl) {
+        let selectedValue = selectEl.options[selectEl.selectedIndex].value;
+        let subForms = document.getElementsByClassName("category");
+        for (let i = 0; i < subForms.length; i += 1) {
+          if (selectedValue === subForms[i].name) {
+            subForms[i].setAttribute("style", "display:block");
+          } else {
+            subForms[i].setAttribute("style", "display:none");
+          }
+        }
+      }
+
+      function changeOptionsSub(selectEl) {
+        let selectedValue = selectEl.options[selectEl.selectedIndex].value;
+        let subForms = document.getElementsByClassName("electronics");
+        for (let i = 0; i < subForms.length; i += 1) {
+          if (selectedValue === subForms[i].name) {
+            subForms[i].setAttribute("style", "display:block");
+          } else {
+            subForms[i].setAttribute("style", "display:none");
+          }
+        }
+      }
+    </script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
