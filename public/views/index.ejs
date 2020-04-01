@@ -14,11 +14,15 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <title>TheVStore | VJTI's own store</title>
+    <script
+      src="https://kit.fontawesome.com/7cd5bd2715.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/css/loginstyle.css" />
+    <title>TheVStore | Log-In</title>
   </head>
   <body>
-    <section id="head">
+    <!-- <section id="head"> -->
       <nav class="navbar navbar-expand-md">
         <!-- Brand -->
         <p class="navbar-brand">TheVStore</p>
@@ -36,9 +40,9 @@
         <!-- Navbar links -->
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
           <ul class="navbar-nav ml-auto custom-link">
-            <li class="nav-item">
-              <a class="nav-link" href="/login">Log In</a>
-            </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#">Log In</a>
+            </li> -->
             <li class="nav-item">
               <a class="nav-link" href="/signup">Register</a>
             </li>
@@ -48,24 +52,74 @@
           </ul>
         </div>
       </nav>
-      <div class="row main">
-        <div class="col-md-6 main-text">
-          <h1>This is a Website</h1>
-          <h2>Thank You</h2>
-          <a href="/signup"
-            ><button class="btn-primary getstarted">Get Started</button></a
-          >
-        </div>
-        <div class="col-md-6 main-img">
-          <img
-            alt="Couldn't load image"
-            src="/images/notes.jpg"
-            height="400px"
-          />
+    <!-- </section> -->
+    <section id="main">
+      <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+          <div class="card card-signin my-5">
+            <div class="card-body">
+              <h5 class="card-title text-center">Sign In</h5>
+              <h6><%= typeof msg != 'undefined' ? msg : '' %></h6>
+              <form class="form-signin" method="POST">
+                <div class="form-label-group">
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-control"
+                    required
+                    autofocus
+                  />
+                  <label for="username">Username</label>
+                </div>
+
+                <div class="form-label-group">
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    required
+                  />
+                  <label for="password">Password</label>
+                </div>
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="customCheck1"
+                  />
+                  <label class="custom-control-label" for="customCheck1"
+                    >Remember password</label
+                  >
+                </div>
+                <button
+                  class="btn btn-lg btn-primary btn-block text-uppercase"
+                  type="submit"
+                  name="submit"
+                >
+                  Sign in
+                </button>
+                <hr class="my-4" />
+                <div id="social-link">
+                  <button class="btn btn-lg " type="button">
+                    <i class="fab fa-facebook btn-facebook"></i>
+                  </button>
+                  <button class="btn btn-lg " type="button">
+                    <i class="fab fa-google-plus btn-google"></i>
+                  </button>
+                </div>
+                <div class="last">
+                  New User?
+                  <a href="/signup">Sign Up</a>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
       integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
