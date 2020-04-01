@@ -51,7 +51,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Username <i class="fas fa-user-circle"></i>
+              <%= user %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="#">Profile</a>
@@ -68,32 +68,37 @@
       </div>
     </nav>
     <section id="main">
+    <% var total = 0; %> <% for(var i=0; i< details.length; i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4 col-md-4">
-          <img src="images/notes.jpg" />
+          <img src="<%= details[i][5] %>" />
         </div>
         <div class="content col-lg-8 col-md-8">
-          <h2>Product Name</h2>
-          <h4>Product Id :</h4>
-          <h4>Years of Usage :</h4>
-          <h4>Condition :</h4>
-          <h3>Price :</h3>
+         <h2><%= details[i][1] %></h2>
+          <h4>Product Id : <%= details[i][0] %></h4>
+          <h4>Years of Usage : <%= details[i][2] %></h4>
+          <h4>Condition : Not Storing</h4>
+          <h3>Rs. <%= details[i][3] %></h3>
           <br />
           <h2>Seller Info</h2>
-          <h4>Username:</h4>
-          <h4>Name :</h4>
-          <h4>Contact No :</h4>
-          <h4>Email :</h4>
-          <h4>Preferred Location :</h4>
-          <h4>Branch/Year :</h4>
+          <h4>Username: <%= details[i][6] %></h4>
+          <h4>Name : <%= details[i][9] %></h4>
+          <h4>Contact No : <%= details[i][12] %></h4>
+          <h4>Email : <%= details[i][10] %></h4>
+          <h4>Preferred Location : Mumbai</h4>
+          <h4>Branch/Year : Not Storing</h4>
         </div>
-        <div class="col buy-button">
-          <button class="btn btn-primary">Buy</button>
-        </div>
+        <a class="col-lg-4 buy-button btn btn-success" href="/cart/products/show/1/<%= user %>,<%= details[i][0]>">
+          Buy
+        </a>
+        <a class="col-lg-4 buy-button btn btn-danger" href="/cart/products/show/0/<%= user %>,<%= details[i][0]>">
+          Remove from Cart
+        </a>
       </div>
+       <% total = total + details[i][3]; %> <% } %>
     </section>
     <div class="footer">
-      <p>Total Cost : 999 $</p>
+      <p>Total Cost : Rs. <%= total %></p>
     </div>
 
     <script
