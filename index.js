@@ -166,4 +166,73 @@ app.get("/product", function(req, res) {
   }
 });
 
+// add to cart clicked on homepage
+app.get("/cart/:id", function(req, res) {
+  var sess = req.session;
+  var product_id = req.params.id;
+  if (sess.username) {
+    // somone is logged in thus can access
+    const pool = new Pool({
+      user: "postgres",
+      host: "localhost",
+      database: "user",
+      password: "123456",
+      port: 5432
+    });
+
+    const query = {
+      text: 'INSERT INTO "cart" VALUES ($1,$2) ',
+      values: [sess.username, product_id]
+    };
+
+    pool.query(query, function(err, resp) {
+      if (err) {
+        res.send("Error | Already present in cart!");
+      } else {
+        res.redirect("/cart/products/show");
+      }
+      pool.end();
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// get the cart page
+app.get("/cart/products/show", function(req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    const pool = new Pool({
+      user: "postgres",
+      host: "localhost",
+      database: "user",
+      password: "123456",
+      port: 5432
+    });
+
+    const query = {
+      text:
+        'SELECT * FROM "product" INNER JOIN "user" ON("product".product_id, "user".username) IN ( SELECT product_id, seller_id FROM "product" WHERE "product".product_id IN( SELECT "cart".product_id FROM "cart" WHERE username = $1 ))',
+      values: [sess.username],
+      rowMode: "array"
+    };
+
+    pool.query(query, function(err, resp) {
+      var details = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        console.log(details[0][5]);
+        res.render("cart", {
+          user: sess.username,
+          details: details
+        });
+      }
+      pool.end();
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.listen(3000);
