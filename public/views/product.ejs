@@ -24,24 +24,25 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="#">Home  </a>
+                <a class="nav-link" href="/homepage">Home  </a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Welcome, Username  <i class="fas fa-user-circle"></i>  
+                  Welcome, <%= user %>  <i class="fas fa-user-circle"></i>  
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="#">Profile</a>
-                  <a class="dropdown-item" href="#">Orders</a>
+                  <a class="dropdown-item" href="/profile">Profile</a>
+                  <a class="dropdown-item" href="/buylog">Buylist</a>
+                  <a class="dropdown-item" href="/selllog">SellList</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Log Out</a>
+                  <a class="dropdown-item" href="/logout">Log Out</a>
                 </div>
               </li>
               <li class="nav-item">
                   <a class="nav-link" href="/sellproduct">Sell  </a>
                 </li>
               <li class="nav-item">
-                <a class="nav-link cart" href="#"><i class="fas fa-shopping-cart"></i> Cart</a>
+                <a class="nav-link cart" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
               </li>
             </ul>
           </div>
@@ -54,25 +55,25 @@
             </form>
               <div class="row product-info">
               <div class="pict col-lg-4">
-                <img src="/public/images/notes.jpg">
-                 <div class="atc">
-                  <a href="/cart/:idofproductbanana.hai.abhi" class="btn btn-primary">Add to Cart</a>
+                <img src="<%= details[0][5] %>">
+                <div class="atc">
+                  <a href="/cart/<%= details[0][0] %>" class="btn btn-primary">Add to Cart</a>
                 </div>
               </div>
               <div class="content col-lg-8">
-                <h2>Product Name</h2>
-                <h4>Product Id : </h4>
-                <h4>Years of Usage : </h4>
-                <h4>Condition : </h4>
-                <h3>Price : </h3>
+                <h2><%= details[0][1] %></h2>
+                <h4>Product Id : <%= details[0][0] %></h4>
+                <h4>Years of Usage : <%= details[0][2] %></h4>
+                <h4>Condition : Not storing</h4>
+                <h3>Price : Rs. <%= details[0][3] %></h3>
                   <br>
                 <h2>Seller Info</h2>
-                <h4>Username: </h4>
-                <h4>Name : </h4>
-                <h4>Contact No : </h4>
-                <h4>Email : </h4>
-                <h4>Preferred Location : </h4>
-                <h4>Branch/Year : </h4>
+                <h4>Username: <%= details[0][6] %></h4>
+                <h4>Name : <%= details[0][9] %></h4>
+                <h4>Contact No : <%= details[0][12] %></h4>
+                <h4>Email : <%= details[0][10] %></h4>
+                <h4>Preferred Location : Not storing</h4>
+                <h4>Branch/Year : Not Storing</h4>
               </div>
             </div>
           </section>
