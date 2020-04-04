@@ -1,13 +1,11 @@
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
 
-    <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -39,7 +37,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home </a>
+            <a class="nav-link" href="/homepage">Home </a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -51,30 +49,35 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <%= user %> <i class="fas fa-user-circle"></i>
+              <%= user %><i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Profile</a>
-              <a class="dropdown-item" href="#">Buylist</a>
-              <a class="dropdown-item" href="#">SellList</a>
+              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="/buylog">Buylist</a>
+              <a class="dropdown-item" href="/selllog">SellList</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Account Settings</a>
+              <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Sell </a>
+            <a class="nav-link" href="/sellproduct">Sell </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link cart" href="/cart"
+              ><i class="fas fa-shopping-cart"></i> Cart</a
+            >
           </li>
         </ul>
       </div>
     </nav>
     <section id="main">
-    <% var total = 0; %> <% for(var i=0; i< details.length; i++) { %>
+      <% var total = 0; for(var i=0; i < details.length; i++) { -%>
       <div class="row product-info">
         <div class="pict col-lg-4 col-md-4">
-          <img src="<%= details[i][5] %>" />
+          <img src="<%= details[i][5] %>" alt="This is a image" />
         </div>
         <div class="content col-lg-8 col-md-8">
-         <h2><%= details[i][1] %></h2>
+          <h2><%= details[i][1] %></h2>
           <h4>Product Id : <%= details[i][0] %></h4>
           <h4>Years of Usage : <%= details[i][2] %></h4>
           <h4>Condition : Not Storing</h4>
@@ -88,19 +91,24 @@
           <h4>Preferred Location : Mumbai</h4>
           <h4>Branch/Year : Not Storing</h4>
         </div>
-        <a class="col-lg-4 buy-button btn btn-success" href="/cart/products/show/1/<%= user %>,<%= details[i][0] %>">
+        <a
+          class="col-lg-4 buy-button btn btn-success"
+          href="/cart/1/<%= details[i][0] %>"
+        >
           Buy
         </a>
-        <a class="col-lg-4 buy-button btn btn-danger" href="/cart/products/show/0/<%= user %>,<%= details[i][0] %>">
+        <a
+          class="col-lg-4 buy-button btn btn-danger"
+          href="/cart/0/<%= details[i][0] %>"
+        >
           Remove from Cart
         </a>
       </div>
-       <% total = total + details[i][3]; %> <% } %>
+      <% total = total + details[i][3]; } -%>
     </section>
     <div class="footer">
       <p>Total Cost : Rs. <%= total %></p>
     </div>
-
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
       integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
