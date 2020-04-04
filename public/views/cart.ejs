@@ -49,7 +49,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <%= user %><i class="fas fa-user-circle"></i>
+              <%= user %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/profile">Profile</a>
@@ -62,15 +62,15 @@
           <li class="nav-item">
             <a class="nav-link" href="/sellproduct">Sell </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link cart" href="/cart"
-              ><i class="fas fa-shopping-cart"></i> Cart</a
-            >
-          </li>
+          
         </ul>
       </div>
     </nav>
     <section id="main">
+      <% if (details.length === 0){   -%>
+        <h3 style="text-align: center;">Cart is Empty</h3>
+        <h4 style="text-align: center;">Search for a desired product and add to cart</h4>
+      <% } -%>
       <% var total = 0; for(var i=0; i < details.length; i++) { -%>
       <div class="row product-info">
         <div class="pict col-lg-4 col-md-4">

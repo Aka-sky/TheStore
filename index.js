@@ -6,8 +6,13 @@ var upload = multer();
 var session = require("express-session");
 var ejs = require("ejs");
 var path = require("path");
-const db = require("./db");
+const {Pool,Client} = require("pg");
+const cookieParser = require("cookie-parser");
+var bcrypt = require('bcrypt');
+const saltRounds = 10;
 
+//Store cookies containing session id on client's browser
+app.use(cookieParser());
 //Session
 app.use(
   session({
@@ -31,18 +36,62 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload.array());
 app.use(express.static("public"));
 
-// displaying the start page index.ejs
-app.get("/", function(req, res) {
+const db = new Pool ({
+  user: "postgres",
+  host: "localhost",
+  database: "thevstore",
+  password: "password",
+  port: 5432
+});
+
+//function to check previous aborted session to continue
+function sessionChecker(req,res,next){
   var sess = req.session;
   if (sess.username) {
     res.redirect("/homepage");
   } else {
-    res.render("index");
+    next();
   }
+}
+//------------------------------------------------------------------------------------------------
+// displaying the start page index.ejs
+app.get("/", sessionChecker, function(req, res) {
+  res.render("index");
 });
 
+//------------------------------------------------------------------------------------------------
+// showing registration page
+app.get("/signup", sessionChecker, function(req, res) {
+  res.render("signup");
+});
+
+// handling submit on signup Page
+app.post("/signup", function(req, res) {
+  var user = req.body;
+  bcrypt.hash(user.password, saltRounds, function(err, hash) {
+    var pass = hash;
+    const query = {
+      text: 'INSERT INTO "user"(username, Name, email_id, password, contact) VALUES ($1,$2,$3,$4,$5)',
+      values: [user.username, user.name, user.email, pass, user.contact]
+    };
+  
+    db.query(query, function(err) {
+      if (err) {
+        console.log(err);
+        res.render("signup", {
+          msg: "Username not available. Try another username."
+        });
+      } else {
+        res.redirect("/login");
+      }
+      //pool.end();
+    });
+  });
+});
+
+//----------------------------------------------------------------------------------------------------
 // displaying login page
-app.get("/login", function(req, res) {
+app.get("/login",sessionChecker, function(req, res) {
   res.render("login");
 });
 
@@ -72,13 +121,24 @@ app.post("/login", function(req, res) {
       res.render("login", {
         msg: "Invalid username and password"
       });
-    } else {
-      if (user.password == resp.rows[0]) {
-        sess.username = user.username;
-        res.redirect("/homepage");
-      } else {
-        res.render("login", {
-          msg: "Invalid re-enter"
+    } 
+    else {
+      try{
+        bcrypt.compare(user.password, resp.rows[0].toString(), function(erro, result) {
+          if (result) {
+            sess.username = user.username;
+            res.redirect("/homepage");
+          } 
+          else {
+            res.render("login", {
+              msg: "Wrong password"
+            });
+          }
+        });
+      }
+      catch(e){
+        res.render("Login", {
+          msg: "Invalid Username"
         });
       }
     }
@@ -86,33 +146,7 @@ app.post("/login", function(req, res) {
   });
 });
 
-// showing registration page
-app.get("/signup", function(req, res) {
-  res.render("signup");
-});
-
-// handling submit on signup Page
-app.post("/signup", function(req, res) {
-  var user = req.body;
-
-  const query = {
-    text: 'INSERT INTO "user" VALUES ($1,$2,$3,$4,$5)',
-    values: [user.username, user.name, user.email, user.password, user.contact]
-  };
-
-  db.query(query, function(err) {
-    if (err) {
-      console.log(err);
-      res.render("signup", {
-        msg: "Username not available. Try another username."
-      });
-    } else {
-      res.redirect("/login");
-    }
-    //pool.end();
-  });
-});
-
+//-------------------------------------------------------------------------------------------------
 // display homepage
 app.get("/homepage", function(req, res) {
   var sess = req.session;
@@ -211,11 +245,7 @@ app.get("/cart/:id", function(req, res) {
     };
 
     db.query(query, function(err, resp) {
-      if (err) {
-        res.send("Error | Already present in cart!");
-      } else {
         res.redirect("/cart");
-      }
     });
   } else {
     res.redirect("/login");
@@ -237,7 +267,8 @@ app.get("/cart", function(req, res) {
       var details = resp.rows;
       if (err) {
         res.send("Error");
-      } else {
+      }
+      else {
         res.render("cart", { details: details, user: sess.username });
       }
     });
@@ -268,7 +299,6 @@ app.get("/cart/:action/:product", function(req, res) {
         if (err) {
           res.send("Error");
         } else {
-          console.log(sess.username + " , " + product_id);
           res.redirect("/cart");
         }
       });
@@ -278,8 +308,6 @@ app.get("/cart/:action/:product", function(req, res) {
   }
 });
 
-app.get("/aboutus", function(req, res) {
-    res.render("aboutus");
+app.listen(3000,function(){
+  console.log("Running on port 3000");
 });
-
-app.listen(3000);

@@ -47,7 +47,7 @@
               <a class="nav-link" href="/signup">Register</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/aboutus">About Us</a>
+              <a class="nav-link" href="/">About Us</a>
             </li>
           </ul>
         </div>
@@ -59,7 +59,7 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Sign In</h5>
-              <h6><%= typeof msg != 'undefined' ? msg : '' %></h6>
+              <h6 style="color: red;"><%= typeof msg != 'undefined' ? msg : '' %></h6>
               <form class="form-signin" method="POST">
                 <div class="form-label-group">
                   <input
@@ -67,6 +67,7 @@
                     id="username"
                     name="username"
                     class="form-control"
+                    placeholder="Username"
                     required
                     autofocus
                   />
@@ -79,6 +80,7 @@
                     id="password"
                     name="password"
                     class="form-control"
+                    placeholder="Password"
                     required
                   />
                   <label for="password">Password</label>

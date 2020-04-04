@@ -23,16 +23,14 @@
             
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                  <a class="nav-link" href="#">Home  </a>
-                </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Welcome, <%= username %>  <i class="fas fa-user-circle"></i>  
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="/profile">Profile</a>
-                    <a class="dropdown-item" href="/buylog">Orders</a>
+                    <a class="dropdown-item" href="/buylog">buylog</a>
+                    <a class="dropdown-item" href="/selllog">selllog</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/logout">Log Out</a>
                   </div>
@@ -107,7 +105,7 @@
       <h1>Recommended Products for you</h1>
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 center-block">
         <div class="card" style="width: 16rem;">
           <img class="card-img-top" src="<%= product[i][3] %>" alt="Card image cap">
           <div class="card-body">
