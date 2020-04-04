@@ -14,6 +14,55 @@
     <title>TheVStore | About Us</title>
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light">
+      <p class="navbar-brand">TheVStore</p>
+      <button
+        class="navbar-toggler custom-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/homepage">Home </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Welcome <i class="fas fa-user-circle"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="/buylog">Orders</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/logout">Log Out</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/sellproduct">Sell </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link cart" href="/cart"
+              ><i class="fas fa-shopping-cart"></i> Cart</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
     <div class="container">
       <h1>The Vstore.</h1>
       <p>
