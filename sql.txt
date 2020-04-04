@@ -1,0 +1,127 @@
+CREATE TABLE "user" (
+    username character varying PRIMARY KEY,
+    name character varying NOT NULL,
+    email_id character varying NOT NULL,
+    password character varying NOT NULL,
+    contact character varying
+);
+
+
+INSERT INTO "user" VALUES ('akashkamble0730','Akash Kamble','akashkamble0730@gmail.com','passAk','9833114068');
+INSERT INTO "user" VALUES ('someone1','S','someono1@gmail.com','passSo','9833114069');
+INSERT INTO "user" VALUES ('someone2','S','someono2@gmail.com','passSo','9833114070');
+INSERT INTO "user" VALUES ('someone3','S','someono3@gmail.com','passSo','9833114071');
+
+CREATE TABLE product (
+    product_id SERIAL PRIMARY KEY ,
+    name character varying NOT NULL,
+    years_of_usage INT,
+    price INT NOT NULL,
+    buyer_id character varying,
+    image character varying,
+    seller_id character varying NOT NULL,
+    description character varying NOT NULL,
+    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE SET NULL,
+    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
+);
+
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,450,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Lab Coat',1,400,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Computer',2,15000,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone4');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,300,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',2,430,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('DBMS',2,460,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone2');
+
+
+CREATE TABLE "cart" (
+    username character varying,
+    product_id int,
+    PRIMARY KEY (username, product_id),
+    FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE SET NULL,
+    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE SET NULL
+); 
+
+INSERT INTO cart VALUES ('akashkamble0730',3);
+INSERT INTO cart VALUES ('someone1',1);
+INSERT INTO cart VALUES ('someone1',2);
+
+CREATE TABLE "book"(
+	  product_id int,
+	  publication character varying NOT NULL,
+	  edition character varying NOT NULL,
+	  subject character varying NOT NULL,
+	  PRIMARY KEY (product_id),
+      FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+);
+
+insert into "book" VALUES (1, 'Clrs publications','9th edition','data structers');
+insert into "book" VALUES (4, 'Clrs publications','8th edition','data structers');
+
+CREATE TABLE "calculator"(
+	  product_id int, -- 
+	  brand character varying NOT NULL, -- 
+	  model character varying NOT NULL,
+	  features character varying NOT NULL,
+	  PRIMARY KEY (product_id),
+	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	);
+
+INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('CASIO ES 991',2,250,'../images/booksvg.svg','Scientific calculator for all.','someone4');
+
+INSERT INTO "calculator" VALUES (8, 'CASIO', 'EX-991 PLUS', '1000 functions');
+
+CREATE TABLE "clothing"
+	(
+	  product_id int,
+	  size character varying NOT NULL,
+	  "type" character varying NOT NULL,
+	  color character varying NOT NULL,
+	  detailedcondition character varying NOT NULL,
+	  PRIMARY KEY (product_id),
+	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	);
+
+INSERT INTO "clothing" VALUES (2,'XL','Cotton','White','1 acid mark on upper pocket.');
+
+SELECT * FROM product;
+
+CREATE TABLE "notes"(
+	  "product_id" serial,
+	  "subject" character varying NOT NULL,
+	  "topic" character varying NOT NULL,
+	  "professor Name" character varying NOT NULL,
+	  "year" character varying NOT NULL,
+	  PRIMARY KEY ("product_id"),
+	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	);
+
+INSERT INTO "notes" VALUES (5, 'DATA STRUCTURES', 'Sorting And Searching', 'Sir. Ranjit', '2020');
+INSERT INTO "notes" VALUES (6, 'DBMS', 'Sequencing', 'Mayuri More', '2020');
+
+CREATE TABLE "other"
+	(
+	  "product_id" int ,
+	  "description" character varying,
+	  "category" character varying,
+	  PRIMARY KEY ("product_id"),
+	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	);
+
+INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('Something',2,460,'../images/booksvg.svg','some item not belonging to any of the categories specified.','someone2');
+
+INSERT INTO "other" VALUES (9, 'What to say about this product as type not known.', 'Unknown');
+
+CREATE TABLE "pc"
+	(
+	  "product_id" int,
+	  "operating system" character varying,
+	  "ram" int,
+	  "storage" int,
+	  "brand" character varying,
+	  "processor" character varying,
+	  "images" character varying,
+        PRIMARY KEY ("product_id"),
+        FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	);
+
+INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium','../images/laptop.jpg');
