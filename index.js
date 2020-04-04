@@ -6,12 +6,12 @@ var upload = multer();
 var session = require("express-session");
 var ejs = require("ejs");
 var path = require("path");
-const { Pool, Client } = require("pg");
+const db = require("./db");
 
 //Session
 app.use(
   session({
-    secret: "bugatti chiron oneplus",
+    secret: "oneplus 6",
     saveUninitialized: true,
     resave: true
   })
@@ -24,7 +24,7 @@ app.set("views", "./public/views");
 app.use(bodyParser.json());
 
 //for parsing application/xwww-
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 //form-urlencoded
 
 //for parsing multipart/form-data
@@ -46,19 +46,18 @@ app.get("/login", function(req, res) {
   res.render("login");
 });
 
+app.get("/logout", function(req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    req.session.destroy();
+  }
+  res.redirect("/login");
+});
+
 // handling submit on login page
 app.post("/login", function(req, res) {
   var sess = req.session;
   var user = req.body;
-
-  // database details
-  const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "user",
-    password: "123456",
-    port: 5432
-  });
 
   // query definition
   const query = {
@@ -68,7 +67,7 @@ app.post("/login", function(req, res) {
   };
 
   // making the query
-  pool.query(query, function(err, resp) {
+  db.query(query, function(err, resp) {
     if (err) {
       res.render("login", {
         msg: "Invalid username and password"
@@ -83,7 +82,7 @@ app.post("/login", function(req, res) {
         });
       }
     }
-    pool.end();
+    //pool.end();
   });
 });
 
@@ -95,20 +94,13 @@ app.get("/signup", function(req, res) {
 // handling submit on signup Page
 app.post("/signup", function(req, res) {
   var user = req.body;
-  const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "user",
-    password: "123456",
-    port: 5432
-  });
 
   const query = {
     text: 'INSERT INTO "user" VALUES ($1,$2,$3,$4,$5)',
     values: [user.username, user.name, user.email, user.password, user.contact]
   };
 
-  pool.query(query, function(err) {
+  db.query(query, function(err) {
     if (err) {
       console.log(err);
       res.render("signup", {
@@ -117,7 +109,7 @@ app.post("/signup", function(req, res) {
     } else {
       res.redirect("/login");
     }
-    pool.end();
+    //pool.end();
   });
 });
 
@@ -126,20 +118,13 @@ app.get("/homepage", function(req, res) {
   var sess = req.session;
   if (sess.username) {
     // someone is logged in and thus can access this page
-    const pool = new Pool({
-      user: "postgres",
-      host: "localhost",
-      database: "user",
-      password: "123456",
-      port: 5432
-    });
 
     const query = {
       text: 'SELECT name,price,description,image,product_id FROM "product"',
       rowMode: "array"
     };
 
-    pool.query(query, function(err, resp) {
+    db.query(query, function(err, resp) {
       var product = resp.rows;
       if (err) {
         res.send("Error");
@@ -149,18 +134,65 @@ app.get("/homepage", function(req, res) {
           username: sess.username
         });
       }
-
-      pool.end();
     });
   } else {
     res.redirect("/login");
   }
 });
 
-app.get("/product", function(req, res) {
+// to sort for a particular category of product
+app.get("/homepage/:category", function(req, res) {
+  var sess = req.session;
+  var category = req.params.category;
+  console.log(category);
+  if (sess.username) {
+    const query = {
+      text:
+        'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+        category +
+        ");",
+      rowMode: "array"
+    };
+
+    db.query(query, function(err, resp) {
+      // console.log(resp);
+      var product = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("homepage", {
+          product: product,
+          username: sess.username
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/product/:id", function(req, res) {
   var sess = req.session;
   if (sess.username) {
-    // try to get the id from url body and then get the product from database and display.
+    var product_id = req.params.id;
+    const query = {
+      text:
+        'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
+      values: [product_id],
+      rowMode: "array"
+    };
+
+    db.query(query, function(err, resp) {
+      var details = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("product", {
+          details: details,
+          user: sess.username
+        });
+      }
+    });
   } else {
     res.redirect("/login");
   }
@@ -172,26 +204,18 @@ app.get("/cart/:id", function(req, res) {
   var product_id = req.params.id;
   if (sess.username) {
     // somone is logged in thus can access
-    const pool = new Pool({
-      user: "postgres",
-      host: "localhost",
-      database: "user",
-      password: "123456",
-      port: 5432
-    });
 
     const query = {
       text: 'INSERT INTO "cart" VALUES ($1,$2) ',
       values: [sess.username, product_id]
     };
 
-    pool.query(query, function(err, resp) {
+    db.query(query, function(err, resp) {
       if (err) {
         res.send("Error | Already present in cart!");
       } else {
-        res.redirect("/cart/products/show");
+        res.redirect("/cart");
       }
-      pool.end();
     });
   } else {
     res.redirect("/login");
@@ -199,17 +223,9 @@ app.get("/cart/:id", function(req, res) {
 });
 
 // get the cart page
-app.get("/cart/products/show", function(req, res) {
+app.get("/cart", function(req, res) {
   var sess = req.session;
   if (sess.username) {
-    const pool = new Pool({
-      user: "postgres",
-      host: "localhost",
-      database: "user",
-      password: "123456",
-      port: 5432
-    });
-
     const query = {
       text:
         'SELECT * FROM "product" INNER JOIN "user" ON("product".product_id, "user".username) IN ( SELECT product_id, seller_id FROM "product" WHERE "product".product_id IN( SELECT "cart".product_id FROM "cart" WHERE username = $1 ))',
@@ -217,22 +233,53 @@ app.get("/cart/products/show", function(req, res) {
       rowMode: "array"
     };
 
-    pool.query(query, function(err, resp) {
+    db.query(query, function(err, resp) {
       var details = resp.rows;
       if (err) {
         res.send("Error");
       } else {
-        console.log(details[0][5]);
-        res.render("cart", {
-          user: sess.username,
-          details: details
-        });
+        res.render("cart", { details: details, user: sess.username });
       }
-      pool.end();
     });
   } else {
     res.redirect("/login");
   }
+});
+
+app.get("/cart/:action/:product", function(req, res) {
+  var sess = req.session;
+  var action = req.params.action;
+  var product_id = req.params.product;
+  if (sess.username) {
+    // if action = 1 means buy from cart and 0 means remove from cart.
+
+    if (action == 1) {
+      // buy selected in cart on product_id
+      // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
+      res.send("Request sent to seller!!");
+    } else {
+      // remove selected in cart on product_id
+      const query = {
+        text: 'DELETE FROM "cart" WHERE username = $1 AND product_id = $2',
+        values: [sess.username, product_id]
+      };
+
+      db.query(query, function(err, resp) {
+        if (err) {
+          res.send("Error");
+        } else {
+          console.log(sess.username + " , " + product_id);
+          res.redirect("/cart");
+        }
+      });
+    }
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/aboutus", function(req, res) {
+    res.render("aboutus");
 });
 
 app.listen(3000);
