@@ -1,6 +1,6 @@
 .navbar {
   height: 120px;
-  padding: 0% 10%;
+  padding: 0%;
 }
 .navbar-brand {
   background-color: #0062e6;
@@ -31,7 +31,7 @@
 }
 
 #head {
-  padding: 2% 8%;
+  padding: 0% 10% 2%;
 }
 .main {
   padding-top: 50px;

@@ -59,6 +59,11 @@
 #products .card {
   margin: 2% 1%;
 }
+.card img {
+  height: 220px;
+  width: 100%;
+  object-fit: cover;
+}
 
 @media (max-width: 991px) {
   .fixed-top {
