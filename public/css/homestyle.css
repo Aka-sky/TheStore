@@ -66,6 +66,13 @@
 }
 
 @media (max-width: 991px) {
+  .search-bar {
+    display: none;
+  }
+  .search-bar-1 {
+    display: block;
+    text-align: center;
+  }
   .fixed-top {
     top: -0px;
     position: static;
@@ -74,13 +81,6 @@
     background-color: white;
     padding: 0% 6% 0%;
     z-index: 1;
-  }
-  .search-bar {
-    display: none;
-  }
-  .search-bar-1 {
-    display: block;
-    text-align: center;
   }
   #head {
     text-align: center;

@@ -85,20 +85,23 @@
                   <div class="col-md-6 col-md-offset-3">
                       <div class="panel panel-info">
                           <div class="panel-body">
-                              <textarea placeholder="Write your comment here!" class="pb-cmnt-textarea"></textarea>
-                              <form class="form-inline">
-                                  <div class="btn-group">
-                                      <button class="btn" type="button"><span class="fa fa-picture-o fa-lg"></span></button>
-                                      <button class="btn" type="button"><span class="fa fa-video-camera fa-lg"></span></button>
-                                      <button class="btn" type="button"><span class="fa fa-microphone fa-lg"></span></button>
-                                      <button class="btn" type="button"><span class="fa fa-music fa-lg"></span></button>
-                                  </div>
-                                  <button class="btn btn-primary pull-right" type="button">Share</button>
-                              </form>
+                            <form method="POST">
+                              <textarea placeholder="Write your comment here!" name="com" class="pb-cmnt-textarea"></textarea>
+                              <button class="btn btn-primary pull-right" type="submit">Share</button>
+                            </form>
                           </div>
                       </div>
                   </div>
               </div>
+          </div>
+          <div class="added-comments">
+            <% for(var i=0; i< comments.length; i++) { %>
+            <div class="comment">
+              <a href="/profile/username1"><h6><%= comments[i][0] %></h6></a>
+              <p><%= comments[i][1] %></p>
+            </div>
+            <hr width="100%">
+            <% } %>
           </div>
           </section>
           <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

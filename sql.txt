@@ -126,3 +126,14 @@ CREATE TABLE "pc"
 	);
 
 INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium','../images/laptop.jpg');
+
+CREATE TABLE "comments"
+(
+	"comment_id" bigserial PRIMARY KEY, 
+	"username" character varying,
+        "product_id" int,
+	"content" character varying NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+        FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE SET NULL
+);
+	
