@@ -205,34 +205,98 @@ app.get("/homepage/:category", function(req, res) {
   }
 });
 
+//---------------------------------------------------------------------------------------------------
+//Display individual product
 app.get("/product/:id", function(req, res) {
   var sess = req.session;
   if (sess.username) {
+    //For displaying products
     var product_id = req.params.id;
+    //Creating a promise chain
+    const pool = new Pool();
+    pool.connect((err, client, done) => {
+      const shouldAbort = err => {
+        if (err) {
+          console.error('Error in transaction', err.stack);
+          client.query('ROLLBACK', err => {
+            if (err) {
+              console.error('Error rolling back client', err.stack);
+            }
+            // release the client back to the pool
+            done();
+          })
+        }
+        return !!err;
+      }
+      //transaction begins
+      client.query('BEGIN', err => {
+        if (shouldAbort(err)) return;
+
+        const query1 = {
+          text:
+            'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
+          values: [product_id],
+          rowMode: "array"
+        };
+        client.query(query1, (err, respo) => {
+          if (shouldAbort(err)) return;
+
+          const query2 = {
+            text:
+              'SELECT (username, content) FROM "comments" WHERE "comments".product_id = $1',
+            values: [product_id],
+            rowMode: "array"
+          };
+          client.query(query2, (err, resp) => {
+            if (shouldAbort(err)) return;
+            //commiting queries 
+            client.query('COMMIT', err => {
+              if (err) {
+                console.error('Error committing transaction', err.stack);
+              }
+              else{
+                var details = respo.rows;
+                var comments = resp.rows;
+                res.render("product", {
+                  details: details,
+                  user: sess.username,
+                  comments: comments
+                });
+              }
+            })
+          })
+        })
+      })
+    })
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/product/:id", function(req, res) {
+  var sess = req.session;
+  var product_id = req.params.id;
+  var comment = req.body.com;
+
+  if (sess.username) {
     const query = {
-      text:
-        'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
-      values: [product_id],
-      rowMode: "array"
+      text: 'INSERT INTO "comments" (username, product_id, content) VALUES ($1, $2, $3) ',
+      values: [sess.username, product_id, comment]
     };
 
     db.query(query, function(err, resp) {
-      var details = resp.rows;
       if (err) {
         res.send("Error");
       } else {
-        res.render("product", {
-          details: details,
-          user: sess.username
-        });
+        res.redirect("/homepage");
       }
     });
   } else {
     res.redirect("/login");
   }
 });
-
-// add to cart clicked on homepage
+//------------------------------------------------------------------------------------------------------
+// add to cart clicked on homepage or product page
 app.get("/cart/:id", function(req, res) {
   var sess = req.session;
   var product_id = req.params.id;
@@ -308,6 +372,57 @@ app.get("/cart/:action/:product", function(req, res) {
   }
 });
 
+//------------------------------------------------------------------------------------------------------
+//Profile page
+app.get("/profile/:username", function(req, res){
+  var sess = req.session;
+  var currentusername = req.params.username;
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text: 'SELECT * FROM "user" WHERE username = $1',
+      values: [currentusername],
+      rowMode: "array"
+    };
+    db.query(query, function(err, resp) {
+      var currentuser = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("profile", {
+          currentuser: currentuser,
+          username: sess.username
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.listen(3000,function(){
   console.log("Running on port 3000");
 });
+
+
+/*
+//original code inside app.get("/product/:id") -> function -> if -> line 215
+const query = {
+      text:
+        'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
+      values: [product_id],
+      rowMode: "array"
+    };
+
+    db.query(query, function(err, respo) {
+      var details = respo.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("product", {
+          details: details,
+          user: sess.username
+        });
+      }
+    });
+*/

@@ -42,10 +42,10 @@
   border-radius: 10px;
   padding: 2%;
 }
-.buy-button {
-  text-align: center;
-  margin: 2% 0% 0%;
+.atc{
+  padding: 3%;
 }
+
 @media (max-width: 991px) {
   .product-info,
   .pict {
@@ -55,8 +55,8 @@
   .content {
     margin: 3% 2% 2%;
   }
-  .buy-button {
-    margin: 0% 0% 2%;
+  .atc {
+    text-align: center;
   }
 }
 
@@ -72,6 +72,9 @@
   height: 130px;
   width: 100%;
   border: 1px solid #f2f2f2;
+}
+.added-comments{
+  padding: 3%;
 }
 
 @media (max-width: 991px) {

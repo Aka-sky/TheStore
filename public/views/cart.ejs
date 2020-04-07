@@ -52,7 +52,7 @@
               <%= user %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="/profile/<%= user %>">Profile</a>
               <a class="dropdown-item" href="/buylog">Buylist</a>
               <a class="dropdown-item" href="/selllog">SellList</a>
               <div class="dropdown-divider"></div>
@@ -68,8 +68,8 @@
     </nav>
     <section id="main">
       <% if (details.length === 0){   -%>
-        <h3 style="text-align: center;">Cart is Empty</h3>
-        <h4 style="text-align: center;">Search for a desired product and add to cart</h4>
+        <h3 style="text-align: center; margin-top: 300px;">Cart is Empty</h3>
+        <h4 style="text-align: center;">Search for a desired product and add to cart <a href="/homepage">here</a></h4>
       <% } -%>
       <% var total = 0; for(var i=0; i < details.length; i++) { -%>
       <div class="row product-info">
