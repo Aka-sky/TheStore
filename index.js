@@ -6,10 +6,10 @@ var upload = multer();
 var session = require("express-session");
 var ejs = require("ejs");
 var path = require("path");
-const {Pool,Client} = require("pg");
 const cookieParser = require("cookie-parser");
-var bcrypt = require('bcrypt');
+var bcrypt = require("bcrypt");
 const saltRounds = 10;
+const { Pool } = require("pg");
 
 //Store cookies containing session id on client's browser
 app.use(cookieParser());
@@ -18,7 +18,7 @@ app.use(
   session({
     secret: "oneplus 6",
     saveUninitialized: true,
-    resave: true
+    resave: true,
   })
 );
 
@@ -36,16 +36,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(upload.array());
 app.use(express.static("public"));
 
-const db = new Pool ({
+const db = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "thevstore",
-  password: "password",
-  port: 5432
+  database: "user",
+  password: "123456",
+  port: 5432,
 });
 
-//function to check previous aborted session to continue
-function sessionChecker(req,res,next){
+// function to check previous aborted session to continue
+function sessionChecker(req, res, next) {
   var sess = req.session;
   if (sess.username) {
     res.redirect("/homepage");
@@ -55,47 +55,55 @@ function sessionChecker(req,res,next){
 }
 //------------------------------------------------------------------------------------------------
 // displaying the start page index.ejs
-app.get("/", sessionChecker, function(req, res) {
+app.get("/", sessionChecker, function (req, res) {
   res.render("index");
 });
 
 //------------------------------------------------------------------------------------------------
 // showing registration page
-app.get("/signup", sessionChecker, function(req, res) {
+app.get("/signup", sessionChecker, function (req, res) {
   res.render("signup");
 });
 
 // handling submit on signup Page
-app.post("/signup", function(req, res) {
+app.post("/signup", function (req, res) {
   var user = req.body;
-  bcrypt.hash(user.password, saltRounds, function(err, hash) {
+  bcrypt.hash(user.password, saltRounds, function (err, hash) {
     var pass = hash;
     const query = {
-      text: 'INSERT INTO "user"(username, Name, email_id, password, contact) VALUES ($1,$2,$3,$4,$5)',
-      values: [user.username, user.name, user.email, pass, user.contact]
+      text:
+        'INSERT INTO "user"(username, Name, email_id, password, contact, location, branchYear) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      values: [
+        user.username,
+        user.name,
+        user.email,
+        pass,
+        user.contact,
+        user.location,
+        user.branchYear,
+      ],
     };
-  
-    db.query(query, function(err) {
+
+    db.query(query, function (err) {
       if (err) {
         console.log(err);
         res.render("signup", {
-          msg: "Username not available. Try another username."
+          msg: "Username not available. Try another username.",
         });
       } else {
         res.redirect("/login");
       }
-      //pool.end();
     });
   });
 });
 
 //----------------------------------------------------------------------------------------------------
 // displaying login page
-app.get("/login",sessionChecker, function(req, res) {
+app.get("/login", sessionChecker, function (req, res) {
   res.render("login");
 });
 
-app.get("/logout", function(req, res) {
+app.get("/logout", function (req, res) {
   var sess = req.session;
   if (sess.username) {
     req.session.destroy();
@@ -104,7 +112,7 @@ app.get("/logout", function(req, res) {
 });
 
 // handling submit on login page
-app.post("/login", function(req, res) {
+app.post("/login", function (req, res) {
   var sess = req.session;
   var user = req.body;
 
@@ -112,60 +120,59 @@ app.post("/login", function(req, res) {
   const query = {
     text: 'SELECT password FROM "user" WHERE username = $1 ',
     values: [user.username],
-    rowMode: "array"
+    rowMode: "array",
   };
 
   // making the query
-  db.query(query, function(err, resp) {
+  db.query(query, function (err, resp) {
     if (err) {
       res.render("login", {
-        msg: "Invalid username and password"
+        msg: "Invalid username and password",
       });
-    } 
-    else {
-      try{
-        bcrypt.compare(user.password, resp.rows[0].toString(), function(erro, result) {
+    } else {
+      try {
+        bcrypt.compare(user.password, resp.rows[0].toString(), function (
+          erro,
+          result
+        ) {
           if (result) {
             sess.username = user.username;
             res.redirect("/homepage");
-          } 
-          else {
+          } else {
             res.render("login", {
-              msg: "Wrong password"
+              msg: "Wrong password",
             });
           }
         });
-      }
-      catch(e){
+      } catch (e) {
         res.render("Login", {
-          msg: "Invalid Username"
+          msg: "Invalid Username",
         });
       }
     }
-    //pool.end();
   });
 });
 
 //-------------------------------------------------------------------------------------------------
 // display homepage
-app.get("/homepage", function(req, res) {
+app.get("/homepage", function (req, res) {
   var sess = req.session;
   if (sess.username) {
     // someone is logged in and thus can access this page
 
     const query = {
       text: 'SELECT name,price,description,image,product_id FROM "product"',
-      rowMode: "array"
+      rowMode: "array",
     };
 
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       var product = resp.rows;
       if (err) {
         res.send("Error");
       } else {
         res.render("homepage", {
           product: product,
-          username: sess.username
+          username: sess.username,
         });
       }
     });
@@ -175,28 +182,35 @@ app.get("/homepage", function(req, res) {
 });
 
 // to sort for a particular category of product
-app.get("/homepage/:category", function(req, res) {
+app.get("/homepage/:category", function (req, res) {
   var sess = req.session;
   var category = req.params.category;
-  console.log(category);
+  var query;
   if (sess.username) {
-    const query = {
-      text:
-        'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
-        category +
-        ");",
-      rowMode: "array"
-    };
+    if (category == "electronics") {
+      query = {
+        text:
+          'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
+        rowMode: "array",
+      };
+    } else {
+      query = {
+        text:
+          'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+          category +
+          ");",
+        rowMode: "array",
+      };
+    }
 
-    db.query(query, function(err, resp) {
-      // console.log(resp);
+    db.query(query, function (err, resp) {
       var product = resp.rows;
       if (err) {
         res.send("Error");
       } else {
         res.render("homepage", {
           product: product,
-          username: sess.username
+          username: sess.username,
         });
       }
     });
@@ -205,111 +219,89 @@ app.get("/homepage/:category", function(req, res) {
   }
 });
 
-//---------------------------------------------------------------------------------------------------
-//Display individual product
-app.get("/product/:id", function(req, res) {
+//display product page
+app.get("/product/:id", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    //For displaying products
     var product_id = req.params.id;
-    //Creating a promise chain
-    const pool = new Pool();
-    pool.connect((err, client, done) => {
-      const shouldAbort = err => {
-        if (err) {
-          console.error('Error in transaction', err.stack);
-          client.query('ROLLBACK', err => {
-            if (err) {
-              console.error('Error rolling back client', err.stack);
-            }
-            // release the client back to the pool
-            done();
-          })
-        }
-        return !!err;
-      }
-      //transaction begins
-      client.query('BEGIN', err => {
-        if (shouldAbort(err)) return;
+    (async () => {
+      const client = await db.connect();
 
-        const query1 = {
+      try {
+        await client.query("BEGIN");
+        const productUserQuery = {
           text:
             'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
           values: [product_id],
-          rowMode: "array"
+          rowMode: "array",
         };
-        client.query(query1, (err, respo) => {
-          if (shouldAbort(err)) return;
+        const productResp = await client.query(productUserQuery);
+        const details = productResp.rows;
 
-          const query2 = {
-            text:
-              'SELECT (username, content) FROM "comments" WHERE "comments".product_id = $1',
-            values: [product_id],
-            rowMode: "array"
-          };
-          client.query(query2, (err, resp) => {
-            if (shouldAbort(err)) return;
-            //commiting queries 
-            client.query('COMMIT', err => {
-              if (err) {
-                console.error('Error committing transaction', err.stack);
-              }
-              else{
-                var details = respo.rows;
-                var comments = resp.rows;
-                res.render("product", {
-                  details: details,
-                  user: sess.username,
-                  comments: comments
-                });
-              }
-            })
-          })
-        })
-      })
-    })
+        const commentQuery = {
+          text:
+            'SELECT username, content FROM "comments" WHERE "comments".product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        const commentResp = await client.query(commentQuery);
+        const comments = commentResp.rows;
+        res.render("product", {
+          user: sess.username,
+          details: details,
+          comments: comments,
+        });
+        await client.query("COMMIT");
+      } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+      } finally {
+        client.release();
+      }
+    })().catch((err) => console.log(err.stack));
   } else {
     res.redirect("/login");
   }
 });
 
-app.post("/product/:id", function(req, res) {
+//comment post on product page
+app.post("/product/:id", function (req, res) {
   var sess = req.session;
   var product_id = req.params.id;
-  var comment = req.body.com;
+  var comment = req.body.comment;
 
   if (sess.username) {
     const query = {
-      text: 'INSERT INTO "comments" (username, product_id, content) VALUES ($1, $2, $3) ',
-      values: [sess.username, product_id, comment]
+      text:
+        'INSERT INTO "comments" (username, product_id, content) VALUES ($1,$2,$3)',
+      values: [sess.username, product_id, comment],
     };
 
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       if (err) {
         res.send("Error");
       } else {
-        res.redirect("/homepage");
+        res.redirect("/product/" + product_id);
       }
     });
   } else {
     res.redirect("/login");
   }
 });
-//------------------------------------------------------------------------------------------------------
-// add to cart clicked on homepage or product page
-app.get("/cart/:id", function(req, res) {
+
+// add to cart clicked on homepage
+app.get("/cart/:id", function (req, res) {
   var sess = req.session;
   var product_id = req.params.id;
   if (sess.username) {
     // somone is logged in thus can access
-
     const query = {
       text: 'INSERT INTO "cart" VALUES ($1,$2) ',
-      values: [sess.username, product_id]
+      values: [sess.username, product_id],
     };
 
-    db.query(query, function(err, resp) {
-        res.redirect("/cart");
+    db.query(query, function (err, resp) {
+      res.redirect("/cart");
     });
   } else {
     res.redirect("/login");
@@ -317,22 +309,21 @@ app.get("/cart/:id", function(req, res) {
 });
 
 // get the cart page
-app.get("/cart", function(req, res) {
+app.get("/cart", function (req, res) {
   var sess = req.session;
   if (sess.username) {
     const query = {
       text:
         'SELECT * FROM "product" INNER JOIN "user" ON("product".product_id, "user".username) IN ( SELECT product_id, seller_id FROM "product" WHERE "product".product_id IN( SELECT "cart".product_id FROM "cart" WHERE username = $1 ))',
       values: [sess.username],
-      rowMode: "array"
+      rowMode: "array",
     };
 
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       var details = resp.rows;
       if (err) {
         res.send("Error");
-      }
-      else {
+      } else {
         res.render("cart", { details: details, user: sess.username });
       }
     });
@@ -341,7 +332,7 @@ app.get("/cart", function(req, res) {
   }
 });
 
-app.get("/cart/:action/:product", function(req, res) {
+app.get("/cart/:action/:product", function (req, res) {
   var sess = req.session;
   var action = req.params.action;
   var product_id = req.params.product;
@@ -356,10 +347,10 @@ app.get("/cart/:action/:product", function(req, res) {
       // remove selected in cart on product_id
       const query = {
         text: 'DELETE FROM "cart" WHERE username = $1 AND product_id = $2',
-        values: [sess.username, product_id]
+        values: [sess.username, product_id],
       };
 
-      db.query(query, function(err, resp) {
+      db.query(query, function (err, resp) {
         if (err) {
           res.send("Error");
         } else {
@@ -372,9 +363,7 @@ app.get("/cart/:action/:product", function(req, res) {
   }
 });
 
-//------------------------------------------------------------------------------------------------------
-//Profile page
-app.get("/profile/:username", function(req, res){
+app.get("/profile/:username", function (req, res) {
   var sess = req.session;
   var currentusername = req.params.username;
   if (sess.username) {
@@ -382,16 +371,16 @@ app.get("/profile/:username", function(req, res){
     const query = {
       text: 'SELECT * FROM "user" WHERE username = $1',
       values: [currentusername],
-      rowMode: "array"
+      rowMode: "array",
     };
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       var currentuser = resp.rows;
       if (err) {
         res.send("Error");
       } else {
         res.render("profile", {
           currentuser: currentuser,
-          username: sess.username
+          username: sess.username,
         });
       }
     });
@@ -400,29 +389,19 @@ app.get("/profile/:username", function(req, res){
   }
 });
 
-app.listen(3000,function(){
-  console.log("Running on port 3000");
+app.get("/sellproduct", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    res.render("sellproduct");
+  } else {
+    res.redirect("/login");
+  }
 });
 
+app.get("/aboutus", function (req, res) {
+  res.render("aboutus");
+});
 
-/*
-//original code inside app.get("/product/:id") -> function -> if -> line 215
-const query = {
-      text:
-        'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
-      values: [product_id],
-      rowMode: "array"
-    };
-
-    db.query(query, function(err, respo) {
-      var details = respo.rows;
-      if (err) {
-        res.send("Error");
-      } else {
-        res.render("product", {
-          details: details,
-          user: sess.username
-        });
-      }
-    });
-*/
+app.listen(3000, function () {
+  console.log("Running on port 3000");
+});

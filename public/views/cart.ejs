@@ -49,10 +49,10 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <%= user %> <i class="fas fa-user-circle"></i>
+              <%= user %><i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="/profile/<%= user %>">Profile</a>
+              <a class="dropdown-item" href="/profile/<%= user %>"><Profile></a>
               <a class="dropdown-item" href="/buylog">Buylist</a>
               <a class="dropdown-item" href="/selllog">SellList</a>
               <div class="dropdown-divider"></div>
@@ -62,16 +62,17 @@
           <li class="nav-item">
             <a class="nav-link" href="/sellproduct">Sell </a>
           </li>
-          
+          <li class="nav-item">
+            <a class="nav-link cart" href="/cart"
+              ><i class="fas fa-shopping-cart"></i> Cart</a
+            >
+          </li>
         </ul>
       </div>
     </nav>
     <section id="main">
-      <% if (details.length === 0){   -%>
-        <h3 style="text-align: center; margin-top: 300px;">Cart is Empty</h3>
-        <h4 style="text-align: center;">Search for a desired product and add to cart <a href="/homepage">here</a></h4>
-      <% } -%>
-      <% var total = 0; for(var i=0; i < details.length; i++) { -%>
+      <% if (details.length > 0) { %> <% var total = 0; for(var i=0; i <
+      details.length; i++) { -%>
       <div class="row product-info">
         <div class="pict col-lg-4 col-md-4">
           <img src="<%= details[i][5] %>" alt="This is a image" />
@@ -88,8 +89,8 @@
           <h4>Name : <%= details[i][9] %></h4>
           <h4>Contact No : <%= details[i][12] %></h4>
           <h4>Email : <%= details[i][10] %></h4>
-          <h4>Preferred Location : Mumbai</h4>
-          <h4>Branch/Year : Not Storing</h4>
+          <h4>Preferred Location : <%= details[i][13] %></h4>
+          <h4>Branch/Year : <%= details[i][14] %></h4>
         </div>
         <a
           class="col-lg-4 buy-button btn btn-success"
@@ -104,11 +105,16 @@
           Remove from Cart
         </a>
       </div>
-      <% total = total + details[i][3]; } -%>
-    </section>
-    <div class="footer">
+      <% total = total + details[i][3]; } -%> 
+      <div class="footer">
       <p>Total Cost : Rs. <%= total %></p>
     </div>
+      <% } else { %>
+         <h3 style="text-align: center; margin-top: 300px;">Cart is Empty</h3>
+        <h4 style="text-align: center;">Search for a desired product and add to cart <a href="/homepage">here</a></h4>
+      <% } %>
+    </section>
+    
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
       integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"

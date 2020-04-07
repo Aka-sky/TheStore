@@ -31,7 +31,7 @@
                   Welcome, <%= user %>  <i class="fas fa-user-circle"></i>  
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/profile">Profile</a>
+                  <a class="dropdown-item" href="/profile/<%= user %>">Profile</a>
                   <a class="dropdown-item" href="/buylog">Buylist</a>
                   <a class="dropdown-item" href="/selllog">SellList</a>
                   <div class="dropdown-divider"></div>
@@ -72,8 +72,8 @@
                 <h4>Name : <%= details[0][9] %></h4>
                 <h4>Contact No : <%= details[0][12] %></h4>
                 <h4>Email : <%= details[0][10] %></h4>
-                <h4>Preferred Location : Not storing</h4>
-                <h4>Branch/Year : Not Storing</h4>
+                <h4>Preferred Location : <%= details[0][13] %></h4>
+                <h4>Branch/Year : <%= details[0][14] %></h4>
               </div>
             </div>
           </section>
@@ -85,23 +85,25 @@
                   <div class="col-md-6 col-md-offset-3">
                       <div class="panel panel-info">
                           <div class="panel-body">
-                            <form method="POST">
-                              <textarea placeholder="Write your comment here!" name="com" class="pb-cmnt-textarea"></textarea>
-                              <button class="btn btn-primary pull-right" type="submit">Share</button>
-                            </form>
+                              <form method="POST">
+                                <textarea name="comment" id="comment" placeholder="Write your comment here!" class="pb-cmnt-textarea"></textarea>
+                                <button class="btn btn-primary pull-right" type="submit">Share</button>
+                              </form>
                           </div>
                       </div>
                   </div>
               </div>
           </div>
           <div class="added-comments">
-            <% for(var i=0; i< comments.length; i++) { %>
-            <div class="comment">
-              <a href="/profile/username1"><h6><%= comments[i][0] %></h6></a>
-              <p><%= comments[i][1] %></p>
-            </div>
-            <hr width="100%">
-            <% } %>
+            <% for(var i=0; i<comments.length; i++) { -%>
+              <div class="comment">
+                  <a href="/profile/<%= comments[i][0] %>" >
+                  <h6><%= comments[i][0] %></h6>
+                  </a>
+                  <p><%= comments[i][1] %></p>
+              </div>
+              <hr width="100%">
+            <% } -%>
           </div>
           </section>
           <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

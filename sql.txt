@@ -3,15 +3,19 @@ CREATE TABLE "user" (
     name character varying NOT NULL,
     email_id character varying NOT NULL,
     password character varying NOT NULL,
-    contact bigint NOT NULL,
-    location character varying,
-    year character varying
+    contact character varying,
+	location character varying,
+    branchYear character varying
 );
+
+//-------------- This part won't work as "user" table structure is
+changed. So enter data from signup page. 
 
 INSERT INTO "user" VALUES ('akashkamble0730','Akash Kamble','akashkamble0730@gmail.com','passAk','9833114068','daf','2018');
 INSERT INTO "user" VALUES ('someone1','S','someono1@gmail.com','passSo','9833114069','da','2019');
 INSERT INTO "user" VALUES ('someone2','S','someono2@gmail.com','passSo','9833114070','d','2020');
 INSERT INTO "user" VALUES ('someone3','S','someono3@gmail.com','passSo','9833114071','idhd','2021');
+-----------------------------------------// 
 
 CREATE TABLE product (
     product_id SERIAL PRIMARY KEY ,
@@ -26,12 +30,12 @@ CREATE TABLE product (
     FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
 );
 
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,450,'../images/sellicon.svg','This the short description of the product with less than 50 characters.','sumit');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Lab Coat',1,400,'../images/sellicon.svg','This the short description of the product with less than 50 characters.','sumit');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Computer',2,15000,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','sumit');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,300,'../images/sellicon.svg','This the short description of the product with less than 50 characters.','sumit');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',2,430,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akash');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('DBMS',2,460,'../images/sellicon.svg','This the short description of the product with less than 50 characters.','akash');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,450,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Lab Coat',1,400,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Computer',2,15000,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone4');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,300,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',2,430,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
+INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('DBMS',2,460,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone2');
 
 
 CREATE TABLE "cart" (
@@ -127,13 +131,17 @@ CREATE TABLE "pc"
 
 INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium','../images/laptop.jpg');
 
-CREATE TABLE "comments"
-(
-	"comment_id" bigserial PRIMARY KEY, 
-	"username" character varying,
-        "product_id" int,
-	"content" character varying NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
-        FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE SET NULL
+
+CREATE table "comments" (
+comment_id SERIAL PRIMARY KEY,
+username character varying,
+product_id int,
+content character varying NOT NULL,
+FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE
 );
-	
+
+INSERT INTO "comments" (username, product_id, content) VALUES ('akashkamble0730',1,'This is great product. A must buy for anyone who is interested in understanding data structures and analysis.');
+INSERT INTO "comments" (username, product_id, content) VALUES ('someone1',1,'Great product. Good Condition. A few drawings on some pages but thats acceptable.');
+INSERT INTO "comments" (username, product_id, content) VALUES ('someone2',2,'A perfect fit. Condition was also great. The seller is a trustworthy person.');
+INSERT INTO "comments" (username, product_id, content) VALUES ('someone3',3,'Worst product. PC not working properly the seller tried to cheat.');
