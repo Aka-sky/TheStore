@@ -10,6 +10,7 @@ const cookieParser = require("cookie-parser");
 var bcrypt = require("bcrypt");
 const saltRounds = 10;
 const { Pool } = require("pg");
+var _ = require("lodash");
 
 //Store cookies containing session id on client's browser
 app.use(cookieParser());
@@ -39,8 +40,8 @@ app.use(express.static("public"));
 const db = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "user",
-  password: "123456",
+  database: "thevstore",
+  password: "password",
   port: 5432,
 });
 
@@ -219,6 +220,7 @@ app.get("/homepage/:category", function (req, res) {
   }
 });
 
+//-------------------------------------------------------------------------------------------------------
 //display product page
 app.get("/product/:id", function (req, res) {
   var sess = req.session;
@@ -289,7 +291,8 @@ app.post("/product/:id", function (req, res) {
   }
 });
 
-// add to cart clicked on homepage
+//----------------------------------------------------------------------------------------------------
+// add to cart clicked on homepage or product page
 app.get("/cart/:id", function (req, res) {
   var sess = req.session;
   var product_id = req.params.id;
@@ -363,6 +366,8 @@ app.get("/cart/:action/:product", function (req, res) {
   }
 });
 
+//----------------------------------------------------------------------------------------------------
+//display profile of any user
 app.get("/profile/:username", function (req, res) {
   var sess = req.session;
   var currentusername = req.params.username;
@@ -389,6 +394,87 @@ app.get("/profile/:username", function (req, res) {
   }
 });
 
+//Edit profile page of logged in user only
+app.get("/editprofile", function(req, res){
+  var sess = req.session;
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text: 'SELECT * FROM "user" WHERE username = $1',
+      values: [sess.username],
+      rowMode: "array"
+    };
+    db.query(query, function(err, resp) {
+      var currentuser = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("editprofile", {
+          currentuser: currentuser,
+          username: sess.username
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//Updating values in database
+app.post("/editprofile", function(req, res){
+  var sess = req.session;
+  var details = req.body;
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text: 'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, year = $5 WHERE username = $6',
+      values: [details.name, details.email, details.contact, details.location, details.year, sess.username]
+    };
+    db.query(query, function(err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
+      } else {
+        res.redirect("/profile/"+sess.username);
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//---------------------------------------------------------------------------------------------------------------
+//search 
+app.post("/homepage",function(req,res){
+  var sess = req.session;
+  var lowerproductname = _.toLower([string=req.body.productname]);
+  console.log(lowerproductname);
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text: 'SELECT name,price,description,image,product_id FROM "product" WHERE LOWER(name) LIKE ' + '$1',
+      values: [lowerproductname],
+      rowMode: "array"
+    };
+
+    db.query(query, function (err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
+      } else {
+        var product = resp.rows;
+        res.render("homepage", {
+          product: product,
+          username: sess.username,
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//---------------------------------------------------------------------------------------------
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
@@ -396,10 +482,6 @@ app.get("/sellproduct", function (req, res) {
   } else {
     res.redirect("/login");
   }
-});
-
-app.get("/aboutus", function (req, res) {
-  res.render("aboutus");
 });
 
 app.listen(3000, function () {
