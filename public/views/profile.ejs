@@ -19,7 +19,7 @@
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="../css/profilestyle.css" />
-    <title>TheVStore | Username's Profile</title>
+    <title>TheVStore | <%= currentuser[0][0] %>'s Profile</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg fixed-top bg-light">
@@ -86,13 +86,13 @@
             </div>
             <div class="col-md-6">
               <div class="profile-head">
-                <h5>
+                <h3>
                   <%= currentuser[0][1] %>
-                </h5>
-                <h6>
-                  Branch / Year
-                </h6>
-                <p>Joined : 07/08/2001</p>
+                </h3>
+                <h4>
+                  <%= currentuser[0][6] %>
+                </h4>
+                <br><br>
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                   <li class="nav-item">
                     <a
@@ -111,12 +111,9 @@
               </div>
             </div>
             <div class="col-md-2">
-              <input
-                type="submit"
-                class="profile-edit-btn"
-                name="btnAddMore"
-                value="Edit Profile"
-              />
+              <% if ( currentuser[0][0] == username ) { %>
+                <a class="btn btn-primary" href="/editprofile">Edit Profile</a>
+              <% } %>
             </div>
           </div>
           <div class="row">
@@ -163,14 +160,7 @@
                       <p><%= currentuser[0][5] %></p>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <label>Branch / Year</label>
-                    </div>
-                    <div class="col-md-6">
-                      <p><%= currentuser[0][6] %></p>
-                    </div>
-                  </div>
+                  
               </div>
             </div>
           </div>
