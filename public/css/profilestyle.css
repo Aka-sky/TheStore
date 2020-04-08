@@ -23,17 +23,7 @@
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
-@media (max-width: 991px) {
-  .fixed-top {
-    top: -0px;
-    position: static;
-  }
-  .collapse {
-    background-color: white;
-    padding: 0% 6% 0%;
-    z-index: 1;
-  }
-}
+
 
 #main {
   margin: 175px 0% 2%;
@@ -71,12 +61,6 @@ body {
   color: #0062cc;
 }
 .profile-edit-btn {
-  border: none;
-  border-radius: 1.5rem;
-  width: 70%;
-  padding: 2%;
-  font-weight: 600;
-  color: #6c757d;
   cursor: pointer;
 }
 .proile-rating {
@@ -100,29 +84,26 @@ body {
   border: none;
   border-bottom: 2px solid #0062cc;
 }
-.profile-work {
-  padding: 14%;
-  margin-top: -15%;
-}
-.profile-work p {
-  font-size: 12px;
-  color: #818182;
-  font-weight: 600;
-  margin-top: 10%;
-}
-.profile-work a {
-  text-decoration: none;
-  color: #495057;
-  font-weight: 600;
-  font-size: 14px;
-}
-.profile-work ul {
-  list-style: none;
-}
 .profile-tab label {
   font-weight: 600;
 }
 .profile-tab p {
   font-weight: 600;
   color: #0062cc;
+}
+
+@media (max-width: 991px) {
+  .fixed-top {
+    top: -0px;
+    position: static;
+  }
+  .collapse {
+    background-color: white;
+    padding: 0% 6% 0%;
+    z-index: 1;
+  }
+  .profile-edit-btn {
+    cursor: pointer;
+    margin-bottom: 5%;
+  }
 }
