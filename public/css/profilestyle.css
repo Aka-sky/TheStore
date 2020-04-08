@@ -64,10 +64,10 @@ body {
   right: 0;
   top: 0;
 }
-.profile-head h5 {
+.profile-head h3 {
   color: #333;
 }
-.profile-head h6 {
+.profile-head h4 {
   color: #0062cc;
 }
 .profile-edit-btn {
