@@ -56,7 +56,16 @@ CREATE TABLE "book"(
 	  edition character varying NOT NULL,
 	  subject character varying NOT NULL,
 	  PRIMARY KEY (product_id),
-      FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+      FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+      CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( publication IS NULL  OR  publication = '' )
+            OR
+        ( edition IS NULL  OR  edition = '' )
+            OR
+        ( subject IS NULL OR subject = '' )
+   )
+ )
 );
 
 insert into "book" VALUES (1, 'Clrs publications','9th edition','data structers');
@@ -68,7 +77,16 @@ CREATE TABLE "calculator"(
 	  model character varying NOT NULL,
 	  features character varying NOT NULL,
 	  PRIMARY KEY (product_id),
-	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+	  CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( brand IS NULL  OR  brand = '' )
+            OR
+        ( model IS NULL  OR  model = '' )
+            OR
+        ( features IS NULL OR features = '' )
+   )
+ )
 	);
 
 INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('CASIO ES 991',2,250,'../images/booksvg.svg','Scientific calculator for all.','someone4');
@@ -83,7 +101,18 @@ CREATE TABLE "clothing"
 	  color character varying NOT NULL,
 	  detailedcondition character varying NOT NULL,
 	  PRIMARY KEY (product_id),
-	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+	   CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( size IS NULL  OR  size = '' )
+            OR
+        ( type IS NULL  OR  type = '' )
+            OR
+        ( color IS NULL OR color = '' )
+            OR
+        ( detailedcondition IS NULL OR detailedcondition = '' )    
+   )
+ )
 	);
 
 INSERT INTO "clothing" VALUES (2,'XL','Cotton','White','1 acid mark on upper pocket.');
@@ -94,10 +123,21 @@ CREATE TABLE "notes"(
 	  "product_id" serial,
 	  "subject" character varying NOT NULL,
 	  "topic" character varying NOT NULL,
-	  "professor Name" character varying NOT NULL,
+	  "professorname" character varying NOT NULL,
 	  "year" character varying NOT NULL,
 	  PRIMARY KEY ("product_id"),
-	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+	  CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( subject IS NULL  OR  subject = '' )
+            OR
+        ( topic IS NULL  OR  topic = '' )
+            OR
+        ( professorname IS NULL OR professorname = '' )
+            OR
+        ( year IS NULL OR year = '' )    
+   )
+ )
 	);
 
 INSERT INTO "notes" VALUES (5, 'DATA STRUCTURES', 'Sorting And Searching', 'Sir. Ranjit', '2020');
@@ -106,10 +146,17 @@ INSERT INTO "notes" VALUES (6, 'DBMS', 'Sequencing', 'Mayuri More', '2020');
 CREATE TABLE "other"
 	(
 	  "product_id" int ,
-	  "description" character varying,
+	  "description" character varying NOT NULL,
 	  "category" character varying,
 	  PRIMARY KEY ("product_id"),
-	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+	   CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( description IS NULL  OR  description = '' )
+            OR
+        ( category IS NULL  OR  category = '' )
+   )
+ )
 	);
 
 INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('Something',2,460,'../images/booksvg.svg','some item not belonging to any of the categories specified.','someone2');
@@ -119,18 +166,29 @@ INSERT INTO "other" VALUES (9, 'What to say about this product as type not known
 CREATE TABLE "pc"
 	(
 	  "product_id" int,
-	  "operating system" character varying,
+	  "os" character varying,
 	  "ram" int,
 	  "storage" int,
 	  "brand" character varying,
 	  "processor" character varying,
-	  "images" character varying,
         PRIMARY KEY ("product_id"),
-        FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
-	);
+        FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+        CONSTRAINT notnullchecker CHECK (
+        NOT (
+        ( os IS NULL  OR  os = '' )
+            OR
+        ( ram IS NULL)
+            OR
+        ( storage IS NULL)
+            OR
+        ( brand IS NULL OR brand = '' )
+            OR
+        ( processor IS NULL oR processor = '' )
+   )
+ )
+);
 
-INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium','../images/laptop.jpg');
-
+INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium');
 
 CREATE table "comments" (
 comment_id SERIAL PRIMARY KEY,

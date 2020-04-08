@@ -87,7 +87,6 @@
             <h6>Upload a different photo...</h6>
 
             <input type="file" id="upImg" name="upImg" class="form-control" required/>
-            <h6><%= typeof msg != 'undefined' ? msg : '' %></h6>
             <!-- <input class="btn btn-primary" type="submit" value="Add image"></input> -->
           </div>  
         </div>
@@ -97,8 +96,7 @@
           <div class="alert alert-info alert-dismissable">
             <a class="panel-close close" data-dismiss="alert">×</a>
             <i class="fa fa-coffee"></i>
-            This is an <strong>.alert</strong>. Use this to show important
-            messages to the user.
+            <%= typeof msg != 'undefined' ? msg : 'Fill out all fields for successful entry'%>
           </div>
           <h3>Product info</h3>
 
@@ -315,7 +313,7 @@
 
             <div
               class="category"
-              id="others"
+              id="other"
               style="display:none"
             >
               <div class="form-group">

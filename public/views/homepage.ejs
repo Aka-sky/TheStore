@@ -102,6 +102,7 @@
     </section>
     <hr width="90%">
     <section id="products">
+      <% if (product.length > 0) { %>
       <h1>Recommended Products for you</h1>
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
@@ -119,7 +120,9 @@
       </div>
       <% } %>
     </div>
-    
+  <% } else { %>
+    <h4 style="text-align: center;">No Results</h4>
+  <% } %>
     </section>
 
 

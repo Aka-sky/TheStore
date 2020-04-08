@@ -73,8 +73,8 @@ app.use(express.static("public"));
 const db = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "thevstore",
-  password: "password",
+  database: "user",
+  password: "123456",
   port: 5432,
 });
 
@@ -431,94 +431,68 @@ app.get("/profile/:username", function (req, res) {
 app.get("/editprofile", function(req, res){
   var sess = req.session;
   if (sess.username) {
-    res.render("sellproduct", {
-      user: sess.username,
+    // somone is logged in thus can access
+    const query = {
+      text: 'SELECT * FROM "user" WHERE username = $1',
+      values: [sess.username],
+      rowMode: "array"
+    };
+    db.query(query, function(err, resp) {
+      var currentuser = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("editprofile", {
+          currentuser: currentuser,
+          username: sess.username
+        });
+      }
     });
   } else {
     res.redirect("/login");
   }
 });
 
-// app.post("/sellproduct", function (req, res) {
-//   var product = req.body;
-//   console.log(product)
-//   console.log(product.categoryOptions)
-//   res.send("done")
-
-// });
-
-app.post("/productUpload", function (req, res) {
+//Updating values in database
+app.post("/editprofile", function(req, res){
   var sess = req.session;
- upload(req, res, function (err) {
-  var product = req.body; 
-    if (err) {
-      res.render("sellproduct", {
-        msg: err,
-        user: sess.username,
-      });
-    } else {
-      if (req.file == undefined) {
-        res.render("sellproduct", {
-          msg: "No file selected",
-          user: sess.username,
-        });
+  var details = req.body;
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text: 'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, branchYear = $5 WHERE username = $6',
+      values: [details.name, details.email, details.contact, details.location, details.year, sess.username]
+    };
+    db.query(query, function(err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
       } else {
-        (async () => {
-          const client = await db.connect();
-
-          try {
-            await client.query("BEGIN");
-            const productTableInsertQuery = {
-              text:
-                'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
-              values: [product_id],
-              rowMode: "array",
-            };
-            const productResp = await client.query(productUserQuery);
-            const details = productResp.rows;
-
-            const commentQuery = {
-              text:
-                'SELECT username, content FROM "comments" WHERE "comments".product_id = $1',
-              values: [product_id],
-              rowMode: "array",
-            };
-            const commentResp = await client.query(commentQuery);
-            const comments = commentResp.rows;
-            res.render("product", {
-              user: sess.username,
-              details: details,
-              comments: comments,
-            });
-            await client.query("COMMIT");
-          } catch (err) {
-            await client.query("ROLLBACK");
-            throw err;
-          } finally {
-            client.release();
-          }
-        })().catch((err) => console.log(err.stack));
-      
+        res.redirect("/profile/"+sess.username);
       }
-    }
-  });
+    });
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/aboutus", function (req, res) {
   res.render("aboutus");
 });
 //---------------------------------------------------------------------------------------------------------------
-//search 
-app.post("/homepage",function(req,res){
+//search
+app.post("/homepage", function (req, res) {
   var sess = req.session;
-  var lowerproductname = _.toLower([string=req.body.productname]);
-  console.log(lowerproductname);
+  var lowerproductname = _.toLower([(string = req.body.productname)]);
+  //console.log(lowerproductname);
   if (sess.username) {
     // somone is logged in thus can access
     const query = {
-      text: 'SELECT name,price,description,image,product_id FROM "product" WHERE LOWER(name) LIKE ' + '$1',
-      values: [lowerproductname],
-      rowMode: "array"
+      text:
+        'SELECT name,price,description,image,product_id FROM "product" WHERE LOWER(name) LIKE \'%' +
+        lowerproductname + '%\'',
+      //values: [lowerproductname],
+      rowMode: "array",
     };
 
     db.query(query, function (err, resp) {
@@ -542,11 +516,148 @@ app.post("/homepage",function(req,res){
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    res.render("sellproduct");
+    res.render("sellproduct", {
+      user: sess.username,
+    });
   } else {
     res.redirect("/login");
   }
 });
+
+app.post("/productUpload", function (req, res) {
+  var sess = req.session;
+  upload(req, res, function (err) {
+    var product = req.body;
+    if (err) {
+      res.render("sellproduct", {
+        msg: err,
+        user: sess.username,
+      });
+    } else {
+      if (req.file == undefined) {
+        res.render("sellproduct", {
+          msg: "No file selected",
+          user: sess.username,
+        });
+      } else {
+        const imgPath = `../images/${req.file.filename}`;
+        (async () => {
+          const client = await db.connect();
+
+          try {
+            await client.query("BEGIN");
+            const productTableInsertQuery = {
+              text:
+                "INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ($1,$2,$3,$4,$5,$6) RETURNING product_id",
+              values: [
+                product.name,
+                product.years,
+                product.price,
+                imgPath,
+                "Default description. Will be added later",
+                sess.username,
+              ]
+            };
+            const productResp = await client.query(productTableInsertQuery);
+            var product_id = productResp.rows[0].product_id;
+            console.log(product_id)
+            var category = product.categoryOptions;
+            var query;
+
+            switch (category) {
+              case "books":
+                query = {
+                  text: 'INSERT INTO "book" VALUES ($1,$2,$3,$4)',
+                  values: [
+                    product_id,
+                    product.publication,
+                    product.edition,
+                    product.subject,
+                  ],
+                };
+                break;
+              case "clothing":
+                query = {
+                  text: 'INSERT INTO "clothing" VALUES ($1,$2,$3,$4,$5)',
+                  values: [
+                    product_id,
+                    product.size,
+                    product.type,
+                    product.color,
+                    "Great Condition",
+                  ],
+                };
+                break;
+              case "notes":
+                query = {
+                  text: 'INSERT INTO "notes" VALUES ($1,$2,$3,$4,$5)',
+                  values: [
+                    product_id,
+                    product.n_subject,
+                    product.topic,
+                    product.professor,
+                    product.year,
+                  ],
+                };
+                break;
+              case "other":
+                query = {
+                  text: 'INSERT INTO "other" VALUES ($1,$2,$3)',
+                  values: [product_id, product.description, product.cate],
+                };
+                break;
+              case "electronics":
+                if (product.electronicsOptions == "calculators") {
+                  query = {
+                    text: 'INSERT INTO "calculator" VALUES ($1,$2,$3,$4)',
+                    values: [
+                      product_id,
+                      product.calcibrand,
+                      product.model,
+                      product.features,
+                    ],
+                  };
+                } else {
+                  query = {
+                    text: 'INSERT INTO "pc" VALUES ($1,$2,$3,$4,$5,$6)',
+                    values: [
+                      product_id,
+                      product.os,
+                      product.ram,
+                      product.storage,
+                      product.pcbrand,
+                      product.processor,
+                    ],
+                  };
+                }
+                break;
+            }
+
+            await client.query(query);
+            res.render("sellproduct", {
+              msg: "Successfully added the product.",
+              user: sess.username,
+            });
+            await client.query("COMMIT");
+          } catch (err) {
+            await client.query("ROLLBACK");
+            //console.log(err);
+            res.render("sellproduct", {
+              msg: "Please fill out all fields!!",
+              user: sess.username,
+            });
+          } finally {
+            client.release();
+          }
+        })().catch((err) => console.log(err.stack));
+      }
+    }
+  });
+});
+
+app.use(function(req,res){
+  res.send(404);
+})
 
 app.listen(3000, function () {
   console.log("Running on port 3000");
