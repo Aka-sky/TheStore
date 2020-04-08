@@ -39,7 +39,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home </a>
+            <a class="nav-link" href="/homepage">Home </a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -51,18 +51,18 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Username <i class="fas fa-user-circle"></i>
+              <%= user %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Profile</a>
-              <a class="dropdown-item" href="#">BuyList</a>
-              <a class="dropdown-item" href="#">SellList</a>
+              <a class="dropdown-item" href="/profile/<%= user %>">Profile</a>
+              <a class="dropdown-item" href="/buylog">BuyList</a>
+              <a class="dropdown-item" href="/selllog">SellList</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Log Out</a>
+              <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link cart" href="#"
+            <a class="nav-link cart" href="/cart"
               ><i class="fas fa-shopping-cart"></i> Cart</a
             >
           </li>
@@ -73,19 +73,23 @@
     <div class="container">
       <h1>Sell Product</h1>
       <hr />
+      <form method="POST" action="/productUpload" enctype="multipart/form-data">
       <div class="row">
         <!-- left column -->
         <div class="col-md-3">
+          <!-- <form action="/imageUpload" method="POST" enctype="multipart/form-data"> -->
           <div class="text-center">
             <img
-              src="../images/sellicon.svg"
+              src="<%= typeof image != 'undefined' ? image : '../images/sellicon.svg' %>"
               class="avatar img-circle"
               alt="avatar"
             />
             <h6>Upload a different photo...</h6>
 
-            <input type="file" class="form-control" />
-          </div>
+            <input type="file" id="upImg" name="upImg" class="form-control" required/>
+            <h6><%= typeof msg != 'undefined' ? msg : '' %></h6>
+            <!-- <input class="btn btn-primary" type="submit" value="Add image"></input> -->
+          </div>  
         </div>
 
         <!-- edit form column -->
@@ -98,17 +102,18 @@
           </div>
           <h3>Product info</h3>
 
-          <form class="form-horizontal" role="form" method="POST">
+          <!-- <form class="form-horizontal" role="form" method="POST"> -->
+         <div class="form-horizontal">
             <div class="form-group">
               <label class="col-lg-3 control-label">Product Name:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="text" placeholder="name" />
+                <input class="form-control" type="text" placeholder="name" id="name" name="name" required/>
               </div>
             </div>
             <div class="form-group">
               <label class="col-lg-3 control-label">Years of Usage:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="number" placeholder="usage" />
+                <input class="form-control" type="number" placeholder="usage" id="years" name="years" required/>
               </div>
             </div>
             <div class="form-group">
@@ -118,13 +123,14 @@
                   class="form-control"
                   type="text"
                   placeholder="condition"
+                  required
                 />
               </div>
             </div>
             <div class="form-group">
               <label class="col-lg-3 control-label">Price:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="number" placeholder="price" />
+                <input class="form-control" type="number" placeholder="price" id="price" name="price" required/>
               </div>
             </div>
             <div class="form-group">
@@ -135,26 +141,26 @@
                 <select
                   class="form-control"
                   onchange="changeOptions(this)"
-                  name="category-options"
+                  name="categoryOptions"
+                  id="categoryOptions"
                 >
                   <option value="books">Books</option>
                   <option value="notes">Notes</option>
                   <option value="clothing">Clothing</option>
                   <option value="electronics">Electronics</option>
-                  <option value="others">Others</option>
+                  <option value="other">Others</option>
                 </select>
               </div>
             </div>
 
-            <form
+            <div
               class="form-horizontal form-books category"
               role="form"
-            ></form>
+            ></div>
 
-            <form
-              class="form-horizontal form-books category"
-              role="form"
-              name="books"
+            <div
+              class="category"
+              id="books"
               style="display:block"
             >
               <div class="form-group">
@@ -166,6 +172,7 @@
                     placeholder="Author name"
                     id="author_name"
                     name="author_name"
+                  
                   />
                 </div>
               </div>
@@ -178,6 +185,7 @@
                     placeholder="publication"
                     id="publication"
                     name="publication"
+         
                   />
                 </div>
               </div>
@@ -205,12 +213,11 @@
                   />
                 </div>
               </div>
-            </form>
+            </div>
 
-            <form
-              class="form-horizontal form-notes category"
-              role="form"
-              name="notes"
+            <div
+              class="category"
+              id="notes"
               style="display:none"
             >
               <div class="form-group">
@@ -261,12 +268,11 @@
                   />
                 </div>
               </div>
-            </form>
+            </div>
 
-            <form
-              class="form-horizontal form-clothing category"
-              role="form"
-              name="clothing"
+            <div
+              class="category"
+              id="clothing"
               style="display:none"
             >
               <div class="form-group">
@@ -305,12 +311,11 @@
                   />
                 </div>
               </div>
-            </form>
+            </div>
 
-            <form
-              class="form-horizontal form-others category"
-              role="form"
-              name="others"
+            <div
+              class="category"
+              id="others"
               style="display:none"
             >
               <div class="form-group">
@@ -338,12 +343,11 @@
                   ></textarea>
                 </div>
               </div>
-            </form>
+            </div>
 
-            <form
-              class="form-horizontal form-electronics category"
-              role="form"
-              name="electronics"
+            <div
+              class="category"
+              id="electronics"
               style="display:none"
             >
               <div class="form-group">
@@ -355,8 +359,12 @@
                     id="category"
                     class="form-control"
                     onchange="changeOptionsSub(this)"
+                    name="electronicsOptions"
+                    id="electronicsOptions"
                   >
-                    <option value="calculators">Calculators</option>
+                    <!-- <option value="" selected disabled hidden>Select</option> -->
+                    <option value="calculators" selected
+                    >Calculators</option>
                     <option value="pcs">PCs</option>
                   </select>
                 </div>
@@ -374,12 +382,10 @@
                   ></textarea>
                 </div>
               </div>
-            </form>
 
-            <form
-              class="form-horizontal form-calculators electronics"
-              role="form"
-              name="calculators"
+            <div
+              class="electronics"
+              id="calculators"
               style="display:none"
             >
               <div class="form-group">
@@ -401,8 +407,8 @@
                     class="form-control"
                     type="text"
                     placeholder="brand"
-                    id="brand"
-                    name="brand"
+                    id="calcibrand"
+                    name="calcibrand"
                   />
                 </div>
               </div>
@@ -418,13 +424,12 @@
                   />
                 </div>
               </div>
-            </form>
+            </div>
 
-            <form
-              class="form-horizontal form-laptops electronics"
-              role="form"
-              name="pcs"
+            <div
+              class="electronics"
               style="display:none"
+              id = "pcs"
             >
               <div class="form-group">
                 <label class="col-lg-3 control-label">OS:</label>
@@ -481,12 +486,13 @@
                     class="form-control"
                     type="text"
                     placeholder="brand"
-                    id="brand"
-                    name="brand"
+                    id="pcbrand"
+                    name="pcbrand"
                   />
                 </div>
               </div>
-            </form>
+            </div>
+            </div>
             <div class="form-group">
               <label class="col-md-3 control-label"></label>
               <div class="col-md-8">
@@ -497,21 +503,33 @@
                 />
               </div>
             </div>
-          </form>
+            </div>
+          <!-- </form> -->
         </div>
       </div>
+      </form>
     </div>
     <hr />
 
     <script>
+      // function setAttribute(inp,bool) {
+      //  for(var i=0;i<inp.length;i++){
+      //    if (bool){
+      //     inp[i].setAttribute("required","");
+      //    } else {
+      //       inp[i].setAttribute("required");
+      //    }
+      //  }
+      // }
+
       function changeOptions(selectEl) {
         let selectedValue = selectEl.options[selectEl.selectedIndex].value;
         let subForms = document.getElementsByClassName("category");
         for (let i = 0; i < subForms.length; i += 1) {
-          if (selectedValue === subForms[i].name) {
-            subForms[i].setAttribute("style", "display:block");
+          if (selectedValue === subForms[i].id) {
+            subForms[i].setAttribute("style","display:block")
           } else {
-            subForms[i].setAttribute("style", "display:none");
+            subForms[i].setAttribute("style","display:none")
           }
         }
       }
@@ -520,7 +538,7 @@
         let selectedValue = selectEl.options[selectEl.selectedIndex].value;
         let subForms = document.getElementsByClassName("electronics");
         for (let i = 0; i < subForms.length; i += 1) {
-          if (selectedValue === subForms[i].name) {
+          if (selectedValue === subForms[i].id) {
             subForms[i].setAttribute("style", "display:block");
           } else {
             subForms[i].setAttribute("style", "display:none");

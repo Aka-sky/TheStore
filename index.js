@@ -2,7 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var multer = require("multer");
-var upload = multer();
+//var upload = multer();
 var session = require("express-session");
 var ejs = require("ejs");
 var path = require("path");
@@ -22,6 +22,39 @@ app.use(
   })
 );
 
+//Set storage engine image uploads
+const storage = multer.diskStorage({
+  destination: "./public/images",
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + Date.now() + path.extname(file.originalname));
+  },
+});
+
+//Init image upload
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 },
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
+}).single("upImg");
+
+//Check File type
+function checkFileType(file, cb) {
+  // allowed ext
+  const fileTypes = /jpeg|jpg|png|gif/;
+  //Check ext
+  const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimeType = fileTypes.test(file.mimetype);
+
+  if (mimeType && extName) {
+    return cb(null, true);
+  } else {
+    cb("Error : Images only!!!!!!");
+  }
+}
+
 app.set("view engine", "ejs");
 app.set("views", "./public/views");
 
@@ -33,7 +66,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //form-urlencoded
 
 //for parsing multipart/form-data
-app.use(upload.array());
+//app.use(upload.array());
 app.use(express.static("public"));
 
 const db = new Pool({
@@ -392,10 +425,77 @@ app.get("/profile/:username", function (req, res) {
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    res.render("sellproduct");
+    res.render("sellproduct", {
+      user: sess.username,
+    });
   } else {
     res.redirect("/login");
   }
+});
+
+// app.post("/sellproduct", function (req, res) {
+//   var product = req.body;
+//   console.log(product)
+//   console.log(product.categoryOptions)
+//   res.send("done")
+
+// });
+
+app.post("/productUpload", function (req, res) {
+  var sess = req.session;
+ upload(req, res, function (err) {
+  var product = req.body; 
+    if (err) {
+      res.render("sellproduct", {
+        msg: err,
+        user: sess.username,
+      });
+    } else {
+      if (req.file == undefined) {
+        res.render("sellproduct", {
+          msg: "No file selected",
+          user: sess.username,
+        });
+      } else {
+        (async () => {
+          const client = await db.connect();
+
+          try {
+            await client.query("BEGIN");
+            const productTableInsertQuery = {
+              text:
+                'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
+              values: [product_id],
+              rowMode: "array",
+            };
+            const productResp = await client.query(productUserQuery);
+            const details = productResp.rows;
+
+            const commentQuery = {
+              text:
+                'SELECT username, content FROM "comments" WHERE "comments".product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            const commentResp = await client.query(commentQuery);
+            const comments = commentResp.rows;
+            res.render("product", {
+              user: sess.username,
+              details: details,
+              comments: comments,
+            });
+            await client.query("COMMIT");
+          } catch (err) {
+            await client.query("ROLLBACK");
+            throw err;
+          } finally {
+            client.release();
+          }
+        })().catch((err) => console.log(err.stack));
+      
+      }
+    }
+  });
 });
 
 app.get("/aboutus", function (req, res) {
