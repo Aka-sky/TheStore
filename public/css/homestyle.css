@@ -58,11 +58,18 @@
 }
 #products .card {
   margin: 2% 1%;
+  display : none;
 }
 .card img {
   height: 220px;
   width: 100%;
   object-fit: cover;
+}
+.center-block > .card{
+  text-align: center;
+}
+.card-body .btn{
+  margin: 1% 1%;
 }
 
 @media (max-width: 991px) {
