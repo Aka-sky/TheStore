@@ -73,8 +73,8 @@ app.use(express.static("public"));
 const db = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "user",
-  password: "123456",
+  database: "thevstore",
+  password: "password",
   port: 5432,
 });
 
@@ -236,15 +236,35 @@ app.get("/homepage/:category", function (req, res) {
         rowMode: "array",
       };
     }
-
+    var searchmsg = "";
+    switch(category){
+      case "book":
+        searchmsg = "Search Book by Name, Author, Subject...";
+        break;
+      case "notes":
+        searchmsg = "Search Notes by Subject, Professor, year...";
+        break;
+      case "clothing":
+        searchmsg = "Search by Name, Subject...";
+        break;
+      case "electronics":
+        searchmsg = "Search by Name, Type, Brand...";
+        break;
+      case "other":
+        searchmsg = "Search by Name";
+        break;
+    }
     db.query(query, function (err, resp) {
       var product = resp.rows;
       if (err) {
         res.send("Error");
       } else {
-        res.render("homepage", {
+        res.render("search", {
           product: product,
           username: sess.username,
+          category: category,
+          heading: "Recommended products for you",
+          searchmsg: searchmsg
         });
       }
     });
@@ -460,7 +480,7 @@ app.post("/editprofile", function(req, res){
   if (sess.username) {
     // somone is logged in thus can access
     const query = {
-      text: 'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, branchYear = $5 WHERE username = $6',
+      text: 'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, year = $5 WHERE username = $6',
       values: [details.name, details.email, details.contact, details.location, details.year, sess.username]
     };
     db.query(query, function(err, resp) {
@@ -476,11 +496,9 @@ app.post("/editprofile", function(req, res){
   }
 });
 
-app.get("/aboutus", function (req, res) {
-  res.render("aboutus");
-});
 //---------------------------------------------------------------------------------------------------------------
 //search
+/*
 app.post("/homepage", function (req, res) {
   var sess = req.session;
   var lowerproductname = _.toLower([(string = req.body.productname)]);
@@ -511,7 +529,7 @@ app.post("/homepage", function (req, res) {
     res.redirect("/login");
   }
 });
-
+*/
 //---------------------------------------------------------------------------------------------
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;

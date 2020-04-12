@@ -28,9 +28,6 @@
   padding: 50px 7% 2.5%;
   background-color: white;
 }
-.search-bar-1 {
-  display: none;
-}
 .describe {
   text-align: center;
   padding: 2%;
@@ -58,28 +55,29 @@
 }
 #products .card {
   margin: 2% 1%;
+  display : none;
 }
 .card img {
   height: 220px;
   width: 100%;
   object-fit: cover;
 }
+.center-block > .card{
+  text-align: center;
+}
+.card-body .btn{
+  margin: 1% 1%;
+}
 
 @media (max-width: 991px) {
   .search-bar {
     display: none;
   }
-  .search-bar-1 {
-    display: block;
-    text-align: center;
-  }
-  .fixed-top {
-    top: -0px;
-    position: static;
+  .describe{
+    margin-top: 20px;
   }
   .collapse {
     background-color: white;
-    padding: 0% 6% 0%;
     z-index: 1;
   }
   #head {

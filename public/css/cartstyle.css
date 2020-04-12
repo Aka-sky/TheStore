@@ -23,17 +23,6 @@
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
-@media (max-width: 991px) {
-  .fixed-top {
-    top: -0px;
-    position: static;
-  }
-  .collapse {
-    background-color: white;
-    padding: 0% 6% 0%;
-    z-index: 1;
-  }
-}
 
 #main {
   margin: 110px 15% 2%;
@@ -61,14 +50,17 @@
   background-color: #0062e6;
   color: white;
   padding-left: 20%;
-  font-size: 120%;
+  font-size: 150%;
 }
-@media (min-width: 991px) {
-  .buy-button {
-    margin: auto;
-  }
+.footer p{
+  margin-bottom: 0rem;
 }
+
 @media (max-width: 991px) {
+  .collapse {
+    background-color: white;
+    z-index: 1;
+  }
   .buy-button {
     margin: 1% 1%;
   }
@@ -84,6 +76,9 @@
   }
   .product-info {
     margin-bottom: 13%;
+  }
+  .pict img{
+    border-radius: 10px 10px 0px 0px;
   }
   .content {
     margin: 3% 2% 2%;

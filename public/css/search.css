@@ -1,0 +1,74 @@
+.navbar {
+  height: 90px;
+  padding: 0% 5%;
+}
+.navbar-brand {
+  background-color: #0062e6;
+  border-radius: 20px;
+  font-size: 230%;
+  padding: 5px;
+  color: white;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.nav-item {
+  font-size: 110%;
+}
+.custom-toggler.navbar-toggler {
+  border-color: #0062e6;
+}
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+.search-bar{
+  margin: auto;
+  margin-left: 10%;
+}
+.search-inp{
+  height: 45%;
+  border-radius: 6px;
+  border-color: #0275d8;
+  border-width: 1px;
+  border-style:solid;
+  padding-left: 1%;
+}
+  
+#products {
+    padding: 8% 14.5% 2%;
+  }
+  #products h1 {
+    padding: 0% 0% 1%;
+  }
+  #products .card {
+    margin: 2% 1%;
+    display : none;
+  }
+  .card img {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+  }
+  .center-block > .card{
+    text-align: center;
+  }
+  .card-body .btn{
+    margin: 1% 1%;
+  }
+  
+  @media (max-width: 991px) {
+    .collapse {
+      background-color: white;
+      z-index: 1;
+    }
+    .search-bar{
+      margin-top: 1%;
+    }
+    #products{
+      margin-top: 6%;
+    }
+  }
+  @media (max-width: 768px) {
+    #products{
+      margin-top: 16%;
+    }
+  }

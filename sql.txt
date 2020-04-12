@@ -203,3 +203,19 @@ INSERT INTO "comments" (username, product_id, content) VALUES ('akashkamble0730'
 INSERT INTO "comments" (username, product_id, content) VALUES ('someone1',1,'Great product. Good Condition. A few drawings on some pages but thats acceptable.');
 INSERT INTO "comments" (username, product_id, content) VALUES ('someone2',2,'A perfect fit. Condition was also great. The seller is a trustworthy person.');
 INSERT INTO "comments" (username, product_id, content) VALUES ('someone3',3,'Worst product. PC not working properly the seller tried to cheat.');
+
+ALTER TABLE "product"
+  ADD COLUMN "doc_with_weights" tsvector;
+
+update "product"
+set "doc_with_weights" = setweight(to_tsvector("name"), 'A') ||
+  setweight(to_tsvector("description"), 'B');
+
+CREATE INDEX "doc_weights_idx"
+  ON "product"
+  USING GIN ("doc_with_weights");
+
+select *
+from "product"
+where "doc_with_weights" @@ plainto_tsquery('Computer')
+order by ts_rank("doc_with_weights", plainto_tsquery('Computer')) desc;
