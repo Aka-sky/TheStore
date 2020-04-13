@@ -195,7 +195,7 @@ app.get("/homepage", function (req, res) {
     // someone is logged in and thus can access this page
 
     const query = {
-      text: 'SELECT name,price,description,image,product_id FROM "product"',
+      text: 'SELECT product_name,price,description,product_image,product_id FROM "product"',
       rowMode: "array",
     };
 
@@ -224,13 +224,13 @@ app.get("/homepage/:category", function (req, res) {
     if (category == "electronics") {
       query = {
         text:
-          'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
+          'SELECT product_name,price,description,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
         rowMode: "array",
       };
     } else {
       query = {
         text:
-          'SELECT name,price,description,image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+          'SELECT product_name,price,description,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
           category +
           ");",
         rowMode: "array",
@@ -566,7 +566,7 @@ app.post("/productUpload", function (req, res) {
             await client.query("BEGIN");
             const productTableInsertQuery = {
               text:
-                "INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ($1,$2,$3,$4,$5,$6) RETURNING product_id",
+                "INSERT INTO product (product_name,years_of_usage,price,product_image,description,seller_id) VALUES ($1,$2,$3,$4,$5,$6) RETURNING product_id",
               values: [
                 product.name,
                 product.years,
@@ -585,12 +585,13 @@ app.post("/productUpload", function (req, res) {
             switch (category) {
               case "books":
                 query = {
-                  text: 'INSERT INTO "book" VALUES ($1,$2,$3,$4)',
+                  text: 'INSERT INTO "book" VALUES ($1,$2,$3,$4,$5)',
                   values: [
                     product_id,
                     product.publication,
                     product.edition,
                     product.subject,
+                    product.author
                   ],
                 };
                 break;

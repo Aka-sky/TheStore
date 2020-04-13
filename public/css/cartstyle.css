@@ -55,7 +55,11 @@
 .footer p{
   margin-bottom: 0rem;
 }
-
+@media (min-width: 991px) {
+  .buy-button {
+    margin: auto;
+  }
+}
 @media (max-width: 991px) {
   .collapse {
     background-color: white;
