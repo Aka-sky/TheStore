@@ -227,42 +227,42 @@ alter table "notes" rename column "professor Name" to "professor";
 alter table"notes" rename column "year" to "noteyear";
 
 CREATE VIEW bookview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
 username, name, email_id, contact, location, year, "book".author,"book".publication,"book".edition,"book".subject
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "book" on 
 "product".product_id = "book".product_id;
 
 CREATE VIEW notesview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
 username, name, email_id, contact, location, year, "notes".topic,"notes".professor,"notes".noteyear,"notes".subject
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "notes" on 
 "product".product_id = "notes".product_id;
 
 CREATE VIEW clothview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
 username, name, email_id, contact, location, year, "clothing".size,"clothing".type,"clothing".color
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "clothing" on 
 "product".product_id = "clothing".product_id;
 
 CREATE VIEW otherview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
-username, name, email_id, contact, location, year,"other".category,"other".description
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
+username, name, email_id, contact, location, year,"other".type,"other".description
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "other" on 
 "product".product_id = "other".product_id;
 
 CREATE VIEW pcview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
 username, name, email_id, contact, location, year,"pc".os,"pc".ram,"pc".storage,"pc".brand, "pc".processor
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "pc" on 
 "product".product_id = "pc".product_id;
 
 CREATE VIEW calcview AS
-select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,
+select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
 username, name, email_id, contact, location, year,"calculator".brand,"calculator".model,"calculator".features
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "calculator" on 
