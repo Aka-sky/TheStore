@@ -309,8 +309,7 @@ app.get("/homepage", function (req, res) {
     // someone is logged in and thus can access this page
 
     const query = {
-      text:
-        'SELECT product_name,price,description,product_image,product_id FROM "product"',
+      text: 'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"',
       rowMode: "array",
     };
 
@@ -336,16 +335,16 @@ app.get("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var query;
   if (sess.username) {
-    if (category == "electronics") {
+    if (category == "calculator" || category == "pc") {
       query = {
         text:
-          'SELECT product_name,price,description,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
+          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
         rowMode: "array",
       };
     } else {
       query = {
         text:
-          'SELECT product_name,price,description,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
           category +
           ");",
         rowMode: "array",
@@ -399,12 +398,59 @@ app.get("/product/:id", function (req, res) {
 
       try {
         await client.query("BEGIN");
-        const productUserQuery = {
+        const productCategoryQuery = {
           text:
-            'SELECT * FROM "product" INNER JOIN "user" ON ("product".product_id, "user".username) IN ( SELECT product.product_id, seller_id FROM product WHERE product.product_id = $1)',
+            'SELECT "category" FROM "product" WHERE product_id = $1',
           values: [product_id],
           rowMode: "array",
         };
+        const CategoryResp = await client.query(productCategoryQuery);
+        const category = CategoryResp.rows;
+
+        switch (category[0][0]) {
+          case "books":
+            productUserQuery = {
+              text: 'SELECT * FROM "bookview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            break;
+          case "clothing":
+            productUserQuery = {
+              text:'SELECT * FROM "clothview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            break;
+          case "notes":
+            productUserQuery = {
+              text:'SELECT * FROM "notesview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            break;
+          case "other":
+            productUserQuery = {
+              text:'SELECT * FROM "otherview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            break;
+          case "calculators":
+            productUserQuery = {
+              text:'SELECT * FROM "calcview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+            };
+            break;
+          case "pcs":
+            productUserQuery = {
+              text:'SELECT * FROM "pcview" WHERE product_id = $1',
+              values: [product_id],
+              rowMode: "array",
+              };
+              break;
+        }
         const productResp = await client.query(productUserQuery);
         const details = productResp.rows;
 
@@ -418,6 +464,7 @@ app.get("/product/:id", function (req, res) {
         const comments = commentResp.rows;
         res.render("product", {
           user: sess.username,
+          category: category,
           details: details,
           comments: comments,
         });
@@ -702,15 +749,16 @@ app.post("/productUpload", function (req, res) {
             await client.query("BEGIN");
             const productTableInsertQuery = {
               text:
-                "INSERT INTO product (product_name,years_of_usage,price,product_image,description,seller_id) VALUES ($1,$2,$3,$4,$5,$6) RETURNING product_id",
+                "INSERT INTO product (product_name,years_of_usage,price,product_image,condition,seller_id,category) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING product_id",
               values: [
                 product.name,
                 product.years,
                 product.price,
                 imgPath,
-                "Default description. Will be added later",
+                product.condition,
                 sess.username,
-              ],
+                product.categoryOptions
+              ]
             };
             const productResp = await client.query(productTableInsertQuery);
             var product_id = productResp.rows[0].product_id;
@@ -733,14 +781,13 @@ app.post("/productUpload", function (req, res) {
                 break;
               case "clothing":
                 query = {
-                  text: 'INSERT INTO "clothing" VALUES ($1,$2,$3,$4,$5)',
+                  text: 'INSERT INTO "clothing" VALUES ($1,$2,$3,$4)',
                   values: [
                     product_id,
                     product.size,
                     product.type,
-                    product.color,
-                    product.detailedCondition,
-                  ],
+                    product.color
+                  ]
                 };
                 break;
               case "notes":
@@ -751,28 +798,28 @@ app.post("/productUpload", function (req, res) {
                     product.n_subject,
                     product.topic,
                     product.professor,
-                    product.year,
-                  ],
+                    product.year
+                  ]
                 };
                 break;
               case "other":
                 query = {
                   text: 'INSERT INTO "other" VALUES ($1,$2,$3)',
-                  values: [product_id, product.description, product.cate],
+                  values: [product_id, product.description, product.cate]
                 };
                 break;
-              case "electronics":
-                if (product.electronicsOptions == "calculators") {
-                  query = {
-                    text: 'INSERT INTO "calculator" VALUES ($1,$2,$3,$4)',
-                    values: [
-                      product_id,
-                      product.calcibrand,
-                      product.model,
-                      product.features,
-                    ],
-                  };
-                } else {
+              case "calculators":
+                query = {
+                  text: 'INSERT INTO "calculator" VALUES ($1,$2,$3,$4)',
+                  values: [
+                    product_id,
+                    product.calcibrand,
+                    product.model,
+                    product.features
+                  ]
+                };
+                break;
+              case "pcs":
                   query = {
                     text: 'INSERT INTO "pc" VALUES ($1,$2,$3,$4,$5,$6)',
                     values: [
@@ -781,11 +828,10 @@ app.post("/productUpload", function (req, res) {
                       product.ram,
                       product.storage,
                       product.pcbrand,
-                      product.processor,
-                    ],
+                      product.processor
+                    ]
                   };
-                }
-                break;
+                  break;
             }
 
             await client.query(query);

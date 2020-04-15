@@ -11,12 +11,8 @@
     <title>TheVStore | Home | VJTI's own store </title>
   </head>
   <body>
-        <nav class="navbar navbar-expand-lg fixed-top bg-light">
-            <p class="navbar-brand">TheVStore</p>
-            <!-- <form class="form-inline my-2 my-lg-0 search-bar" method="POST">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" name="productname" aria-label="Search">
-              <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-            </form> -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-light">
+      <p class="navbar-brand">TheVStore</p>
             <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -53,6 +49,7 @@
               <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
               <li data-target="#carouselExampleCaptions" data-slide-to="3"></li>
               <li data-target="#carouselExampleCaptions" data-slide-to="4"></li>
+              <li data-target="#carouselExampleCaptions" data-slide-to="5"></li>
             </ol>
             <div class="carousel-inner" role="listbox">
               <div class="carousel-item active">
@@ -80,10 +77,18 @@
               </a>
               </div>
               <div class="carousel-item">
-                <a href='/homepage/electronics'>
+                <a href='/homepage/calculator'>
                 <img src="../images/laptop.jpg" class="d-block w-100" alt="...">
                 <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">Electronics</h5>
+                   <h5 style="color: white;">Calculators</h5>
+                </div>
+              </a>
+              </div>
+              <div class="carousel-item">
+                <a href='/homepage/pc'>
+                <img src="../images/laptop.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                   <h5 style="color: white;">PCs</h5>
                 </div>
               </a>
               </div>
@@ -117,7 +122,8 @@
           <img class="card-img-top" src="<%= product[i][3] %>" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title"><%= product[i][0] %></h5>
-            <p class="card-text"><%= product[i][2] %></p>
+            <p class="card-text"><%= product[i][5] %></p>
+            <p class="card-text">Years of Usage: <%= product[i][2] %></p>
             <p class="card-text">Rs. <%= product[i][1] %></p>
             <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a>
             <a href="/cart/<%= product[i][4]%>" class="btn btn-primary">Add to Cart</a>
@@ -136,6 +142,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
       $('#products .card').slice(0,3).show();
+      if( $('#products .card:hidden').length === 0 ){
+          $('#loadmore').hide();
+        }
       $('#loadmore').on('click', function(){
         $('#products .card:hidden').slice(0,3).show();
         if( $('#products .card:hidden').length === 0 ){

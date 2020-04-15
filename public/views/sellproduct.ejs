@@ -121,6 +121,7 @@
                   class="form-control"
                   type="text"
                   placeholder="condition"
+                  name="condition"
                   required
                 />
               </div>
@@ -145,7 +146,8 @@
                   <option value="books">Books</option>
                   <option value="notes">Notes</option>
                   <option value="clothing">Clothing</option>
-                  <option value="electronics">Electronics</option>
+                  <option value="calculators">Calculators</option>
+                  <option value="pcs">PCs</option>
                   <option value="other">Others</option>
                 </select>
               </div>
@@ -355,46 +357,10 @@
               </div>
             </div>
 
-            <div
-              class="category"
-              id="electronics"
-              style="display:none"
-            >
-              <div class="form-group">
-                <label for="category-electronics" class="col-lg-3 control-label"
-                  >Elecronics Category</label
-                >
-                <div class="col-lg-8">
-                  <select
-                    id="category"
-                    class="form-control"
-                    onchange="changeOptionsSub(this)"
-                    name="electronicsOptions"
-                    id="electronicsOptions"
-                  >
-                    <!-- <option value="" selected disabled hidden>Select</option> -->
-                    <option value="calculators" selected
-                    >Calculators</option>
-                    <option value="pcs">PCs</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-lg-3 control-label">Description:</label>
-                <div class="col-lg-8">
-                  <textarea
-                    rows="3"
-                    class="form-control"
-                    type="text"
-                    placeholder="description"
-                    id="e_description"
-                    name="e_description"
-                  ></textarea>
-                </div>
-              </div>
+          
 
             <div
-              class="electronics"
+              class="category"
               id="calculators"
               style="display:none"
             >
@@ -437,7 +403,7 @@
             </div>
 
             <div
-              class="electronics"
+              class="category"
               style="display:none"
               id = "pcs"
             >
@@ -543,7 +509,7 @@
           }
         }
       }
-
+/*
       function changeOptionsSub(selectEl) {
         let selectedValue = selectEl.options[selectEl.selectedIndex].value;
         let subForms = document.getElementsByClassName("electronics");
@@ -554,7 +520,7 @@
             subForms[i].setAttribute("style", "display:none");
           }
         }
-      }
+      }*/
     </script>
 
     <script
