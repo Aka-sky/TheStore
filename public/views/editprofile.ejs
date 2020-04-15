@@ -53,15 +53,15 @@
             ><%= username %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Profile</a>
+              <a class="dropdown-item" href="/profile/<%= username %>">Profile</a>
               <a class="dropdown-item" href="#">BuyList</a>
               <a class="dropdown-item" href="#">SellList</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Log Out</a>
+              <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link cart" href="#"
+            <a class="nav-link cart" href="/cart"
               ><i class="fas fa-shopping-cart"></i> Cart</a
             >
           </li>

@@ -3,29 +3,23 @@ CREATE TABLE "user" (
     name character varying NOT NULL,
     email_id character varying NOT NULL,
     password character varying NOT NULL,
-    contact character varying,
-	location character varying,
-    branchYear character varying
+    contact character varying NOT NULL,
+	location character varying NOT NULL,
+    year character varying NOT NULL,
+    image character varying DEFAULT '../images/studentprofile.svg',
+    active boolean NOT NULL DEFAULT false
 );
-
-//-------------- This part won't work as "user" table structure is
-changed. So enter data from signup page. 
-
-INSERT INTO "user" VALUES ('akashkamble0730','Akash Kamble','akashkamble0730@gmail.com','passAk','9833114068','daf','2018');
-INSERT INTO "user" VALUES ('someone1','S','someono1@gmail.com','passSo','9833114069','da','2019');
-INSERT INTO "user" VALUES ('someone2','S','someono2@gmail.com','passSo','9833114070','d','2020');
-INSERT INTO "user" VALUES ('someone3','S','someono3@gmail.com','passSo','9833114071','idhd','2021');
------------------------------------------// 
 
 CREATE TABLE product (
     product_id SERIAL PRIMARY KEY ,
-    name character varying NOT NULL,
+    product_name character varying NOT NULL,
     years_of_usage INT,
     price INT NOT NULL,
     buyer_id character varying,
-    image character varying,
+    product_image character varying,
     seller_id character varying NOT NULL,
-    description character varying NOT NULL,
+    condition character varying NOT NULL,
+    doc_with_weights tsvector,
     FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE SET NULL,
     FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
 );
@@ -55,6 +49,7 @@ CREATE TABLE "book"(
 	  publication character varying NOT NULL,
 	  edition character varying NOT NULL,
 	  subject character varying NOT NULL,
+	  author character varying NOT NULL,
 	  PRIMARY KEY (product_id),
       FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
       CONSTRAINT notnullchecker CHECK (
@@ -64,16 +59,15 @@ CREATE TABLE "book"(
         ( edition IS NULL  OR  edition = '' )
             OR
         ( subject IS NULL OR subject = '' )
+            OR
+        ( author IS NULL OR author = '' )
    )
  )
 );
 
-insert into "book" VALUES (1, 'Clrs publications','9th edition','data structers');
-insert into "book" VALUES (4, 'Clrs publications','8th edition','data structers');
-
 CREATE TABLE "calculator"(
-	  product_id int, -- 
-	  brand character varying NOT NULL, -- 
+	  product_id int, 
+	  brand character varying NOT NULL, 
 	  model character varying NOT NULL,
 	  features character varying NOT NULL,
 	  PRIMARY KEY (product_id),

@@ -7,6 +7,8 @@ var session = require("express-session");
 var ejs = require("ejs");
 var path = require("path");
 const cookieParser = require("cookie-parser");
+var crypto = require("crypto");
+var nodemailer = require("nodemailer");
 var bcrypt = require("bcrypt");
 const saltRounds = 10;
 const { Pool } = require("pg");
@@ -102,11 +104,12 @@ app.get("/signup", sessionChecker, function (req, res) {
 // handling submit on signup Page
 app.post("/signup", function (req, res) {
   var user = req.body;
+  var sess = req.session;
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
     var pass = hash;
     const query = {
       text:
-        'INSERT INTO "user"(username, Name, email_id, password, contact, location, branchYear) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        'INSERT INTO "user"(username, name, email_id, password, contact, location, year) VALUES ($1,$2,$3,$4,$5,$6,$7)',
       values: [
         user.username,
         user.name,
@@ -125,10 +128,120 @@ app.post("/signup", function (req, res) {
           msg: "Username not available. Try another username.",
         });
       } else {
-        res.redirect("/login");
+        res.redirect("login");
       }
     });
   });
+});
+
+app.get("/verify", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    (async () => {
+      const client = await db.connect();
+      try {
+        await client.query("BEGIN");
+        // first try to get the email address of user
+        const queryEmail = {
+          text: 'SELECT email_id FROM "user" WHERE username = $1',
+          values: [sess.username],
+        };
+        const emailResp = await client.query(queryEmail);
+        const email = emailResp.rows[0].email_id;
+
+        // once email address found try emailing
+        // if emailing failed show error
+        var cipherKey = crypto.createCipher("aes128", "satviFail");
+        var str = cipherKey.update(sess.username, "utf8", "hex");
+        str += cipherKey.final("hex");
+        var link = "http://localhost:3000/verify/" + str;
+        var transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "tempV.Store@gmail.com",
+            pass: "tgmSPAN@V4",
+          },
+        });
+        var mailOptions = {
+          from: "tempV.Store@gmail.com",
+          to: email,
+          subject: "Verfication of email on VStore",
+          html:
+            "<h4>Hello!</h4><p>Just one step away from email verfication!<br>Click <a href = " +
+            link +
+            ">here </a>to complete the process</p>",
+        };
+        //  var sent = false;
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            // some error
+            console.log(error);
+            throw new Error("Email not sent");
+          } else {
+            console.log("Sent Mail!");
+          }
+        });
+        res.render("verify", {
+          username: sess.username,
+          msg: "Email is sent please check your email address: " + email,
+        });
+        await client.query("COMMIT");
+      } catch (err) {
+        console.log(err);
+        res.render("verify", {
+          username: sess.username,
+          msg: "Verification email not sent! Try again",
+        });
+      } finally {
+        client.release();
+      }
+    })().catch((err) => console.log(err.stack));
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/verify/:user", function (req, res) {
+  var sess = req.session;
+  console.log("Sess" + sess.username + " " + req.params.user);
+  if (sess.username) {
+    var user = req.params.user;
+    var decipherKey = crypto.createDecipher("aes128", "satviFail");
+    var username = decipherKey.update(user, "hex", "utf8");
+    username += decipherKey.final("utf8");
+    console.log("username" + username);
+    if (sess.username == username) {
+      // email is verified for user
+      const query = {
+        text: 'UPDATE "user" SET active = true WHERE username = $1',
+        values: [sess.username],
+      };
+      db.query(query, function (err) {
+        if (err) {
+          // database error so send msg Not Verified
+          console.log(err);
+          res.render("verify", {
+            username: sess.username,
+            msg: "Verification not done. Try Again",
+          });
+        } else {
+          sess.active = true;
+          res.render("verify", {
+            username: sess.username,
+            msg: "Verification Done",
+            done: "Yes",
+          });
+        }
+      });
+    } else {
+      res.render("verify", {
+        username: sess.username,
+        msg: "Verification Error. Try again.",
+      });
+    }
+  } else {
+    res.redirect("/login");
+  }
 });
 
 //----------------------------------------------------------------------------------------------------
@@ -152,7 +265,7 @@ app.post("/login", function (req, res) {
 
   // query definition
   const query = {
-    text: 'SELECT password FROM "user" WHERE username = $1 ',
+    text: 'SELECT password,active FROM "user" WHERE username = $1 ',
     values: [user.username],
     rowMode: "array",
   };
@@ -165,12 +278,13 @@ app.post("/login", function (req, res) {
       });
     } else {
       try {
-        bcrypt.compare(user.password, resp.rows[0].toString(), function (
+        bcrypt.compare(user.password, resp.rows[0][0].toString(), function (
           erro,
           result
         ) {
           if (result) {
             sess.username = user.username;
+            sess.active = resp.rows[0][1];
             res.redirect("/homepage");
           } else {
             res.render("login", {
@@ -195,7 +309,8 @@ app.get("/homepage", function (req, res) {
     // someone is logged in and thus can access this page
 
     const query = {
-      text: 'SELECT product_name,price,description,product_image,product_id FROM "product"',
+      text:
+        'SELECT product_name,price,description,product_image,product_id FROM "product"',
       rowMode: "array",
     };
 
@@ -237,7 +352,7 @@ app.get("/homepage/:category", function (req, res) {
       };
     }
     var searchmsg = "";
-    switch(category){
+    switch (category) {
       case "book":
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
@@ -264,7 +379,7 @@ app.get("/homepage/:category", function (req, res) {
           username: sess.username,
           category: category,
           heading: "Recommended products for you",
-          searchmsg: searchmsg
+          searchmsg: searchmsg,
         });
       }
     });
@@ -397,7 +512,13 @@ app.get("/cart/:action/:product", function (req, res) {
 
     if (action == 1) {
       // buy selected in cart on product_id
-      // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
+      if (sess.active) {
+        // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
+      } else {
+        res.render("verify", {
+          username: sess.username,
+        });
+      }
       res.send("Request sent to seller!!");
     } else {
       // remove selected in cart on product_id
@@ -439,6 +560,7 @@ app.get("/profile/:username", function (req, res) {
         res.render("profile", {
           currentuser: currentuser,
           username: sess.username,
+          active: sess.active,
         });
       }
     });
@@ -448,23 +570,23 @@ app.get("/profile/:username", function (req, res) {
 });
 
 //Edit profile page of logged in user only
-app.get("/editprofile", function(req, res){
+app.get("/editprofile", function (req, res) {
   var sess = req.session;
   if (sess.username) {
     // somone is logged in thus can access
     const query = {
       text: 'SELECT * FROM "user" WHERE username = $1',
       values: [sess.username],
-      rowMode: "array"
+      rowMode: "array",
     };
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       var currentuser = resp.rows;
       if (err) {
         res.send("Error");
       } else {
         res.render("editprofile", {
           currentuser: currentuser,
-          username: sess.username
+          username: sess.username,
         });
       }
     });
@@ -474,21 +596,29 @@ app.get("/editprofile", function(req, res){
 });
 
 //Updating values in database
-app.post("/editprofile", function(req, res){
+app.post("/editprofile", function (req, res) {
   var sess = req.session;
   var details = req.body;
   if (sess.username) {
     // somone is logged in thus can access
     const query = {
-      text: 'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, year = $5 WHERE username = $6',
-      values: [details.name, details.email, details.contact, details.location, details.year, sess.username]
+      text:
+        'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, year = $5 WHERE username = $6',
+      values: [
+        details.name,
+        details.email,
+        details.contact,
+        details.location,
+        details.year,
+        sess.username,
+      ],
     };
-    db.query(query, function(err, resp) {
+    db.query(query, function (err, resp) {
       if (err) {
         res.send("Error");
         console.log(err);
       } else {
-        res.redirect("/profile/"+sess.username);
+        res.redirect("/profile/" + sess.username);
       }
     });
   } else {
@@ -534,9 +664,15 @@ app.post("/homepage", function (req, res) {
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    res.render("sellproduct", {
-      user: sess.username,
-    });
+    if (sess.active) {
+      res.render("sellproduct", {
+        user: sess.username,
+      });
+    } else {
+      res.render("verify", {
+        username: sess.username,
+      });
+    }
   } else {
     res.redirect("/login");
   }
@@ -574,11 +710,11 @@ app.post("/productUpload", function (req, res) {
                 imgPath,
                 "Default description. Will be added later",
                 sess.username,
-              ]
+              ],
             };
             const productResp = await client.query(productTableInsertQuery);
             var product_id = productResp.rows[0].product_id;
-            console.log(product_id)
+            console.log(product_id);
             var category = product.categoryOptions;
             var query;
 
@@ -591,7 +727,7 @@ app.post("/productUpload", function (req, res) {
                     product.publication,
                     product.edition,
                     product.subject,
-                    product.author
+                    product.author,
                   ],
                 };
                 break;
@@ -603,7 +739,7 @@ app.post("/productUpload", function (req, res) {
                     product.size,
                     product.type,
                     product.color,
-                    "Great Condition",
+                    product.detailedCondition,
                   ],
                 };
                 break;
@@ -674,9 +810,9 @@ app.post("/productUpload", function (req, res) {
   });
 });
 
-app.use(function(req,res){
+app.use(function (req, res) {
   res.send(404);
-})
+});
 
 app.listen(3000, function () {
   console.log("Running on port 3000");
