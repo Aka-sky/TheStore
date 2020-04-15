@@ -22,7 +22,7 @@
 }
 .search-bar{
   margin: auto;
-  margin-left: 10%;
+  margin-left: 7%;
 }
 .search-inp{
   height: 45%;
@@ -31,6 +31,12 @@
   border-width: 1px;
   border-style:solid;
   padding-left: 1%;
+}
+.custom-nav{
+  background-color: #0062e6;
+  color: white;
+  font-size: 120%;
+  border-radius: 15px;
 }
   
 #products {

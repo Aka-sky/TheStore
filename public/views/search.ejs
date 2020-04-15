@@ -21,8 +21,32 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/homepage">Home</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link cart" href="/cart"><i class="nav-link fas fa-shopping-cart"></i></a>
+                  <li class="nav-item dropdown" style="cursor: pointer;">
+                    <div class="nav-link dropdown-toggle  custom-nav" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <%= category %> 
+                    </div>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/homepage/book">Books</a>
+                      <a class="dropdown-item" href="/homepage/notes">Notes</a>
+                      <a class="dropdown-item" href="/homepage/clothing">Clothing</a>
+                      <a class="dropdown-item" href="/homepage/calculator">Calculators</a>
+                      <a class="dropdown-item" href="/homepage/pc">PCs</a>
+                      <a class="dropdown-item" href="/homepage/other">others</a>
+                    </div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <%= username %>  <i class="fas fa-user-circle"></i>  
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/profile/<%=username%>">Profile</a>
+                      <a class="dropdown-item" href="/buylog">buylog</a>
+                      <a class="dropdown-item" href="/selllog">selllog</a>
+                      <a class="dropdown-item" href="/sellproduct">Sell</a>
+                      <a class="dropdown-item" href="/cart">Cart</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/logout">Log Out</a>
+                    </div>
                   </li>
               </ul>
             </div>
@@ -60,6 +84,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
       $('#products .card').slice(0,3).show();
+      if( $('#products .card:hidden').length === 0 ){
+          $('#loadmore').hide();
+        }
       $('#loadmore').on('click', function(){
         $('#products .card:hidden').slice(0,3).show();
         if( $('#products .card:hidden').length === 0 ){
