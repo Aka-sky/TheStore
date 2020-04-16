@@ -93,7 +93,6 @@ CREATE TABLE "clothing"
 	  size character varying NOT NULL,
 	  "type" character varying NOT NULL,
 	  color character varying NOT NULL,
-	  detailedcondition character varying NOT NULL,
 	  PRIMARY KEY (product_id),
 	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
 	   CONSTRAINT notnullchecker CHECK (

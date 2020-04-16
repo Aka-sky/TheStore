@@ -151,7 +151,7 @@ app.get("/verify", function (req, res) {
 
         // once email address found try emailing
         // if emailing failed show error
-        var cipherKey = crypto.createCipher("aes128", "satviFail");
+        var cipherKey = crypto.createCipheriv("aes128", "satviFail");
         var str = cipherKey.update(sess.username, "utf8", "hex");
         str += cipherKey.final("hex");
         var link = "http://localhost:3000/verify/" + str;
@@ -206,7 +206,7 @@ app.get("/verify/:user", function (req, res) {
   console.log("Sess" + sess.username + " " + req.params.user);
   if (sess.username) {
     var user = req.params.user;
-    var decipherKey = crypto.createDecipher("aes128", "satviFail");
+    var decipherKey = crypto.createDecipheriv("aes128", "satviFail");
     var username = decipherKey.update(user, "hex", "utf8");
     username += decipherKey.final("utf8");
     console.log("username" + username);
@@ -857,7 +857,7 @@ app.post("/productUpload", function (req, res) {
 });
 
 app.use(function (req, res) {
-  res.send(404);
+  res.sendStatus(404);
 });
 
 app.listen(3000, function () {
