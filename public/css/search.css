@@ -60,6 +60,9 @@
   .card-body .btn{
     margin: 1% 1%;
   }
+  .card{
+    border: 0.5px solid;
+  }
   
   @media (max-width: 991px) {
     .collapse {

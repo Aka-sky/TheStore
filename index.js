@@ -80,8 +80,8 @@ app.use(express.static("public"));
 const db = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "user",
-  password: "123456",
+  database: "thevstore",
+  password: "password",
   port: 5432,
 });
 
@@ -341,13 +341,6 @@ app.get("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var query;
   if (sess.username) {
-    if (category == "calculator" || category == "pc") {
-      query = {
-        text:
-          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "pc" UNION SELECT product_id FROM "calculator")',
-        rowMode: "array",
-      };
-    } else {
       query = {
         text:
           'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
@@ -355,23 +348,25 @@ app.get("/homepage/:category", function (req, res) {
           ");",
         rowMode: "array",
       };
-    }
     var searchmsg = "";
     switch (category) {
       case "book":
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
       case "notes":
-        searchmsg = "Search Notes by Subject, Professor, year...";
+        searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
       case "clothing":
         searchmsg = "Search by Name, Subject...";
         break;
-      case "electronics":
-        searchmsg = "Search by Name, Type, Brand...";
+      case "calculator":
+        searchmsg = "Search by Name, Brand...";
+        break;
+      case "pc":
+        searchmsg = "Search by Name, Brand...";
         break;
       case "other":
-        searchmsg = "Search by Name";
+        searchmsg = "Search by Name, Type, Description...";
         break;
     }
     db.query(query, function (err, resp) {
@@ -385,6 +380,105 @@ app.get("/homepage/:category", function (req, res) {
           category: category,
           heading: "Recommended products for you",
           searchmsg: searchmsg,
+          searchvalue: null
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//Searching by category
+app.post("/homepage/:category", function (req, res) {
+  var sess = req.session;
+  var category = req.params.category;
+  var input = _.lowerCase([(string = req.body.productinput)]);
+
+  var newstring ='';
+  for(var i=0; i < input.length; i++){
+    if(input[i] == ' '){
+        newstring += '|'
+    }
+    else{
+        newstring += input[i]
+    }
+  }
+  console.log(newstring);
+
+  if (sess.username) {
+    // somone is logged in thus can access
+    var searchmsg = "";
+    switch (category) {
+      case "book":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || '+"' '"+' || "author" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search Book by Name, Author, Subject...";
+        break;
+      case "notes":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || '+"' '"+' ||"topic" || '+"' '"+' || "professor" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search Notes by Subject, Professor, Topic...";
+        break;
+      case "clothing":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search by Name, Subject...";
+        break;
+      case "calculator":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search by Name, Brand...";
+        break;
+      case "pc":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search by Name, Brand...";
+        break;
+      case "other":
+        var searchquery = {
+          text:
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type" || '+"' '"+' || "description") @@ to_tsquery('+'$1'+'))',
+          values: [newstring],
+          rowMode: "array",
+        };
+        searchmsg = "Search by Name, Type, Description...";
+        break;
+    }
+
+    db.query(searchquery, function (err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
+      } else {
+        var product = resp.rows;
+        res.render("search", {
+          product: product,
+          category: category,
+          username: sess.username,
+          heading: "Search Results",
+          searchmsg: searchmsg,
+          searchvalue: input
         });
       }
     });
