@@ -11,8 +11,13 @@ var crypto = require("crypto");
 var nodemailer = require("nodemailer");
 var bcrypt = require("bcrypt");
 const saltRounds = 10;
+var fs = require('fs');
 const { Pool } = require("pg");
 var _ = require("lodash");
+
+//crypto key and iv
+const key = crypto.randomBytes(16);
+const iv = crypto.randomBytes(16);
 
 //Store cookies containing session id on client's browser
 app.use(cookieParser());
@@ -151,7 +156,7 @@ app.get("/verify", function (req, res) {
 
         // once email address found try emailing
         // if emailing failed show error
-        var cipherKey = crypto.createCipheriv("aes128", "satviFail");
+        var cipherKey = crypto.createCipheriv("aes128", key, iv);
         var str = cipherKey.update(sess.username, "utf8", "hex");
         str += cipherKey.final("hex");
         var link = "http://localhost:3000/verify/" + str;
@@ -203,13 +208,13 @@ app.get("/verify", function (req, res) {
 
 app.get("/verify/:user", function (req, res) {
   var sess = req.session;
-  console.log("Sess" + sess.username + " " + req.params.user);
+  // console.log("Sess" + sess.username + " " + req.params.user);
   if (sess.username) {
     var user = req.params.user;
-    var decipherKey = crypto.createDecipheriv("aes128", "satviFail");
+    var decipherKey = crypto.createDecipheriv("aes128", key, iv);
     var username = decipherKey.update(user, "hex", "utf8");
     username += decipherKey.final("utf8");
-    console.log("username" + username);
+    // console.log("username" + username);
     if (sess.username == username) {
       // email is verified for user
       const query = {
@@ -309,7 +314,8 @@ app.get("/homepage", function (req, res) {
     // someone is logged in and thus can access this page
 
     const query = {
-      text: 'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"',
+      text:
+        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"',
       rowMode: "array",
     };
 
@@ -399,8 +405,7 @@ app.get("/product/:id", function (req, res) {
       try {
         await client.query("BEGIN");
         const productCategoryQuery = {
-          text:
-            'SELECT "category" FROM "product" WHERE product_id = $1',
+          text: 'SELECT "category" FROM "product" WHERE product_id = $1',
           values: [product_id],
           rowMode: "array",
         };
@@ -417,39 +422,39 @@ app.get("/product/:id", function (req, res) {
             break;
           case "clothing":
             productUserQuery = {
-              text:'SELECT * FROM "clothview" WHERE product_id = $1',
+              text: 'SELECT * FROM "clothview" WHERE product_id = $1',
               values: [product_id],
               rowMode: "array",
             };
             break;
           case "notes":
             productUserQuery = {
-              text:'SELECT * FROM "notesview" WHERE product_id = $1',
+              text: 'SELECT * FROM "notesview" WHERE product_id = $1',
               values: [product_id],
               rowMode: "array",
             };
             break;
           case "other":
             productUserQuery = {
-              text:'SELECT * FROM "otherview" WHERE product_id = $1',
+              text: 'SELECT * FROM "otherview" WHERE product_id = $1',
               values: [product_id],
               rowMode: "array",
             };
             break;
           case "calculators":
             productUserQuery = {
-              text:'SELECT * FROM "calcview" WHERE product_id = $1',
+              text: 'SELECT * FROM "calcview" WHERE product_id = $1',
               values: [product_id],
               rowMode: "array",
             };
             break;
           case "pcs":
             productUserQuery = {
-              text:'SELECT * FROM "pcview" WHERE product_id = $1',
+              text: 'SELECT * FROM "pcview" WHERE product_id = $1',
               values: [product_id],
               rowMode: "array",
-              };
-              break;
+            };
+            break;
         }
         const productResp = await client.query(productUserQuery);
         const details = productResp.rows;
@@ -561,12 +566,13 @@ app.get("/cart/:action/:product", function (req, res) {
       // buy selected in cart on product_id
       if (sess.active) {
         // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
+        res.send("Request Sent")
       } else {
         res.render("verify", {
           username: sess.username,
         });
       }
-      res.send("Request sent to seller!!");
+      // res.send("Request sent to seller!!");
     } else {
       // remove selected in cart on product_id
       const query = {
@@ -757,8 +763,8 @@ app.post("/productUpload", function (req, res) {
                 imgPath,
                 product.condition,
                 sess.username,
-                product.categoryOptions
-              ]
+                product.categoryOptions,
+              ],
             };
             const productResp = await client.query(productTableInsertQuery);
             var product_id = productResp.rows[0].product_id;
@@ -786,8 +792,8 @@ app.post("/productUpload", function (req, res) {
                     product_id,
                     product.size,
                     product.type,
-                    product.color
-                  ]
+                    product.color,
+                  ],
                 };
                 break;
               case "notes":
@@ -798,14 +804,14 @@ app.post("/productUpload", function (req, res) {
                     product.n_subject,
                     product.topic,
                     product.professor,
-                    product.year
-                  ]
+                    product.year,
+                  ],
                 };
                 break;
               case "other":
                 query = {
                   text: 'INSERT INTO "other" VALUES ($1,$2,$3)',
-                  values: [product_id, product.description, product.cate]
+                  values: [product_id, product.description, product.cate],
                 };
                 break;
               case "calculators":
@@ -815,23 +821,23 @@ app.post("/productUpload", function (req, res) {
                     product_id,
                     product.calcibrand,
                     product.model,
-                    product.features
-                  ]
+                    product.features,
+                  ],
                 };
                 break;
               case "pcs":
-                  query = {
-                    text: 'INSERT INTO "pc" VALUES ($1,$2,$3,$4,$5,$6)',
-                    values: [
-                      product_id,
-                      product.os,
-                      product.ram,
-                      product.storage,
-                      product.pcbrand,
-                      product.processor
-                    ]
-                  };
-                  break;
+                query = {
+                  text: 'INSERT INTO "pc" VALUES ($1,$2,$3,$4,$5,$6)',
+                  values: [
+                    product_id,
+                    product.os,
+                    product.ram,
+                    product.storage,
+                    product.pcbrand,
+                    product.processor,
+                  ],
+                };
+                break;
             }
 
             await client.query(query);
@@ -841,6 +847,14 @@ app.post("/productUpload", function (req, res) {
             });
             await client.query("COMMIT");
           } catch (err) {
+            var filePath = `./public/images/${req.file.filename}`;
+            fs.unlink(filePath, function (err) {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log('Deleted!')
+              }
+            });
             await client.query("ROLLBACK");
             //console.log(err);
             res.render("sellproduct", {
