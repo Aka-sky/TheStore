@@ -327,6 +327,8 @@ app.get("/homepage", function (req, res) {
         res.render("homepage", {
           product: product,
           username: sess.username,
+          searchmsg: "Recommended products for you",
+          searchvalue: ''
         });
       }
     });
@@ -335,6 +337,40 @@ app.get("/homepage", function (req, res) {
   }
 });
 
+//search among all products from homepage
+app.post("/homepage", function (req, res) {
+  var sess = req.session;
+  var lowerproductname = _.lowerCase([(string = req.body.productname)]);
+  //console.log(lowerproductname);
+  if (sess.username) {
+    // somone is logged in thus can access
+    const query = {
+      text:
+        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product" WHERE LOWER(product_name) LIKE \'%' +
+        lowerproductname + '%\'',
+      //values: [lowerproductname],
+      rowMode: "array",
+    };
+    db.query(query, function (err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
+      } else {
+        var product = resp.rows;
+        res.render("homepage", {
+          product: product,
+          username: sess.username,
+          searchmsg: "Search Results",
+          searchvalue: req.body.productname
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+//---------------------------------------------------------------------------------------------
 // to sort for a particular category of product
 app.get("/homepage/:category", function (req, res) {
   var sess = req.session;
@@ -377,7 +413,7 @@ app.get("/homepage/:category", function (req, res) {
         res.render("search", {
           product: product,
           username: sess.username,
-          category: category,
+          category: _.capitalize([(string = category)]),
           heading: "Recommended products for you",
           searchmsg: searchmsg,
           searchvalue: null
@@ -474,7 +510,7 @@ app.post("/homepage/:category", function (req, res) {
         var product = resp.rows;
         res.render("search", {
           product: product,
-          category: category,
+          category: _.capitalize([(string = category)]),
           username: sess.username,
           heading: "Search Results",
           searchmsg: searchmsg,
@@ -774,40 +810,7 @@ app.post("/editprofile", function (req, res) {
 });
 
 //---------------------------------------------------------------------------------------------------------------
-//search
-/*
-app.post("/homepage", function (req, res) {
-  var sess = req.session;
-  var lowerproductname = _.toLower([(string = req.body.productname)]);
-  //console.log(lowerproductname);
-  if (sess.username) {
-    // somone is logged in thus can access
-    const query = {
-      text:
-        'SELECT name,price,description,image,product_id FROM "product" WHERE LOWER(name) LIKE \'%' +
-        lowerproductname + '%\'',
-      //values: [lowerproductname],
-      rowMode: "array",
-    };
 
-    db.query(query, function (err, resp) {
-      if (err) {
-        res.send("Error");
-        console.log(err);
-      } else {
-        var product = resp.rows;
-        res.render("homepage", {
-          product: product,
-          username: sess.username,
-        });
-      }
-    });
-  } else {
-    res.redirect("/login");
-  }
-});
-*/
-//---------------------------------------------------------------------------------------------
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
