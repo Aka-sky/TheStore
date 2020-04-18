@@ -31,6 +31,7 @@
 .describe {
   text-align: center;
   padding: 2%;
+  padding-bottom: 0%;
   font-family: monospace;
   font-weight: bolder;
   font-size: 50px;
@@ -71,11 +72,58 @@
 .card{
   border: 0.5px solid;
 }
+.cat{
+  background-color: rgb(196, 189, 189);
+  color: black;
+  padding: 1%;
+  border-radius: 5px;
+}
+
+
+.searchbar{
+  margin: 2% 0% 1.5%;
+  height: 60px;
+  background-image: linear-gradient(to bottom right,  rgb(226, 243, 247),rgb(112, 208, 224));
+  border-radius: 30px;
+  padding: 10px;
+  }
+
+  .search_input{
+  color: black;
+  border: 0;
+  outline: 0;
+  background: none;
+  width: 0;
+  caret-color:transparent;
+  line-height: 40px;
+  transition: width 0.4s linear;
+  }
+
+  .searchbar:hover > .search_input{
+  padding: 0 10px;
+  width: 650px;
+  caret-color:black;
+  transition: width 0.4s linear;
+  }
+
+  .searchbar:hover > .search_icon{
+  background: white;
+  color: #0062e6;
+  }
+
+  .search_icon{
+  height: 40px;
+  width: 40px;
+  float: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  color:rgb(12, 15, 168);
+  text-decoration:none;
+  }
 
 @media (max-width: 991px) {
-  .search-bar {
-    display: none;
-  }
   .describe{
     margin-top: 20px;
   }
@@ -85,5 +133,8 @@
   }
   #head {
     text-align: center;
+  }
+  .searchbar:hover > .search_input{
+    width: 300px;
   }
 }

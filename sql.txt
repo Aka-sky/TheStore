@@ -4,7 +4,7 @@ CREATE TABLE "user" (
     email_id character varying NOT NULL,
     password character varying NOT NULL,
     contact character varying NOT NULL,
-	location character varying NOT NULL,
+    location character varying NOT NULL,
     year character varying NOT NULL,
     image character varying DEFAULT '../images/studentprofile.svg',
     active boolean NOT NULL DEFAULT false
@@ -18,19 +18,11 @@ CREATE TABLE product (
     buyer_id character varying,
     product_image character varying,
     seller_id character varying NOT NULL,
+    category character varying NOT NULL,
     condition character varying NOT NULL,
-    doc_with_weights tsvector,
     FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE SET NULL,
     FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
 );
-
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,450,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Lab Coat',1,400,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','akashkamble0730');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('Computer',2,15000,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone4');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',1,300,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('CLRS',2,430,'../images/notes.jpg','This the short description of the product with less than 50 characters.','akashkamble0730');
-INSERT INTO product (name,years_of_usage,price,image,description,seller_id) VALUES ('DBMS',2,460,'../images/booksvg.svg','This the short description of the product with less than 50 characters.','someone2');
-
 
 CREATE TABLE "cart" (
     username character varying,
@@ -91,7 +83,7 @@ CREATE TABLE "clothing"
 	(
 	  product_id int,
 	  size character varying NOT NULL,
-	  "type" character varying NOT NULL,
+	  type character varying NOT NULL,
 	  color character varying NOT NULL,
 	  PRIMARY KEY (product_id),
 	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
@@ -116,8 +108,8 @@ CREATE TABLE "notes"(
 	  "product_id" serial,
 	  "subject" character varying NOT NULL,
 	  "topic" character varying NOT NULL,
-	  "professorname" character varying NOT NULL,
-	  "year" character varying NOT NULL,
+	  "professor" character varying NOT NULL,
+	  "noteyear" character varying NOT NULL,
 	  PRIMARY KEY ("product_id"),
 	  FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
 	  CONSTRAINT notnullchecker CHECK (
@@ -126,9 +118,9 @@ CREATE TABLE "notes"(
             OR
         ( topic IS NULL  OR  topic = '' )
             OR
-        ( professorname IS NULL OR professorname = '' )
+        ( professor IS NULL OR professor = '' )
             OR
-        ( year IS NULL OR year = '' )    
+        ( noteyear IS NULL OR noteyear = '' )    
    )
  )
 	);
@@ -140,14 +132,14 @@ CREATE TABLE "other"
 	(
 	  "product_id" int ,
 	  "description" character varying NOT NULL,
-	  "category" character varying,
+	  "type" character varying,
 	  PRIMARY KEY ("product_id"),
 	   FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
 	   CONSTRAINT notnullchecker CHECK (
         NOT (
         ( description IS NULL  OR  description = '' )
             OR
-        ( category IS NULL  OR  category = '' )
+        ( type IS NULL  OR  type = '' )
    )
  )
 	);
@@ -160,8 +152,8 @@ CREATE TABLE "pc"
 	(
 	  "product_id" int,
 	  "os" character varying,
-	  "ram" int,
-	  "storage" int,
+	  "ram" character varying,
+	  "storage" character varying,
 	  "brand" character varying,
 	  "processor" character varying,
         PRIMARY KEY ("product_id"),
@@ -212,6 +204,9 @@ select *
 from "product"
 where "doc_with_weights" @@ plainto_tsquery('Computer')
 order by ts_rank("doc_with_weights", plainto_tsquery('Computer')) desc;
+
+select * from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' ' || "author" || ' ' || "subject") @@ to_tsquery('jamnadaas'));
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 alter table "user" rename column "branchYear" to "year";
 alter table "product" rename column "image" to "product_image";

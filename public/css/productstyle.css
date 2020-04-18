@@ -42,6 +42,9 @@
 .atc{
   padding: 3%;
 }
+.details{
+  font-weight: 350;
+}
 
 @media (max-width: 991px) {
   .product-info,

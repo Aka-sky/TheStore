@@ -40,6 +40,9 @@
   padding: 2%;
   margin-bottom: 6%;
 }
+.details{
+  font-weight: 350;
+}
 
 .footer {
   position: fixed;

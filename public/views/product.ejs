@@ -47,65 +47,65 @@
           <section id="picture">
               <div class="row product-info">
               <div class="pict col-lg-4">
-                <img src="<%= details[0][5] %>">
+                <img src="<%= details[0][4] %>">
                 <div class="atc">
                   <a href="/cart/<%= details[0][0] %>" class="btn btn-primary">Add to Cart</a>
                 </div>
               </div>
               <div class="content col-lg-8">
-                <h2><%= details[0][1] %></h2>
-                <h4>Product Id : <%= details[0][0] %></h4>
-                <h4>Years of Usage : <%= details[0][2] %></h4>
-                <h4>Condition : <%= details[0][4] %></h4>
-                <h3>Price : Rs. <%= details[0][3] %></h3>
+                <h3><%= details[0][1] %></h3>
+                <h5>Product Id : <span class="details"><%= details[0][0] %></span></h5>
+                <h5>Years of Usage : <span class="details"><%= details[0][2] %></span></h5>
+                <h5>Condition : <span class="details"><%= details[0][5] %></span></h5>
+                <h5>Price : <span class="details">Rs. <%= details[0][3] %></span></h5>
                   <br>
                   <% if(category[0][0] == "books"){ %>
-                    <h2>Details</h2>
-                    <h4>Author : <%= details[0][12] %></h4>
-                    <h4>Publication : <%= details[0][13] %></h4>
-                    <h4>Edition : <%= details[0][14] %></h4>
-                    <h4>Subject : <%= details[0][15] %></h4>
+                    <h3>Details</h3>
+                    <h5>Author : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>Publication : <span class="details"><%= details[0][14] %></span></h5>
+                    <h5>Edition : <span class="details"><%= details[0][15] %></span></h5>
+                    <h5>Subject : <span class="details"><%= details[0][16] %></span></h5>
                   <% } %>
                   <% if(category[0][0] == "notes"){ %>
-                    <h2>Details</h2>
-                    <h4>Topic : <%= details[0][12] %></h4>
-                    <h4>Professor : <%= details[0][13] %></h4>
-                    <h4>Year : <%= details[0][14] %></h4>
-                    <h4>Subject : <%= details[0][15] %></h4>
+                    <h3>Details</h3>
+                    <h5>Topic : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>Professor : <span class="details"><%= details[0][14] %></span></h5>
+                    <h5>Year : <span class="details"><%= details[0][15] %></span></h5>
+                    <h5>Subject : <span class="details"><%= details[0][16] %></span></h5>
                   <% } %>
                   <% if(category[0][0] == "calculators"){ %>
-                    <h2>Details</h2>
-                    <h4>Brand : <%= details[0][12] %></h4>
-                    <h4>Model : <%= details[0][13] %></h4>
-                    <h4>Features : <%= details[0][14] %></h4>
+                    <h3>Details</h3>
+                    <h5>Brand : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>Model : <span class="details"><%= details[0][14] %></span></h5>
+                    <h5>Features : <span class="details"><%= details[0][15] %></span></h5>
                   <% } %>
                   <% if(category[0][0] == "other"){ %>
-                    <h2>Details</h2>
-                    <h4>Type : <%= details[0][13] %></h4>
-                    <h4>Description : <%= details[0][12] %></h4>
+                    <h3>Details</h3>
+                    <h5>Type : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>Description : <span class="details"><%= details[0][14] %></span></h5>
                   <% } %>
                   <% if(category[0][0] == "clothing"){ %>
-                    <h2>Details</h2>
-                    <h4>Size : <%= details[0][12] %></h4>
-                    <h4>Type : <%= details[0][13] %></h4>
-                    <h4>Color : <%= details[0][14] %></h4>
+                    <h3>Details</h3>
+                    <h5>Size : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>Type : <span class="details"><%= details[0][14] %></span></h5>
+                    <h5>Color : <span class="details"><%= details[0][15] %></span></h5>
                   <% } %>
                   <% if(category[0][0] == "pcs"){ %>
-                    <h2>Details</h2>
-                    <h4>OS : <%= details[0][12] %></h4>
-                    <h4>RAM : <%= details[0][13] %></h4>
-                    <h4>Storage : <%= details[0][14] %></h4>
-                    <h4>Brand : <%= details[0][15] %></h4>
-                    <h4>Processor : <%= details[0][16] %></h4>
+                    <h3>Details</h3>
+                    <h5>OS : <span class="details"><%= details[0][13] %></span></h5>
+                    <h5>RAM : <span class="details"><%= details[0][14] %></span></h5>
+                    <h5>Storage : <span class="details"><%= details[0][15] %></span></h5>
+                    <h5>Brand : <span class="details"><%= details[0][16] %></span></h5>
+                    <h5>Processor : <span class="details"><%= details[0][17] %></span></h5>
                   <% } %>
                   <br>
-                <h2>Seller Info</h2>
-                <h4>Username: <%= details[0][6] %></h4>
-                <h4>Name : <%= details[0][7] %></h4>
-                <h4>Contact No : <%= details[0][9] %></h4>
-                <h4>Email : <%= details[0][8] %></h4>
-                <h4>Preferred Location : <%= details[0][10] %></h4>
-                <h4>Branch/Year : <%= details[0][11] %></h4>
+                <h3>Seller Info</h3>
+                <h5>Username: <span class="details"><%= details[0][7] %></span></h5>
+                <h5>Name : <span class="details"><%= details[0][8] %></span></h5>
+                <h5>Contact No : <span class="details"><%= details[0][10] %></span></h5>
+                <h5>Email : <span class="details"><%= details[0][9] %></span></h5>
+                <h5>Preferred Location : <span class="details"><%= details[0][11] %></span></h5>
+                <h5>Branch/Year : <span class="details"><%= details[0][12] %></span></h5>
                 
               </div>
             </div>

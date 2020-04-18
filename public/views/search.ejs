@@ -26,6 +26,7 @@
                       <%= category %> 
                     </div>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/homepage">All Categories</a>
                       <a class="dropdown-item" href="/homepage/book">Books</a>
                       <a class="dropdown-item" href="/homepage/notes">Notes</a>
                       <a class="dropdown-item" href="/homepage/clothing">Clothing</a>
@@ -51,13 +52,14 @@
               </ul>
             </div>
             <form class="search-bar w-100" method="POST">
-              <input class="w-75 search-inp" type="text" placeholder="<%= searchmsg %>" name="productname">
+              <input class="w-75 search-inp" type="text" name="productinput" placeholder="<%= searchmsg %>" value="<%= searchvalue %>" name="productname">
               <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
             </form>
           </nav>
     <section id="products">
       <% if (product.length > 0) { %>
       <h1><%= heading %></h1>
+      <hr width="100%">
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
       <div class="col-lg-4 col-md-6 center-block">
