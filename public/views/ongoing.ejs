@@ -18,8 +18,8 @@
       src="https://kit.fontawesome.com/7cd5bd2715.js"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="../css/selllog.css" />
-    <title>TheVStore | Username's Sell Log</title>
+    <link rel="stylesheet" href="../css/ongoing.css" />
+    <title>TheVStore | <%= username %>'s Current Transactions</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg fixed-top bg-light">
@@ -39,7 +39,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="Home.html">Home </a>
+            <a class="nav-link" href="/homepage">Home </a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -50,22 +50,20 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >
-              Username <i class="fas fa-user-circle"></i>
+            ><%= username %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Profile</a>
+              <a class="dropdown-item" href="/profile/<%= username %>">Profile</a>
               <a class="dropdown-item" href="#">Buylist</a>
-              <a class="dropdown-item" href="#">SellList</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Log Out</a>
+              <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/sellproduct">Sell </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link cart" href="#"
+            <a class="nav-link cart" href="/cart"
               ><i class="fas fa-shopping-cart"></i> Cart</a
             >
           </li>
@@ -76,66 +74,33 @@
     <section id="picture">
       <section class="rad">
         <label class="radio-inline"
-          ><input type="radio" name="optradio" checked />For Sale</label
+          ><input type="radio" name="optradio" checked />Ads</label
         >
         <label class="radio-inline"
-          ><input type="radio" name="optradio" />Sold</label
+          ><input type="radio" name="optradio" />Requests</label
         >
       </section>
-      <h1>Products for sale/sold by you</h1>
+      <h1>Products for sale/requested by you</h1>
       <hr width="100%" />
       <!--product for sale template-->
+      <% for(var i=0; i< details.length; i++){ %>
       <div class="row product-info">
         <div class="pict col-lg-4">
-          <img src="../images/notes.jpg" />
-          <div class="atc btn-danger">
-            For Sale
-          </div>
+          <img src="<%= details[i][5] %>">
         </div>
         <div class="content col-lg-8">
-          <h2>Product Name</h2>
-          <h4>Product Id :</h4>
-          <h4>Years of Usage :</h4>
-          <h4>Condition :</h4>
-          <h3>Price :</h3>
-          <br />
-          <h2>Seller Info</h2>
-          <h4>Username:</h4>
-          <h4>Name :</h4>
-          <h4>Contact No :</h4>
-          <h4>Email :</h4>
-          <h4>Preferred Location :</h4>
-          <h4>Branch/Year :</h4>
-        </div>
-      </div>
-      <!--Sold product template-->
-      <div class="row product-info">
-        <div class="pict col-lg-4">
-          <img src="../images/notes.jpg" />
-          <div class="atc btn-success">
-            Sold
+          <h3><%= details[i][1] %></h3>
+          <h5>Product Id : <span class="details"><%= details[i][0] %></span></h5>
+          <h5>Years of Usage : <span class="details"><%= details[i][2] %></span></h5>
+          <h5>Condition : <span class="details"><%= details[i][8] %></span></h5>
+          <h5>Price : <span class="details">Rs. <%= details[i][3] %></span></h5>
+          <div class="tp">
+          <a href="/product/<%= details[i][0] %>" class=" btn btn-primary atc">More Info</a>
+          <a href="/editproduct/<%= details[i][7] %>&<%= details[i][0] %>" class=" btn btn-primary atc">Edit Info</a>
           </div>
         </div>
-        <div class="content col-lg-8">
-          <h2>Product Name</h2>
-          <h4>Product Id :</h4>
-          <h4>Years of Usage :</h4>
-          <h4>Condition :</h4>
-          <h3>Price :</h3>
-          <br />
-          <h2>Seller Info</h2>
-          <h4>Username:</h4>
-          <h4>Name :</h4>
-          <h4>Contact No :</h4>
-          <h4>Email :</h4>
-          <h4>Preferred Location :</h4>
-          <h4>Branch/Year :</h4>
-        </div>
-        <div class="col">
-          <p>Date of transaction :</p>
-          <p>Verified by buyer : Buyer's Username</p>
-        </div>
       </div>
+      <% } %>
     </section>
 
     <script
