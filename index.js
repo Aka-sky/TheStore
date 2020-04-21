@@ -138,7 +138,7 @@ app.post("/signup", function (req, res) {
     });
   });
 });
-
+//-------------------------------------------------------------------------------------------------------------
 app.get("/verify", function (req, res) {
   var sess = req.session;
   if (sess.username) {
@@ -379,7 +379,7 @@ app.get("/homepage/:category", function (req, res) {
   if (sess.username) {
       query = {
         text:
-          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+          'SELECT product_name,price,years_of_usage,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
           category +
           ");",
         rowMode: "array",
@@ -449,7 +449,7 @@ app.post("/homepage/:category", function (req, res) {
       case "book":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || '+"' '"+' || "author" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || '+"' '"+' || "author" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };
@@ -458,7 +458,7 @@ app.post("/homepage/:category", function (req, res) {
       case "notes":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || '+"' '"+' ||"topic" || '+"' '"+' || "professor" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || '+"' '"+' ||"topic" || '+"' '"+' || "professor" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };
@@ -467,7 +467,7 @@ app.post("/homepage/:category", function (req, res) {
       case "clothing":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };
@@ -476,7 +476,7 @@ app.post("/homepage/:category", function (req, res) {
       case "calculator":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };
@@ -485,7 +485,7 @@ app.post("/homepage/:category", function (req, res) {
       case "pc":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };
@@ -494,7 +494,7 @@ app.post("/homepage/:category", function (req, res) {
       case "other":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type" || '+"' '"+' || "description") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type" || '+"' '"+' || "description") @@ to_tsquery('+'$1'+'))',
           values: [newstring],
           rowMode: "array",
         };

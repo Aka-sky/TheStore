@@ -56,8 +56,8 @@ label {
 }
 .product-info {
   margin-bottom: 3%;
-  border: 1px solid rgba(156, 151, 151, 0.979);
-  border-width: 10%;
+  background-color: rgb(245, 239, 239);
+  border: none;
   border-radius: 10px;
   padding: 2%;
 }
