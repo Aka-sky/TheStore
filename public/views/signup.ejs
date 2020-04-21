@@ -7,7 +7,7 @@
      <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/signupstyle.css">
+    <link rel="stylesheet" href="../css/signupstyle.css">
     <title>TheVStore | Sign Up </title>
   </head>
   <body>
@@ -40,40 +40,45 @@
         <div class="card card-signin my-5">
           <div class="card-body">
             <h5 class="card-title text-center">Sign Up</h5>
-            <p style="color: red;"><%= typeof msg != 'undefined' ? msg : '' %></p>
+            <div id="erralert" class="alert alert-warning alert-dismissible fade show" role="alert">
+              <%= typeof msg != 'undefined' ? msg : "" %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
             <form class="form-signin" method="POST">
               <div class="form-label-group">
-                <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username" value="<%= username %>" required autofocus>
                 <label for="username">Username</label>
               </div>
 
               <div class="form-label-group">
-                <input type="text" id="name" name="name" class="form-control" placeholder="Name" required>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Name" value="<%= name %>" required>
                 <label for="name">Name</label>
               </div>
 
               <div class="form-label-group">
-                <input type="email" id="email" name ='email' class="form-control" placeholder="Email address" required>
+                <input type="email" id="email" name ='email' class="form-control" placeholder="Email address" value="<%= mail_id%>" disabled>
                 <label for="email">Email address</label>
               </div>
 
               <div class="form-label-group">
-                <input type="password" id="password" name = "password" class="form-control" placeholder="Password" required>
+                <input type="password" id="password" name = "password" class="form-control" value="<%= pas %>" placeholder="Password" required>
                 <label for="password">Password</label>
               </div>
 
               <div class="form-label-group">
-                <input type="number" id="contact" name="contact" class="form-control" placeholder="Username" maxlength="10" required>
+                <input type="number" id="contact" name="contact" class="form-control" placeholder="Username" value="<%= contact %>" maxlength="10" required>
                 <label for="contact">Contact No.</label>
               </div>
 
                <div class="form-label-group">
-                <input type="text" id="location" name="location" class="form-control" placeholder="Username" required>
+                <input type="text" id="location" name="location" class="form-control" value="<%= location %>" placeholder="Username" required>
                 <label for="location">Location</label>
               </div>
 
               <div class="form-label-group">
-                <input type="text" id="branchYear" name="branchYear" class="form-control" placeholder="Username" required>
+                <input type="text" id="branchYear" name="branchYear" class="form-control" value="<%= year %>" placeholder="Username" required>
                 <label for="branchYear">Branch & Year</label>
               </div>
 
@@ -93,8 +98,13 @@
       </div>
     </div>
   </section>
-      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <script>
+        // if(typeof msg !== 'undefined'){
+        //   $('#erralert').show();
+        // }
+      </script>
     </body>
   </html>
