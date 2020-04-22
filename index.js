@@ -1,4 +1,5 @@
 var express = require("express");
+require("dotenv").config();
 var app = express();
 var bodyParser = require("body-parser");
 var multer = require("multer");
@@ -11,20 +12,20 @@ var crypto = require("crypto");
 var nodemailer = require("nodemailer");
 var bcrypt = require("bcrypt");
 const saltRounds = 10;
-var fs = require('fs');
+var fs = require("fs");
 const { Pool } = require("pg");
 var _ = require("lodash");
 
 //crypto key and iv
-const key = crypto.randomBytes(16);
-const iv = crypto.randomBytes(16);
+// const key = crypto.randomBytes(16);
+// const iv = crypto.randomBytes(16);
 
 //Store cookies containing session id on client's browser
 app.use(cookieParser());
 //Session
 app.use(
   session({
-    secret: "oneplus 6",
+    secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
     resave: true,
   })
@@ -78,11 +79,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
 const db = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "thevstore",
-  password: "password",
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT,
 });
 
 // function to check previous aborted session to continue
@@ -156,19 +157,23 @@ app.get("/verify", function (req, res) {
 
         // once email address found try emailing
         // if emailing failed show error
-        var cipherKey = crypto.createCipheriv("aes128", key, iv);
+        var cipherKey = crypto.createCipheriv(
+          "aes128",
+          process.env.CRYPTO_KEY,
+          process.env.CRYPTO_IV
+        );
         var str = cipherKey.update(sess.username, "utf8", "hex");
         str += cipherKey.final("hex");
         var link = "http://localhost:3000/verify/" + str;
         var transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
-            user: "tempV.Store@gmail.com",
-            pass: "tgmSPAN@V4",
+            user: process.env.STORE_EMAIL,
+            pass: process.env.STORE_PASS,
           },
         });
         var mailOptions = {
-          from: "tempV.Store@gmail.com",
+          from: process.env.STORE_EMAIL,
           to: email,
           subject: "Verfication of email on VStore",
           html:
@@ -211,33 +216,45 @@ app.get("/verify/:user", function (req, res) {
   // console.log("Sess" + sess.username + " " + req.params.user);
   if (sess.username) {
     var user = req.params.user;
-    var decipherKey = crypto.createDecipheriv("aes128", key, iv);
-    var username = decipherKey.update(user, "hex", "utf8");
-    username += decipherKey.final("utf8");
-    // console.log("username" + username);
-    if (sess.username == username) {
-      // email is verified for user
-      const query = {
-        text: 'UPDATE "user" SET active = true WHERE username = $1',
-        values: [sess.username],
-      };
-      db.query(query, function (err) {
-        if (err) {
-          // database error so send msg Not Verified
-          console.log(err);
-          res.render("verify", {
-            username: sess.username,
-            msg: "Verification not done. Try Again",
-          });
-        } else {
-          sess.active = true;
-          res.render("verify", {
-            username: sess.username,
-            msg: "Verification Done",
-            done: "Yes",
-          });
-        }
-      });
+    if (user.length == 32) {
+      var decipherKey = crypto.createDecipheriv(
+        "aes128",
+        process.env.CRYPTO_KEY,
+        process.env.CRYPTO_IV
+      );
+      var username = decipherKey.update(user, "hex", "utf8");
+      username += decipherKey.final("utf8");
+
+      // console.log("username" + username);
+      if (sess.username == username) {
+        // email is verified for user
+        const query = {
+          text: 'UPDATE "user" SET active = true WHERE username = $1',
+          values: [sess.username],
+        };
+        db.query(query, function (err) {
+          if (err) {
+            // database error so send msg Not Verified
+            console.log(err);
+            res.render("verify", {
+              username: sess.username,
+              msg: "Verification not done. Try Again",
+            });
+          } else {
+            sess.active = true;
+            res.render("verify", {
+              username: sess.username,
+              msg: "Verification Done",
+              done: "Yes",
+            });
+          }
+        });
+      } else {
+        res.render("verify", {
+          username: sess.username,
+          msg: "Verification Error. Try again.",
+        });
+      }
     } else {
       res.render("verify", {
         username: sess.username,
@@ -290,7 +307,12 @@ app.post("/login", function (req, res) {
           if (result) {
             sess.username = user.username;
             sess.active = resp.rows[0][1];
-            res.redirect("/homepage");
+            if (sess.redirectURL) {
+              //console.log(sess.redirectURL);
+              res.redirect(sess.redirectURL);
+            } else {
+              res.redirect("/homepage");
+            }
           } else {
             res.render("login", {
               msg: "Wrong password",
@@ -328,7 +350,7 @@ app.get("/homepage", function (req, res) {
           product: product,
           username: sess.username,
           searchmsg: "Recommended products for you",
-          searchvalue: ''
+          searchvalue: "",
         });
       }
     });
@@ -347,7 +369,8 @@ app.post("/homepage", function (req, res) {
     const query = {
       text:
         'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product" WHERE LOWER(product_name) LIKE \'%' +
-        lowerproductname + '%\'',
+        lowerproductname +
+        "%'",
       //values: [lowerproductname],
       rowMode: "array",
     };
@@ -361,7 +384,7 @@ app.post("/homepage", function (req, res) {
           product: product,
           username: sess.username,
           searchmsg: "Search Results",
-          searchvalue: req.body.productname
+          searchvalue: req.body.productname,
         });
       }
     });
@@ -377,13 +400,13 @@ app.get("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var query;
   if (sess.username) {
-      query = {
-        text:
-          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
-          category +
-          ");",
-        rowMode: "array",
-      };
+    query = {
+      text:
+        'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+        category +
+        ");",
+      rowMode: "array",
+    };
     var searchmsg = "";
     switch (category) {
       case "book":
@@ -416,7 +439,7 @@ app.get("/homepage/:category", function (req, res) {
           category: _.capitalize([(string = category)]),
           heading: "Recommended products for you",
           searchmsg: searchmsg,
-          searchvalue: null
+          searchvalue: null,
         });
       }
     });
@@ -431,13 +454,12 @@ app.post("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var input = _.lowerCase([(string = req.body.productinput)]);
 
-  var newstring ='';
-  for(var i=0; i < input.length; i++){
-    if(input[i] == ' '){
-        newstring += '|'
-    }
-    else{
-        newstring += input[i]
+  var newstring = "";
+  for (var i = 0; i < input.length; i++) {
+    if (input[i] == " ") {
+      newstring += "|";
+    } else {
+      newstring += input[i];
     }
   }
   console.log(newstring);
@@ -449,7 +471,13 @@ app.post("/homepage/:category", function (req, res) {
       case "book":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || '+"' '"+' || "author" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "author" || ' +
+            "' '" +
+            ' || "subject") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -458,7 +486,15 @@ app.post("/homepage/:category", function (req, res) {
       case "notes":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || '+"' '"+' ||"topic" || '+"' '"+' || "professor" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' ||"topic" || ' +
+            "' '" +
+            ' || "professor" || ' +
+            "' '" +
+            ' || "subject") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -467,7 +503,11 @@ app.post("/homepage/:category", function (req, res) {
       case "clothing":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "type") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -476,7 +516,11 @@ app.post("/homepage/:category", function (req, res) {
       case "calculator":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "brand") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -485,7 +529,11 @@ app.post("/homepage/:category", function (req, res) {
       case "pc":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "brand") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -494,7 +542,13 @@ app.post("/homepage/:category", function (req, res) {
       case "other":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type" || '+"' '"+' || "description") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "type" || ' +
+            "' '" +
+            ' || "description") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -514,7 +568,7 @@ app.post("/homepage/:category", function (req, res) {
           username: sess.username,
           heading: "Search Results",
           searchmsg: searchmsg,
-          searchvalue: input
+          searchvalue: input,
         });
       }
     });
@@ -696,7 +750,73 @@ app.get("/cart/:action/:product", function (req, res) {
       // buy selected in cart on product_id
       if (sess.active) {
         // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
-        res.send("Request Sent")
+        // first we need buyer details and then email id of seller
+        (async () => {
+          const client = await db.connect();
+
+          try {
+            await client.query("BEGIN");
+            const buyerQuery = {
+              text:
+                'SELECT username, name, email_id, contact, location,year, image FROM "user" WHERE username = $1',
+              values: [sess.username],
+            };
+            var buyerDetails = await client.query(buyerQuery);
+
+            const emailQuery = {
+              text:
+                'SELECT username,email_id FROM "user" WHERE username IN ( SELECT seller_id FROM "product" WHERE product_id = $1)',
+              values: [product_id],
+            };
+            var seller = await client.query(emailQuery);
+            console.log(seller.rows[0].email_id);
+            var transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: process.env.STORE_EMAIL,
+                pass: process.env.STORE_PASS,
+              },
+            });
+
+            var cipherKey = crypto.createCipheriv(
+              "aes128",
+              process.env.CRYPTO_KEY,
+              process.env.CRYPTO_IV
+            );
+            var str = cipherKey.update(seller.rows[0].username, "utf8", "hex");
+            str += cipherKey.final("hex");
+
+            const data = await ejs.renderFile(
+              __dirname + "/public/views/buyMail.ejs",
+              {
+                user: buyerDetails.rows[0],
+                product_id: product_id,
+                seller_id: str,
+              }
+            );
+
+            var mailOptions = {
+              from: process.env.STORE_EMAIL,
+              to: seller.rows[0].email_id,
+              subject: "Someone is interested in your product.",
+              html: data,
+            };
+
+            transporter.sendMail(mailOptions, function (err, info) {
+              if (err) {
+                console.log(err);
+              } else {
+                res.send("Request sent to seller!!");
+              }
+            });
+            await client.query("COMMIT");
+          } catch (err) {
+            console.log(err);
+            res.send("error sending Email");
+          } finally {
+            client.release();
+          }
+        })().catch((err) => console.log(err.stack));
       } else {
         res.render("verify", {
           username: sess.username,
@@ -718,6 +838,299 @@ app.get("/cart/:action/:product", function (req, res) {
         }
       });
     }
+  } else {
+    res.redirect("/login");
+  }
+});
+
+/* app.get("/request/:productID/:buyerID/:sellerID", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    if (req.params.sellerID.length == 32) {
+      var decipherKey = crypto.createDecipheriv("aes128", process.env.CRYPTO_KEY, process.env.CRYPTO_IV);
+      var username = decipherKey.update(req.params.sellerID, "hex", "utf8");
+      username += decipherKey.final("utf8");
+      if (username == sess.username) {
+        // the seller is logged in
+        const query = {
+          text: 'INSERT INTO "requests" VALUES ($1,$2,$3)',
+          values: [req.params.buyerID, sess.username, req.params.productID],
+        };
+
+        db.query(query, function (err, resp) {
+          if (err) {
+            console.log(err);
+            res.send("Database ERROR!!!!!!!!");
+          } else {
+            res.redirect("/request/0");
+          }
+        });
+      }
+    } else {
+      // somebody else logged in or url not correct
+      res.redirect("/homepage");
+    }
+  } else {
+    sess.redirectURL = `/request/${req.params.productID}/${req.params.buyerID}/${req.params.sellerID}`;
+    res.redirect("/login");
+  }
+}); */
+
+app.get("/request/:productID/:buyerID/:sellerID", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    if (req.params.sellerID.length == 32) {
+      var decipherKey = crypto.createDecipheriv(
+        "aes128",
+        process.env.CRYPTO_KEY,
+        process.env.CRYPTO_IV
+      );
+      var username = decipherKey.update(req.params.sellerID, "hex", "utf8");
+      username += decipherKey.final("utf8");
+      if (username == sess.username) {
+        // the seller is logged in
+        (async () => {
+          const client = await db.connect();
+
+          try {
+            await client.query("BEGIN");
+            var otp = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+            const query = {
+              text: 'INSERT INTO "requests" VALUES ($1,$2,$3,$4)',
+              values: [
+                req.params.buyerID,
+                sess.username,
+                req.params.productID,
+                otp,
+              ],
+            };
+
+            await client.query(query);
+            //now send email with otp to buyer
+            const buyerEmailquery = {
+              text: 'SELECT email_id FROM "user" WHERE username = $1',
+              values: [req.params.buyerID],
+            };
+            const buyerEmail = await client.query(buyerEmailquery);
+
+            var transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: process.env.STORE_EMAIL,
+                pass: process.env.STORE_PASS,
+              },
+            });
+
+            var mailOptions = {
+              from: process.env.STORE_EMAIL,
+              to: buyerEmail.rows[0].email_id,
+              subject: "Request Accepted.",
+              html: `<h2>${username} has accepted your request for purchase of product.</h2><p>On successful purchase of the product share this password <strong>${otp}</strong> with the seller to complete the process.
+              You can view this password on your requests page.</p>`,
+            };
+
+            transporter.sendMail(mailOptions, function (err, info) {
+              if (error) {
+                console.log(error);
+                throw error;
+              }
+            });
+            res.redirect("/request/0");
+            await client.query("COMMIT");
+          } catch (err) {
+            console.log(err);
+            await client.query("ROLLBACK");
+            res.send(
+              "Maybe you already accepted this request. Check your requests page and try again!"
+            );
+          } finally {
+            client.release();
+          }
+        })().catch((err) => console.log(err.stack));
+      }
+    } else {
+      // somebody else logged in or url not correct
+      res.redirect("/homepage");
+    }
+  } else {
+    sess.redirectURL = `/request/${req.params.productID}/${req.params.buyerID}/${req.params.sellerID}`;
+    res.redirect("/login");
+  }
+});
+
+app.get("/request/:action", function (req, res) {
+  // 0 show for sale, 1 show for buy
+  var sess = req.session;
+  if (sess.username) {
+    (async () => {
+      const client = await db.connect();
+
+      try {
+        await client.query("BEGIN");
+        if (req.params.action == 0) {
+          // for sale
+          // first get all products and thier list of buyers from requests
+          // then get all products details from product
+          const buyerProductQuery = {
+            text:
+              'SELECT buyer_id,product_id FROM "requests" WHERE seller_id = $1 ORDER BY product_id ASC',
+            values: [sess.username],
+          };
+          const buyerProduct = await client.query(buyerProductQuery);
+
+          const productQuery = {
+            text:
+              'SELECT product_name,price,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT DISTINCT product_id FROM "requests" WHERE seller_id = $1 ) ORDER BY product_id ASC',
+            values: [sess.username],
+          };
+          const product = await client.query(productQuery);
+
+          res.render("selllog", {
+            username: sess.username,
+            rProduct: buyerProduct.rows,
+            product: product.rows,
+            action: "sale",
+          });
+        } else if (req.params.action == 1) {
+          // for purchase
+          // first select all products and seller_id whose buyer is sess.username
+          // then select product details from product where product_id is from the above
+          const sellerProductQuery = {
+            text:
+              'SELECT seller_id,product_id,otp FROM "requests" WHERE buyer_id = \'' +
+              sess.username +
+              "' ORDER BY product_id ASC",
+          };
+          const sellerProduct = await client.query(sellerProductQuery);
+
+          const productQuery = {
+            text:
+              'SELECT product_name,price,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM "requests" WHERE buyer_id = \'' +
+              sess.username +
+              "' ) ORDER BY product_id ASC",
+          };
+          const product = await client.query(productQuery);
+
+          res.render("selllog", {
+            username: sess.username,
+            rProduct: sellerProduct.rows,
+            product: product.rows,
+            action: "purchase",
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        res.send("ERROR!!");
+      } finally {
+        client.release();
+      }
+    })().catch((err) => console.log(err.stack));
+
+    // query1: 'SELECT buyer_id,product_id FROM "requests" WHERE seller_id = 'someone1' ORDER BY product_id ASC'
+    // query2: 'SELECT product_name,price,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT DISTINCT product_id FROM requests WHERE seller_id = 'someone1') ORDER BY product_id ASC;'
+    // now render selllog and show products accoring to second query and usernames of buyers until product_id matches
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// when seller selects sold on ongoing
+app.get("/sold/:productID", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    // select all buyers for productID and seller=sess.username
+    const query = {
+      text:
+        'SELECT buyer_id FROM "requests" WHERE (seller_id,product_id) = ($1,$2)',
+      values: [sess.username, req.params.productID],
+    };
+    db.query(query, function (err, resp) {
+      if (err) {
+        res.send("Error");
+        console.log(err);
+      } else {
+        res.render("soldVerify", {
+          username: sess.username,
+          buyers: resp.rows,
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/sold/:productID", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    // things to do
+    // 1. verify entered otp from database
+    // 2. From product_id get product_name and product_image
+    // 3. Insert into transaction table seller_id from sess,
+    //    buyer_id,finalizedPrice from form post, product_name
+    //    product_image from product table
+    // 4. Now remove the product from product table where product_id is
+    //    req.params.product_id
+    (async () => {
+      const client = await db.connect();
+
+      try {
+        await client.query("BEGIN");
+        // verify entered otp from database
+        var content = req.body;
+        const verifyQuery = {
+          text:
+            'SELECT otp FROM "requests" WHERE (buyer_id,seller_id) = ($1,$2)',
+          values: [content.buyerOptions, sess.username],
+        };
+        const otp = await client.query(verifyQuery);
+
+        if (otp.rows[0].otp == content.otp) {
+          // correct now,
+          // From product_id get product_name and product_image
+          const productQuery = {
+            text:
+              'SELECT product_name, product_image FROM "product" WHERE product_id = $1',
+            values: [req.params.productID],
+          };
+          const product = await client.query(productQuery);
+
+          // Insert into transaction table seller_id from sess,
+          //    buyer_id,finalizedPrice from form post, product_name
+          //    product_image from product table
+          const insertTransQuery = {
+            text: 'INSERT INTO "transaction" VALUES ($1,$2,$3,$4,$5)',
+            values: [
+              content.buyerOptions,
+              sess.username,
+              product.rows[0].product_name,
+              content.finalPrice,
+              product.rows[0].product_image,
+            ],
+          };
+          await client.query(insertTransQuery);
+
+          // 4. Now remove the product from product table where product_id is
+          //    req.params.product_id
+          const deleteQuery = {
+            text: 'DELETE FROM "product" WHERE product_id = $1',
+            values: [req.params.productID],
+          };
+          await client.query(deleteQuery);
+
+          res.redirect("/request/0");
+        } else {
+          throw "OTP Not Match!";
+        }
+
+        await client.query("COMMIT");
+      } catch (err) {
+        await client.query("ROLLBACK");
+        res.redirect("/sold/" + req.params.productID);
+      } finally {
+        await client.release();
+      }
+    })().catch((err) => console.log(err.stack));
   } else {
     res.redirect("/login");
   }
@@ -947,9 +1360,9 @@ app.post("/productUpload", function (req, res) {
             var filePath = `./public/images/${req.file.filename}`;
             fs.unlink(filePath, function (err) {
               if (err) {
-                console.log(err)
+                console.log(err);
               } else {
-                console.log('Deleted!')
+                console.log("Deleted!");
               }
             });
             await client.query("ROLLBACK");

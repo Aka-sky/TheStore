@@ -39,7 +39,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="Home.html">Home </a>
+            <a class="nav-link" href="/homepage">Home </a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -54,18 +54,18 @@
               Username <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Profile</a>
+              <a class="dropdown-item" href="/profile/<%= username %>">Profile</a>
               <a class="dropdown-item" href="#">Buylist</a>
               <a class="dropdown-item" href="#">SellList</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Log Out</a>
+              <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/sellproduct">Sell </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link cart" href="#"
+            <a class="nav-link cart" href="/cart"
               ><i class="fas fa-shopping-cart"></i> Cart</a
             >
           </li>
@@ -75,41 +75,80 @@
 
     <section id="picture">
       <section class="rad">
+        <%= typeof msg != 'undefined' ? msg : '' %>
+        <% if (action == 'sale' ) { %>
         <label class="radio-inline"
-          ><input type="radio" name="optradio" checked />For Sale</label
+          ><input name="optradio" onclick="document.location.href='/request/0'" type="radio" checked>For Sale</input></label
         >
         <label class="radio-inline"
-          ><input type="radio" name="optradio" />Sold</label
+          ><input name="optradio" onclick="document.location.href='/request/1'" type="radio" >For purchase</input></label
         >
+        <% } else { %>
+          <label class="radio-inline"
+          ><input name="optradio" onclick="document.location.href='/request/0'" type="radio" >For Sale</input></label
+        >
+        <label class="radio-inline"
+          ><input name="optradio" onclick="document.location.href='/request/1'" type="radio" checked >For purchase</input></label
+        >
+          <% } %>
       </section>
-      <h1>Products for sale/sold by you</h1>
+      <% if (product.length > 0) { %>
+      <% if (action == 'sale') { %>
+        <% var j=0; %>
+      <h1>Products you added for sale</h1>
       <hr width="100%" />
       <!--product for sale template-->
+      <% for (var i=0; i<product.length;i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4">
-          <img src="../images/notes.jpg" />
+          <img src= "<%= product[i].product_image %>" style="margin: 10px;"/>
+          <a class="atc btn-danger" style="font-size: 24px;padding: 10px;margin: 10px;" href="#">
+            Remove
+          </a>
+          <a class="atc btn-success" style="font-size: 24px ;padding: 10px;margin: 2px;" href="/sold/<%= product[i].product_id %>">
+            Sold
+          </a>
+        </div>
+        <div class="content col-lg-8">
+          <h2><%= product[i].product_name %></h2>
+          <h4>Product Id : <%= product[i].product_id %></h4>
+          <h4>Price : Rs. <%= product[i].price %></h4>
+          <br />
+          <h2>Buyers Interested</h2>
+          <% while (j < rProduct.length && rProduct[j].product_id == product[i].product_id) { %>
+          <h4><a href = "/profile/<%= rProduct[j].buyer_id %>"><%= rProduct[j].buyer_id %></a></h4>
+            <% j++;} %>
+        </div>
+      </div>
+    <% } %>
+    <% } else { %>
+      <h1>Products you requested for purchase</h1>
+      <hr width="100%" />
+      <!--product for sale template-->
+      <% for (var i=0; i<product.length;i++) { %>
+      <div class="row product-info">
+        <div class="pict col-lg-4">
+          <img src= "<%= product[i].product_image %>" />
           <div class="atc btn-danger">
-            For Sale
+            Pass: <%= rProduct[i].otp %>
           </div>
         </div>
         <div class="content col-lg-8">
-          <h2>Product Name</h2>
-          <h4>Product Id :</h4>
-          <h4>Years of Usage :</h4>
-          <h4>Condition :</h4>
-          <h3>Price :</h3>
+          <h2><%= product[i].product_name %></h2>
+          <h4>Product Id : <%= product[i].product_id %></h4>
+          <h4>Price : Rs. <%= product[i].price %></h4>
           <br />
-          <h2>Seller Info</h2>
-          <h4>Username:</h4>
-          <h4>Name :</h4>
-          <h4>Contact No :</h4>
-          <h4>Email :</h4>
-          <h4>Preferred Location :</h4>
-          <h4>Branch/Year :</h4>
+          <h2>Seller</h2>
+          <h4><a href = "/profile/<%= rProduct[i].seller_id %>"><%= rProduct[i].seller_id %></a></h4>
         </div>
       </div>
+    <% } %>
+    <% } %> 
+  <% } else { %>
+      <h2> No Results </h2>
+    <% } %>
       <!--Sold product template-->
-      <div class="row product-info">
+     <!--  <div class="row product-info">
         <div class="pict col-lg-4">
           <img src="../images/notes.jpg" />
           <div class="atc btn-success">
@@ -135,7 +174,7 @@
           <p>Date of transaction :</p>
           <p>Verified by buyer : Buyer's Username</p>
         </div>
-      </div>
+      </div> -->
     </section>
 
     <script

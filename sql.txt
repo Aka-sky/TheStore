@@ -28,8 +28,8 @@ CREATE TABLE "cart" (
     username character varying,
     product_id int,
     PRIMARY KEY (username, product_id),
-    FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE SET NULL,
-    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE SET NULL
+    FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
 ); 
 
 INSERT INTO cart VALUES ('akashkamble0730',3);

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+</head>
+<body>
+    <div style="text-align: justify;">
+        <h2>Details of buyer are given below.</h2>
+        <h3><strong>Username: </strong><%= user.username %></h3>
+      
+        <h3><strong>Name: </strong><%= user.name %></h3>
+
+        <h3><strong>Email: </strong><%= user.email_id %></h3>
+
+        <h3><strong>Contact: </strong><%= user.contact %></h3>
+
+        <h3><strong>Location: </strong><%= user.location %></h3>
+  
+        <h3><strong>Year: </strong><%= user.year %></h3>
+
+        <div style="display:inline-block">
+            <a href="http://localhost:3000/request/<%= product_id %>/<%= user.username %>/<%= seller_id %>" style="color: green; padding: 10px;">Accept</a>
+            <p style="color: red;padding: 10px;">Ignore</p>
+        </div>
+    </div>
+</body>
+</html>
