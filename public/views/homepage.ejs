@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/homestyle.css">
+    <link rel="stylesheet" href="../css/animate.css">
     <title>TheVStore | Home | VJTI's own store </title>
   </head>
   <body>
@@ -27,7 +28,7 @@
           <a class="dropdown-item" href="/homepage/other">others</a>
         </div>
       </div>
-      <a href="#srch" class="btn btn-primary" style="border-radius: 50%; padding: 0.5%;"><i class="fas fa-search"></i></a>
+      <a href="#srch" class="btn s btn-primary" style="border-radius: 50%; padding: 0.5%;"><i class="fas fa-search"></i></a>
             <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -40,8 +41,8 @@
                   </a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="/profile/<%=username%>">Profile</a>
-                    <a class="dropdown-item" href="/buylog">buylog</a>
-                    <a class="dropdown-item" href="/selllog">selllog</a>
+                    <a class="dropdown-item" href="/ongoing">My Deals</a>
+                    <a class="dropdown-item" href="/buylog">My History</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/logout">Log Out</a>
                   </div>
@@ -86,7 +87,7 @@
               </div>
               <div class="carousel-item">
                 <a href='/homepage/clothing'>
-                <img src="../images/laptop.jpg" class="d-block w-100" alt="..."/>
+                <img src="../images/lab.jpg" class="d-block w-100" alt="..."/>
                 <div class="carousel-caption d-none d-md-block">
                    <h5 style="color: white;">Lab Coats</h5>
                 </div>
@@ -94,7 +95,7 @@
               </div>
               <div class="carousel-item">
                 <a href='/homepage/calculator'>
-                <img src="../images/laptop.jpg" class="d-block w-100" alt="...">
+                <img src="../images/calc.jpg" class="d-block w-100" alt="...">
                 <div class="carousel-caption d-none d-md-block">
                    <h5 style="color: white;">Calculators</h5>
                 </div>
@@ -102,7 +103,7 @@
               </div>
               <div class="carousel-item">
                 <a href='/homepage/pc'>
-                <img src="../images/laptop.jpg" class="d-block w-100" alt="...">
+                <img src="../images/lap.jpg" class="d-block w-100" alt="...">
                 <div class="carousel-caption d-none d-md-block">
                    <h5 style="color: white;">PCs</h5>
                 </div>
@@ -142,21 +143,24 @@
     <section id="products">
       <% if (product.length > 0) { %>
       <h1><%= searchmsg %></h1>
+      
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
+        <a href="/product/<%= product[i][4] %>" class="info">
       <div class="col-lg-4 col-md-6 center-block">
-        <div class="card" style="width: 90%;">
+        <div class="card">
           <img class="card-img-top" src="<%= product[i][3] %>" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title"><%= product[i][0] %></h5>
             <p class="card-text"><span class="cat"><%= product[i][5] %></span></p>
             <p class="card-text">Years of Usage: <%= product[i][2] %></p>
             <p class="card-text">Rs. <%= product[i][1] %></p>
-            <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a>
+            <!-- <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a> -->
             <a href="/cart/<%= product[i][4]%>" class="btn btn-primary">Add to Cart</a>
           </div>
         </div>
       </div>
+      </a>
       <% } %>
     </div>
     <div style="text-align: center; margin-top: 5%;"><div id="loadmore" class="btn btn-primary">More</div></div>
@@ -164,10 +168,23 @@
     <h4 style="text-align: center;">No Results</h4>
   <% } %>
     </section>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
+      $('.card').hover(
+        function(){
+          $(this).animate({
+            marginTop: "-1%",
+          },200);
+        },
+        function(){
+          $(this).animate({
+            marginTop: "0%",
+          },200);
+        }
+      );
       $('#products .card').slice(0,3).show();
       if( $('#products .card:hidden').length === 0 ){
           $('#loadmore').hide();
@@ -178,6 +195,13 @@
           $('#loadmore').hide();
         }
       });
+
+      $(".s").on("click",function(){
+        $(".searchbar").addClass("animated heartBeat slow").one("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
+          $(this).removeClass('animated heartBeat slow');
+        });
+      });
+      $(".navbar-brand").addClass("animated rubberBand")
     </script>
     </body>
 </html>

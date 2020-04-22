@@ -101,13 +101,161 @@ app.get("/", sessionChecker, function (req, res) {
 });
 
 //------------------------------------------------------------------------------------------------
+//Page to check if mail id is already in use
+app.get("/verify", sessionChecker, function (req, res) {
+  res.render("verify", { msg: 'Please enter valid Email ID' });
+});
+//On entering email
+app.post("/verify", function (req, res) {
+  const mail_id = req.body.email;
+  (async () => {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+      // first try to get the email address of user
+      const queryEmail = {
+        text: 'SELECT email_id FROM "user" WHERE email_id = $1',
+        values: [mail_id],
+      };
+      const emailResp = await client.query(queryEmail);
+      const email = emailResp.rows[0];
+      if (email) {
+        res.render("verify", { msg: "Email account is already registered, Try Log In" });
+      }
+      else {
+        function generateotp(){ 
+          var digits = '0123456789'; 
+          let OTP = ''; 
+          for (let i = 0; i < 6; i++ ) { 
+              OTP += digits[Math.floor(Math.random() * 10)]; 
+          } 
+          return OTP; 
+        } 
+        var otp = generateotp();
+        var transporter = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            user: "tempV.Store@gmail.com",
+            pass: "tgmSPAN@V4",
+          },
+        });
+        var mailOptions = {
+          from: "tempV.Store@gmail.com",
+          to: mail_id,
+          subject: "Verfication of email on VStore",
+          html:
+            "<h4>Hello!</h4><p>Just one step away from email verfication!<br>Copy this OTP: " +
+            otp +
+            "<br>& click verify</p>",
+        };
+        //  var sent = false;
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            // some error
+            console.log(error);
+            throw new Error("Email not sent");
+          } else {
+            console.log("Sent Mail!");
+          }
+        });
+        const queryStorage = {
+          text: 'INSERT INTO "tempmail" VALUES('+ '$1,'+ '$2'+')',
+          values: [mail_id,otp],
+        };
+        await client.query(queryStorage);
+        await client.query("COMMIT",function(error,response){
+          if(error){
+            console.log(error);
+            res.render("verify", {
+              msg: "Something went wrong! Try again",
+            });
+          }
+          else{
+          res.redirect("verify/"+mail_id);
+        }
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      res.render("verify", {
+        msg: "Verification email not sent! Try again",
+      });
+    } finally {
+      client.release();
+    }
+  })().catch((err) => console.log(err.stack));
+});
+//--------------------------------------------------------------------------------------------------------
+
+//Page for Entering OTP
+app.get("/verify/:mail_id", function (req, res) {
+  var mail_id = req.params.mail_id;
+  res.render("verifyotp", {
+    text: "Welcome, "+mail_id+" check the mail we just sent to you & enter the OTP below",
+    msg: "Please copy the 6 digit OTP"
+  });
+});
+//After entering OTP
+app.post("/verify/:mail_id", function (req, res) {
+  const mail_id = req.params.mail_id;
+  const otpbyuser = req.body.OTP;
+  (async () => {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+      // first try to get the email address of user
+      const queryOtp = {
+        text: 'SELECT otp FROM "tempmail" WHERE email = $1',
+        values: [mail_id],
+      };
+      const otpResp = await client.query(queryOtp);
+      const OTP = otpResp.rows[0].otp;
+
+      const queryStorage = {
+        text: 'DELETE FROM "tempmail" where email = $1',
+        values: [mail_id]
+      };
+      await client.query(queryStorage);
+      await client.query("COMMIT",function(error,response){
+        if(error){
+          console.log(error);
+        }
+        else{
+          if(otpbyuser == OTP){
+            res.redirect("/signup/"+mail_id);
+          }
+          else{
+            res.redirect("/verify")
+          }
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      res.render("verify/"+mail_id, {
+        msg: "Something went wrong! Try again",
+      });
+    } finally {
+      client.release();
+    }
+  })().catch((err) => console.log(err.stack));
+});
+//----------------------------------------------------------------------------------------------------
 // showing registration page
-app.get("/signup", sessionChecker, function (req, res) {
-  res.render("signup");
+app.get("/signup/:mail_id", sessionChecker, function (req, res) {
+  res.render("signup",{
+    mail_id: req.params.mail_id,
+    msg: 'Please Fill all the fields',
+    username : '',
+    name : '',
+    pas : '',
+    contact : '',
+    location : '',
+    year : '',
+  });
 });
 
 // handling submit on signup Page
-app.post("/signup", function (req, res) {
+app.post("/signup/:mail_id", function (req, res) {
   var user = req.body;
   var sess = req.session;
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
@@ -130,7 +278,14 @@ app.post("/signup", function (req, res) {
       if (err) {
         console.log(err);
         res.render("signup", {
+          mail_id: req.params.mail_id,
           msg: "Username not available. Try another username.",
+          username : user.username,
+          name : user.name,
+          pas : user.password,
+          contact : user.contact,
+          location : user.location,
+          year : user.branchYear,
         });
       } else {
         res.redirect("login");
@@ -138,121 +293,14 @@ app.post("/signup", function (req, res) {
     });
   });
 });
-
-app.get("/verify", function (req, res) {
-  var sess = req.session;
-  if (sess.username) {
-    (async () => {
-      const client = await db.connect();
-      try {
-        await client.query("BEGIN");
-        // first try to get the email address of user
-        const queryEmail = {
-          text: 'SELECT email_id FROM "user" WHERE username = $1',
-          values: [sess.username],
-        };
-        const emailResp = await client.query(queryEmail);
-        const email = emailResp.rows[0].email_id;
-
-        // once email address found try emailing
-        // if emailing failed show error
-        var cipherKey = crypto.createCipheriv("aes128", key, iv);
-        var str = cipherKey.update(sess.username, "utf8", "hex");
-        str += cipherKey.final("hex");
-        var link = "http://localhost:3000/verify/" + str;
-        var transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: "tempV.Store@gmail.com",
-            pass: "tgmSPAN@V4",
-          },
-        });
-        var mailOptions = {
-          from: "tempV.Store@gmail.com",
-          to: email,
-          subject: "Verfication of email on VStore",
-          html:
-            "<h4>Hello!</h4><p>Just one step away from email verfication!<br>Click <a href = " +
-            link +
-            ">here </a>to complete the process</p>",
-        };
-        //  var sent = false;
-        transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-            // some error
-            console.log(error);
-            throw new Error("Email not sent");
-          } else {
-            console.log("Sent Mail!");
-          }
-        });
-        res.render("verify", {
-          username: sess.username,
-          msg: "Email is sent please check your email address: " + email,
-        });
-        await client.query("COMMIT");
-      } catch (err) {
-        console.log(err);
-        res.render("verify", {
-          username: sess.username,
-          msg: "Verification email not sent! Try again",
-        });
-      } finally {
-        client.release();
-      }
-    })().catch((err) => console.log(err.stack));
-  } else {
-    res.redirect("/login");
-  }
-});
-
-app.get("/verify/:user", function (req, res) {
-  var sess = req.session;
-  // console.log("Sess" + sess.username + " " + req.params.user);
-  if (sess.username) {
-    var user = req.params.user;
-    var decipherKey = crypto.createDecipheriv("aes128", key, iv);
-    var username = decipherKey.update(user, "hex", "utf8");
-    username += decipherKey.final("utf8");
-    // console.log("username" + username);
-    if (sess.username == username) {
-      // email is verified for user
-      const query = {
-        text: 'UPDATE "user" SET active = true WHERE username = $1',
-        values: [sess.username],
-      };
-      db.query(query, function (err) {
-        if (err) {
-          // database error so send msg Not Verified
-          console.log(err);
-          res.render("verify", {
-            username: sess.username,
-            msg: "Verification not done. Try Again",
-          });
-        } else {
-          sess.active = true;
-          res.render("verify", {
-            username: sess.username,
-            msg: "Verification Done",
-            done: "Yes",
-          });
-        }
-      });
-    } else {
-      res.render("verify", {
-        username: sess.username,
-        msg: "Verification Error. Try again.",
-      });
-    }
-  } else {
-    res.redirect("/login");
-  }
-});
-
-//----------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
 // displaying login page
 app.get("/login", sessionChecker, function (req, res) {
-  res.render("login");
+  res.render("login",{
+    msg: 'Please Enter Username & Password',
+    id: '',
+    pas: ''
+  });
 });
 
 app.get("/logout", function (req, res) {
@@ -280,6 +328,8 @@ app.post("/login", function (req, res) {
     if (err) {
       res.render("login", {
         msg: "Invalid username and password",
+        id: user.username,
+        pas: user.password
       });
     } else {
       try {
@@ -294,12 +344,16 @@ app.post("/login", function (req, res) {
           } else {
             res.render("login", {
               msg: "Wrong password",
+              id: user.username,
+              pas: user.password
             });
           }
         });
       } catch (e) {
         res.render("Login", {
           msg: "Invalid Username",
+          id: user.username,
+          pas: user.password
         });
       }
     }
@@ -377,13 +431,13 @@ app.get("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var query;
   if (sess.username) {
-      query = {
-        text:
-          'SELECT product_name,price,condition,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
-          category +
-          ");",
-        rowMode: "array",
-      };
+    query = {
+      text:
+        'SELECT product_name,price,years_of_usage,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
+        category +
+        ");",
+      rowMode: "array",
+    };
     var searchmsg = "";
     switch (category) {
       case "book":
@@ -431,13 +485,13 @@ app.post("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var input = _.lowerCase([(string = req.body.productinput)]);
 
-  var newstring ='';
-  for(var i=0; i < input.length; i++){
-    if(input[i] == ' '){
-        newstring += '|'
+  var newstring = '';
+  for (var i = 0; i < input.length; i++) {
+    if (input[i] == ' ') {
+      newstring += '|'
     }
-    else{
-        newstring += input[i]
+    else {
+      newstring += input[i]
     }
   }
   console.log(newstring);
@@ -449,7 +503,7 @@ app.post("/homepage/:category", function (req, res) {
       case "book":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || '+"' '"+' || "author" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "author" || ' + "' '" + ' || "subject") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
@@ -458,7 +512,7 @@ app.post("/homepage/:category", function (req, res) {
       case "notes":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || '+"' '"+' ||"topic" || '+"' '"+' || "professor" || '+"' '"+' || "subject") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' + "' '" + ' ||"topic" || ' + "' '" + ' || "professor" || ' + "' '" + ' || "subject") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
@@ -467,7 +521,7 @@ app.post("/homepage/:category", function (req, res) {
       case "clothing":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "type") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
@@ -476,7 +530,7 @@ app.post("/homepage/:category", function (req, res) {
       case "calculator":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "brand") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
@@ -485,7 +539,7 @@ app.post("/homepage/:category", function (req, res) {
       case "pc":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || '+"' '"+' || "brand") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "brand") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
@@ -494,14 +548,13 @@ app.post("/homepage/:category", function (req, res) {
       case "other":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".condition,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || '+"' '"+' || "type" || '+"' '"+' || "description") @@ to_tsquery('+'$1'+'))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "type" || ' + "' '" + ' || "description") @@ to_tsquery(' + '$1' + '))',
           values: [newstring],
           rowMode: "array",
         };
         searchmsg = "Search by Name, Type, Description...";
         break;
     }
-
     db.query(searchquery, function (err, resp) {
       if (err) {
         res.send("Error");
@@ -640,7 +693,221 @@ app.post("/product/:id", function (req, res) {
     res.redirect("/login");
   }
 });
+//---------------------------------------------------------------------------------------------------
+//Edit product page of logged in user only
+app.get("/editproduct/:category&:id", function (req, res) {
+  var sess = req.session;
+  var product_id = req.params.id;
+  var category = req.params.category;
+  if (sess.username) {
+    //somone is logged in thus can access
+    switch (category) {
+      case "books":
+        productQuery = {
+          text: 'SELECT * FROM "bookview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+      case "clothing":
+        productQuery = {
+          text: 'SELECT * FROM "clothview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+      case "notes":
+        productQuery = {
+          text: 'SELECT * FROM "notesview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+      case "other":
+        productQuery = {
+          text: 'SELECT * FROM "otherview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+      case "calculators":
+        productQuery = {
+          text: 'SELECT * FROM "calcview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+      case "pcs":
+        productQuery = {
+          text: 'SELECT * FROM "pcview" WHERE product_id = $1',
+          values: [product_id],
+          rowMode: "array",
+        };
+        break;
+    }
+    db.query(productQuery, function (err, resp) {
+      var details = resp.rows;
+      if (err) {
+        res.send("Error");
+      }
+      else {
+        res.render("editproduct", {
+          username: sess.username,
+          category: _.capitalize([(string = category)]),
+          details: details
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
 
+//Updating values in database
+app.post("/editpro/:category&:id", function (req, res) {
+  var sess = req.session;
+  var prod_id = req.params.id;
+  var category = req.params.category;
+  console.log(prod_id);
+  console.log(category);
+  upload(req, res, function (err) {
+    var product = req.body;
+    if (err) {
+      res.render("editproduct", {
+        msg: err,
+        username: sess.username,
+        category: _.capitalize([(string = category)]),
+        details: [[]]
+      });
+    } else {
+      if (req.file == undefined) {
+        res.render("editproduct", {
+          msg: "No file selected",
+          username: sess.username,
+          category: _.capitalize([(string = category)]),
+          details: [[]]
+        });
+      } else {
+        const imgPath = `../images/${req.file.filename}`;
+        (async () => {
+          const client = await db.connect();
+
+          try {
+            await client.query("BEGIN");
+            const productTableUpdateQuery = {
+              text:
+                'UPDATE "product" SET product_name = $1,years_of_usage = $2,price = $3,product_image = $4,condition = $5,seller_id = $6 WHERE product_id = $7 RETURNING product_id',
+              values: [
+                product.name,
+                product.years,
+                product.price,
+                imgPath,
+                product.condition,
+                sess.username,
+                prod_id,
+              ],
+            };
+            const productResp = await client.query(productTableUpdateQuery);
+            var product_id = productResp.rows[0].product_id;
+            console.log(product_id);
+            var upquery;
+
+            switch (category) {
+              case "books":
+                upquery = {
+                  text: 'UPDATE "book" SET author = $5,publication = $2,edition = $3,subject = $4 WHERE product_id = $1',
+                  values: [
+                    product_id,
+                    product.publication,
+                    product.edition,
+                    product.subject,
+                    product.author,
+                  ],
+                };
+                break;
+              case "clothing":
+                upquery = {
+                  text: 'UPDATE "clothing" SET size = $2,type = $3,color = $4 WHERE product_id = $1',
+                  values: [
+                    product_id,
+                    product.size,
+                    product.type,
+                    product.color,
+                  ],
+                };
+                break;
+              case "notes":
+                upquery = {
+                  text: 'UPDATE "notes" SET subject = $2,topic = $3,professor = $4,noteyear = $5 WHERE product_id = $1',
+                  values: [
+                    product_id,
+                    product.n_subject,
+                    product.topic,
+                    product.professor,
+                    product.year,
+                  ],
+                };
+                break;
+              case "other":
+                upquery = {
+                  text: 'UPDATE "other" SET description = $2,type = $3 WHERE product_id = $1',
+                  values: [product_id, product.description, product.cate],
+                };
+                break;
+              case "calculators":
+                upquery = {
+                  text: 'UPDATE "calculator" SET brand = $2,model = $3,features = $4 WHERE product_id = $1',
+                  values: [
+                    product_id,
+                    product.calcibrand,
+                    product.model,
+                    product.features,
+                  ],
+                };
+                break;
+              case "pcs":
+                upquery = {
+                  text: 'UPDATE "pc" SET os = $2,ram = $3,storage = $4,brand = $5,processor = $6 WHERE product_id = $1',
+                  values: [
+                    product_id,
+                    product.os,
+                    product.ram,
+                    product.storage,
+                    product.pcbrand,
+                    product.processor,
+                  ],
+                };
+                break;
+            }
+
+            await client.query(upquery);
+            res.redirect("/product/" + prod_id);
+            await client.query("COMMIT");
+          } catch (err) {
+            var filePath = `./public/images/${req.file.filename}`;
+            fs.unlink(filePath, function (err) {
+              if (err) {
+                console.log(err)
+              } else {
+                console.log('Deleted!')
+              }
+            });
+            await client.query("ROLLBACK");
+            //console.log(err);
+            res.render("editproduct", {
+              msg: "Please fill out all fields!!",
+              username: sess.username,
+              category: _.capitalize([(string = category)]),
+              details: [[]]
+            });
+          } finally {
+            client.release();
+          }
+        })().catch((err) => console.log(err.stack));
+      }
+    }
+  });
+});
 //----------------------------------------------------------------------------------------------------
 // add to cart clicked on homepage or product page
 app.get("/cart/:id", function (req, res) {
@@ -694,15 +961,7 @@ app.get("/cart/:action/:product", function (req, res) {
 
     if (action == 1) {
       // buy selected in cart on product_id
-      if (sess.active) {
-        // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
-        res.send("Request Sent")
-      } else {
-        res.render("verify", {
-          username: sess.username,
-        });
-      }
-      // res.send("Request sent to seller!!");
+      res.send("Request Sent")
     } else {
       // remove selected in cart on product_id
       const query = {
@@ -786,10 +1045,9 @@ app.post("/editprofile", function (req, res) {
     // somone is logged in thus can access
     const query = {
       text:
-        'UPDATE "user" SET name = $1, email_id = $2, contact = $3, location = $4, year = $5 WHERE username = $6',
+        'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4 WHERE username = $5',
       values: [
         details.name,
-        details.email,
         details.contact,
         details.location,
         details.year,
@@ -965,6 +1223,31 @@ app.post("/productUpload", function (req, res) {
       }
     }
   });
+});
+//-----------------------------------------------------------------------------------------------------
+//Store products for sale by you along with requsted by you
+app.get("/ongoing", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    const query = {
+      text:
+        'SELECT * FROM "product" WHERE seller_id = $1',
+      values: [sess.username],
+      rowMode: "array",
+    };
+
+    db.query(query, function (err, resp) {
+      var details = resp.rows;
+      if (err) {
+        res.send("Error");
+      } else {
+        res.render("ongoing", { details: details, username: sess.username });
+      }
+    });
+  }
+  else {
+    res.redirect("/login");
+  }
 });
 
 app.use(function (req, res) {
