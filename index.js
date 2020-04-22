@@ -104,7 +104,7 @@ app.get("/", sessionChecker, function (req, res) {
 //------------------------------------------------------------------------------------------------
 //Page to check if mail id is already in use
 app.get("/verify", sessionChecker, function (req, res) {
-  res.render("verify", { msg: 'Please enter valid Email ID' });
+  res.render("verify", { msg: "Please enter valid Email ID" });
 });
 //On entering email
 app.post("/verify", function (req, res) {
@@ -121,17 +121,18 @@ app.post("/verify", function (req, res) {
       const emailResp = await client.query(queryEmail);
       const email = emailResp.rows[0];
       if (email) {
-        res.render("verify", { msg: "Email account is already registered, Try Log In" });
-      }
-      else {
-        function generateotp(){ 
-          var digits = '0123456789'; 
-          let OTP = ''; 
-          for (let i = 0; i < 6; i++ ) { 
-              OTP += digits[Math.floor(Math.random() * 10)]; 
-          } 
-          return OTP; 
-        } 
+        res.render("verify", {
+          msg: "Email account is already registered, Try Log In",
+        });
+      } else {
+        function generateotp() {
+          var digits = "0123456789";
+          let OTP = "";
+          for (let i = 0; i < 6; i++) {
+            OTP += digits[Math.floor(Math.random() * 10)];
+          }
+          return OTP;
+        }
         var otp = generateotp();
         var transporter = nodemailer.createTransport({
           service: "Gmail",
@@ -160,20 +161,19 @@ app.post("/verify", function (req, res) {
           }
         });
         const queryStorage = {
-          text: 'INSERT INTO "tempmail" VALUES('+ '$1,'+ '$2'+')',
-          values: [mail_id,otp],
+          text: 'INSERT INTO "tempmail" VALUES(' + "$1," + "$2" + ")",
+          values: [mail_id, otp],
         };
         await client.query(queryStorage);
-        await client.query("COMMIT",function(error,response){
-          if(error){
+        await client.query("COMMIT", function (error, response) {
+          if (error) {
             console.log(error);
             res.render("verify", {
               msg: "Something went wrong! Try again",
             });
+          } else {
+            res.redirect("verify/" + mail_id);
           }
-          else{
-          res.redirect("verify/"+mail_id);
-        }
         });
       }
     } catch (err) {
@@ -192,8 +192,11 @@ app.post("/verify", function (req, res) {
 app.get("/verify/:mail_id", function (req, res) {
   var mail_id = req.params.mail_id;
   res.render("verifyotp", {
-    text: "Welcome, "+mail_id+" check the mail we just sent to you & enter the OTP below",
-    msg: "Please copy the 6 digit OTP"
+    text:
+      "Welcome, " +
+      mail_id +
+      " check the mail we just sent to you & enter the OTP below",
+    msg: "Please copy the 6 digit OTP",
   });
 });
 //After entering OTP
@@ -214,25 +217,23 @@ app.post("/verify/:mail_id", function (req, res) {
 
       const queryStorage = {
         text: 'DELETE FROM "tempmail" where email = $1',
-        values: [mail_id]
+        values: [mail_id],
       };
       await client.query(queryStorage);
-      await client.query("COMMIT",function(error,response){
-        if(error){
+      await client.query("COMMIT", function (error, response) {
+        if (error) {
           console.log(error);
-        }
-        else{
-          if(otpbyuser == OTP){
-            res.redirect("/signup/"+mail_id);
-          }
-          else{
-            res.redirect("/verify")
+        } else {
+          if (otpbyuser == OTP) {
+            res.redirect("/signup/" + mail_id);
+          } else {
+            res.redirect("/verify");
           }
         }
       });
     } catch (err) {
       console.log(err);
-      res.render("verify/"+mail_id, {
+      res.render("verify/" + mail_id, {
         msg: "Something went wrong! Try again",
       });
     } finally {
@@ -243,15 +244,15 @@ app.post("/verify/:mail_id", function (req, res) {
 //----------------------------------------------------------------------------------------------------
 // showing registration page
 app.get("/signup/:mail_id", sessionChecker, function (req, res) {
-  res.render("signup",{
+  res.render("signup", {
     mail_id: req.params.mail_id,
-    msg: 'Please Fill all the fields',
-    username : '',
-    name : '',
-    pas : '',
-    contact : '',
-    location : '',
-    year : '',
+    msg: "Please Fill all the fields",
+    username: "",
+    name: "",
+    pas: "",
+    contact: "",
+    location: "",
+    year: "",
   });
 });
 
@@ -281,12 +282,12 @@ app.post("/signup/:mail_id", function (req, res) {
         res.render("signup", {
           mail_id: req.params.mail_id,
           msg: "Username not available. Try another username.",
-          username : user.username,
-          name : user.name,
-          pas : user.password,
-          contact : user.contact,
-          location : user.location,
-          year : user.branchYear,
+          username: user.username,
+          name: user.name,
+          pas: user.password,
+          contact: user.contact,
+          location: user.location,
+          year: user.branchYear,
         });
       } else {
         res.redirect("login");
@@ -297,10 +298,10 @@ app.post("/signup/:mail_id", function (req, res) {
 //-------------------------------------------------------------------------------------------------------------
 // displaying login page
 app.get("/login", sessionChecker, function (req, res) {
-  res.render("login",{
-    msg: 'Please Enter Username & Password',
-    id: '',
-    pas: ''
+  res.render("login", {
+    msg: "Please Enter Username & Password",
+    id: "",
+    pas: "",
   });
 });
 
@@ -330,7 +331,7 @@ app.post("/login", function (req, res) {
       res.render("login", {
         msg: "Invalid username and password",
         id: user.username,
-        pas: user.password
+        pas: user.password,
       });
     } else {
       try {
@@ -351,7 +352,7 @@ app.post("/login", function (req, res) {
             res.render("login", {
               msg: "Wrong password",
               id: user.username,
-              pas: user.password
+              pas: user.password,
             });
           }
         });
@@ -359,7 +360,7 @@ app.post("/login", function (req, res) {
         res.render("Login", {
           msg: "Invalid Username",
           id: user.username,
-          pas: user.password
+          pas: user.password,
         });
       }
     }
@@ -492,13 +493,12 @@ app.post("/homepage/:category", function (req, res) {
   var category = req.params.category;
   var input = _.lowerCase([(string = req.body.productinput)]);
 
-  var newstring = '';
+  var newstring = "";
   for (var i = 0; i < input.length; i++) {
-    if (input[i] == ' ') {
-      newstring += '|'
-    }
-    else {
-      newstring += input[i]
+    if (input[i] == " ") {
+      newstring += "|";
+    } else {
+      newstring += input[i];
     }
   }
   console.log(newstring);
@@ -510,7 +510,13 @@ app.post("/homepage/:category", function (req, res) {
       case "book":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "author" || ' + "' '" + ' || "subject") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "author" || ' +
+            "' '" +
+            ' || "subject") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -519,7 +525,15 @@ app.post("/homepage/:category", function (req, res) {
       case "notes":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' + "' '" + ' ||"topic" || ' + "' '" + ' || "professor" || ' + "' '" + ' || "subject") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' ||"topic" || ' +
+            "' '" +
+            ' || "professor" || ' +
+            "' '" +
+            ' || "subject") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -528,7 +542,11 @@ app.post("/homepage/:category", function (req, res) {
       case "clothing":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "type") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "type") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -537,7 +555,11 @@ app.post("/homepage/:category", function (req, res) {
       case "calculator":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "brand") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "brand") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -546,7 +568,11 @@ app.post("/homepage/:category", function (req, res) {
       case "pc":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "brand") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "brand") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -555,7 +581,13 @@ app.post("/homepage/:category", function (req, res) {
       case "other":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' + "' '" + ' || "type" || ' + "' '" + ' || "description") @@ to_tsquery(' + '$1' + '))',
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' +
+            "' '" +
+            ' || "type" || ' +
+            "' '" +
+            ' || "description") @@ to_tsquery(' +
+            "$1" +
+            "))",
           values: [newstring],
           rowMode: "array",
         };
@@ -756,12 +788,11 @@ app.get("/editproduct/:category&:id", function (req, res) {
       var details = resp.rows;
       if (err) {
         res.send("Error");
-      }
-      else {
+      } else {
         res.render("editproduct", {
           username: sess.username,
           category: _.capitalize([(string = category)]),
-          details: details
+          details: details,
         });
       }
     });
@@ -784,7 +815,7 @@ app.post("/editpro/:category&:id", function (req, res) {
         msg: err,
         username: sess.username,
         category: _.capitalize([(string = category)]),
-        details: [[]]
+        details: [[]],
       });
     } else {
       if (req.file == undefined) {
@@ -792,7 +823,7 @@ app.post("/editpro/:category&:id", function (req, res) {
           msg: "No file selected",
           username: sess.username,
           category: _.capitalize([(string = category)]),
-          details: [[]]
+          details: [[]],
         });
       } else {
         const imgPath = `../images/${req.file.filename}`;
@@ -822,7 +853,8 @@ app.post("/editpro/:category&:id", function (req, res) {
             switch (category) {
               case "books":
                 upquery = {
-                  text: 'UPDATE "book" SET author = $5,publication = $2,edition = $3,subject = $4 WHERE product_id = $1',
+                  text:
+                    'UPDATE "book" SET author = $5,publication = $2,edition = $3,subject = $4 WHERE product_id = $1',
                   values: [
                     product_id,
                     product.publication,
@@ -834,7 +866,8 @@ app.post("/editpro/:category&:id", function (req, res) {
                 break;
               case "clothing":
                 upquery = {
-                  text: 'UPDATE "clothing" SET size = $2,type = $3,color = $4 WHERE product_id = $1',
+                  text:
+                    'UPDATE "clothing" SET size = $2,type = $3,color = $4 WHERE product_id = $1',
                   values: [
                     product_id,
                     product.size,
@@ -845,7 +878,8 @@ app.post("/editpro/:category&:id", function (req, res) {
                 break;
               case "notes":
                 upquery = {
-                  text: 'UPDATE "notes" SET subject = $2,topic = $3,professor = $4,noteyear = $5 WHERE product_id = $1',
+                  text:
+                    'UPDATE "notes" SET subject = $2,topic = $3,professor = $4,noteyear = $5 WHERE product_id = $1',
                   values: [
                     product_id,
                     product.n_subject,
@@ -857,13 +891,15 @@ app.post("/editpro/:category&:id", function (req, res) {
                 break;
               case "other":
                 upquery = {
-                  text: 'UPDATE "other" SET description = $2,type = $3 WHERE product_id = $1',
+                  text:
+                    'UPDATE "other" SET description = $2,type = $3 WHERE product_id = $1',
                   values: [product_id, product.description, product.cate],
                 };
                 break;
               case "calculators":
                 upquery = {
-                  text: 'UPDATE "calculator" SET brand = $2,model = $3,features = $4 WHERE product_id = $1',
+                  text:
+                    'UPDATE "calculator" SET brand = $2,model = $3,features = $4 WHERE product_id = $1',
                   values: [
                     product_id,
                     product.calcibrand,
@@ -874,7 +910,8 @@ app.post("/editpro/:category&:id", function (req, res) {
                 break;
               case "pcs":
                 upquery = {
-                  text: 'UPDATE "pc" SET os = $2,ram = $3,storage = $4,brand = $5,processor = $6 WHERE product_id = $1',
+                  text:
+                    'UPDATE "pc" SET os = $2,ram = $3,storage = $4,brand = $5,processor = $6 WHERE product_id = $1',
                   values: [
                     product_id,
                     product.os,
@@ -894,9 +931,9 @@ app.post("/editpro/:category&:id", function (req, res) {
             var filePath = `./public/images/${req.file.filename}`;
             fs.unlink(filePath, function (err) {
               if (err) {
-                console.log(err)
+                console.log(err);
               } else {
-                console.log('Deleted!')
+                console.log("Deleted!");
               }
             });
             await client.query("ROLLBACK");
@@ -905,7 +942,7 @@ app.post("/editpro/:category&:id", function (req, res) {
               msg: "Please fill out all fields!!",
               username: sess.username,
               category: _.capitalize([(string = category)]),
-              details: [[]]
+              details: [[]],
             });
           } finally {
             client.release();
@@ -1338,7 +1375,7 @@ app.post("/sold/:productID", function (req, res) {
           };
           await client.query(deleteQuery);
 
-          res.redirect("/request/0");
+          res.redirect("/history/0");
         } else {
           throw "OTP Not Match!";
         }
@@ -1624,6 +1661,45 @@ app.get("/ongoing", function (req, res) {
   }
 });
  */
+
+app.get("/history/:action", function (req, res) {
+  var sess = req.session;
+  if (sess.username) {
+    var query,action;
+    if (req.params.action == 0) {
+      // sold products by sess.username
+      query = {
+        text:
+          'SELECT buyer_id,product_name,finalized_price,product_image FROM "transaction" WHERE seller_id = $1',
+        values: [sess.username],
+      };
+      action = 'sold'
+    } else {
+      query = {
+        text:
+          'SELECT seller_id,product_name,finalized_price,product_image FROM "transaction" WHERE buyer_id = $1',
+        values: [sess.username],
+      };
+      action = 'bought'
+    }
+
+    db.query(query, function (err, resp) {
+      if (err) {
+        console.log(err);
+        res.send("Error! Try Again.");
+      } else {
+        res.render("history", {
+          username: sess.username,
+          transaction: resp.rows,
+          action:action
+        });
+      }
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.use(function (req, res) {
   res.sendStatus(404);
 });

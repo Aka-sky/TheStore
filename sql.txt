@@ -260,3 +260,25 @@ username, name, email_id, contact, location, year,"calculator".brand,"calculator
 from "product" inner join "user" on
 "product".seller_id = "user".username inner join "calculator" on 
 "product".product_id = "calculator".product_id;
+
+CREATE TABLE "requests" (
+    buyer_id character varying NOT NULL,
+    seller_id character varying NOT NULL,
+    product_id int NOT NULL,
+    otp int NOT NULL,
+    PRIMARY KEY (buyer_id,seller_id,product_id),
+    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+);
+
+CREATE TABLE "transaction" (
+    buyer_id character varying,
+    seller_id character varying,
+    product_name character varying NOT NULL,
+    finalized_price int NOT NULL,
+    product_image character varying NOT NULL,
+    PRIMARY KEY (buyer_id,seller_id),
+    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
+);
