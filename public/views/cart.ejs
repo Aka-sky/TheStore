@@ -52,8 +52,8 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/profile/<%= user %>">Profile</a>
-              <a class="dropdown-item" href="/buylog">Buylist</a>
-              <a class="dropdown-item" href="/selllog">SellList</a>
+              <a class="dropdown-item" href="/request/0">My Deals</a>
+              <a class="dropdown-item" href="#">My History</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
@@ -79,12 +79,12 @@
           <h5>Price : <span class="details">Rs. <%= details[i][3] %></span></h5>
           <br />
           <h3>Seller Info</h3>
-          <h5>Username: <span class="details"><%= details[0][9] %></span></h5>
-          <h5>Name : <span class="details"><%= details[0][10] %></span></h5>
-          <h5>Contact No : <span class="details"><%= details[0][13] %></span></h5>
-          <h5>Email : <span class="details"><%= details[0][11] %></span></h5>
-          <h5>Preferred Location : <span class="details"><%= details[0][14] %></span></h5>
-          <h5>Branch/Year : <span class="details"><%= details[0][15] %></span></h5>
+          <h5>Username: <span class="details"><%= details[i][9] %></span></h5>
+          <h5>Name : <span class="details"><%= details[i][10] %></span></h5>
+          <h5>Contact No : <span class="details"><%= details[i][13] %></span></h5>
+          <h5>Email : <span class="details"><%= details[i][11] %></span></h5>
+          <h5>Preferred Location : <span class="details"><%= details[i][14] %></span></h5>
+          <h5>Branch/Year : <span class="details"><%= details[i][15] %></span></h5>
         </div>
         <a
           class="col-lg-4 buy-button btn btn-success"

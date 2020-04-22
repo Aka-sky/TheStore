@@ -99,23 +99,29 @@
       <% for (var i=0; i<product.length;i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4">
-          <img src= "<%= product[i].product_image %>" style="margin: 10px;"/>
-          <a class="atc btn-danger" style="font-size: 24px;padding: 10px;margin: 10px;" href="#">
-            Remove
-          </a>
-          <a class="atc btn-success" style="font-size: 24px ;padding: 10px;margin: 2px;" href="/sold/<%= product[i].product_id %>">
-            Sold
-          </a>
+          <img src= "<%= product[i].product_image %>"/>
         </div>
         <div class="content col-lg-8">
-          <h2><%= product[i].product_name %></h2>
-          <h4>Product Id : <%= product[i].product_id %></h4>
-          <h4>Price : Rs. <%= product[i].price %></h4>
-          <br />
-          <h2>Buyers Interested</h2>
+          <h3><%= product[i].product_name %></h3>
+          <h5>Product Id : <span class="details"><%= product[i].product_id %></span></h5>
+          <h5>Price : <span class="details">Rs. <%= product[i].price %></span></h5>
+          <% if (typeof rProduct[j] != 'undefined') { %>
+          <% if (rProduct[j].product_id == product[i].product_id) { %>
+          <h4>Buyers Interested</h4>
           <% while (j < rProduct.length && rProduct[j].product_id == product[i].product_id) { %>
-          <h4><a href = "/profile/<%= rProduct[j].buyer_id %>"><%= rProduct[j].buyer_id %></a></h4>
+          <h5><a href = "/profile/<%= rProduct[j].buyer_id %>"><%= rProduct[j].buyer_id %></a></h5>
             <% j++;} %>
+          <% } else { %>
+            <h4>No buyers yet :-(</h4>
+          <% } %>
+          <% } else { %>
+             <h4>No buyers yet :-(</h4>
+          <% } %>
+          <div class="tp">
+          <a href="/sold/<%= product[i].product_id %>" class=" btn btn-primary atc">Mark Sold</a>
+          <a href="/editproduct/<%= product[i].category %>&<%= product[i].product_id %>" class=" btn btn-primary atc">Edit Info</a>
+          </div>
+
         </div>
       </div>
     <% } %>
@@ -131,12 +137,12 @@
             Pass: <%= rProduct[i].otp %>
           </div>
         </div>
-        <div class="content col-lg-8">
-          <h2><%= product[i].product_name %></h2>
-          <h4>Product Id : <%= product[i].product_id %></h4>
-          <h4>Price : Rs. <%= product[i].price %></h4>
-          <br />
-          <h2>Seller</h2>
+        <div class="content col-lg-8">        
+          <h3><%= product[i].product_name %></h3>
+          <h5>Product Id : <span class="details"><%= product[i].product_id %></span></h5>
+          <h5>Price : <span class="details">Rs. <%= product[i].price %></span></h5>
+          <br>
+          <h3>Seller</h3>
           <h4><a href = "/profile/<%= rProduct[i].seller_id %>"><%= rProduct[i].seller_id %></a></h4>
         </div>
       </div>

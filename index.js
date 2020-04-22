@@ -1200,12 +1200,12 @@ app.get("/request/:action", function (req, res) {
 
           const productQuery = {
             text:
-              'SELECT product_name,price,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT DISTINCT product_id FROM "requests" WHERE seller_id = $1 ) ORDER BY product_id ASC',
+              'SELECT product_name,price,product_image,product_id, category FROM "product" WHERE seller_id = $1 ORDER BY product_id ASC',
             values: [sess.username],
           };
           const product = await client.query(productQuery);
 
-          res.render("selllog", {
+          res.render("ongoing", {
             username: sess.username,
             rProduct: buyerProduct.rows,
             product: product.rows,
@@ -1231,7 +1231,7 @@ app.get("/request/:action", function (req, res) {
           };
           const product = await client.query(productQuery);
 
-          res.render("selllog", {
+          res.render("ongoing", {
             username: sess.username,
             rProduct: sellerProduct.rows,
             product: product.rows,
@@ -1248,7 +1248,7 @@ app.get("/request/:action", function (req, res) {
 
     // query1: 'SELECT buyer_id,product_id FROM "requests" WHERE seller_id = 'someone1' ORDER BY product_id ASC'
     // query2: 'SELECT product_name,price,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT DISTINCT product_id FROM requests WHERE seller_id = 'someone1') ORDER BY product_id ASC;'
-    // now render selllog and show products accoring to second query and usernames of buyers until product_id matches
+    // now render ongoing and show products accoring to second query and usernames of buyers until product_id matches
   } else {
     res.redirect("/login");
   }
@@ -1598,7 +1598,7 @@ app.post("/productUpload", function (req, res) {
     }
   });
 });
-//-----------------------------------------------------------------------------------------------------
+/* //-----------------------------------------------------------------------------------------------------
 //Store products for sale by you along with requsted by you
 app.get("/ongoing", function (req, res) {
   var sess = req.session;
@@ -1623,7 +1623,7 @@ app.get("/ongoing", function (req, res) {
     res.redirect("/login");
   }
 });
-
+ */
 app.use(function (req, res) {
   res.sendStatus(404);
 });
