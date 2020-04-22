@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/loginstyle.css">
-    <title>TheVStore | Email </title>
+    <title>TheVStore | Verify Email account </title>
   </head>
   <body>
     <!-- <section id="head"> -->
@@ -24,12 +24,12 @@
         <!-- Navbar links -->
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav ml-auto custom-link">
-          <li class="nav-item">
+          <!-- <li class="nav-item">
           <a class="nav-link" href="/login">Log In</a>
           </li>
           <li class="nav-item">
           <a class="nav-link" href="/">About Us</a>
-          </li>
+          </li> -->
         </ul>
         </div>
       </nav>
@@ -39,7 +39,8 @@
       <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
         <div class="card card-signin my-5">
           <div class="card-body">
-            <h5 class="card-title text-center">Register with Email</h5>
+            <h5 class="card-title text-center">Enter OTP</h5>
+            <p><%= text %></p>
             <div id="erralert" class="alert alert-warning alert-dismissible fade show" role="alert">
               <%= typeof msg != 'undefined' ? msg : "" %>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -50,8 +51,8 @@
               <div class="form-label-group">
 
               <div class="form-label-group">
-                <input type="email" id="email" name ='email' class="form-control" placeholder="Email address" required>
-                <label for="email">Email address</label>
+                <input type="number" id="OTP" name ='OTP' class="form-control" placeholder="Enter OTP here" required>
+                <label for="OTP">OTP</label>
               </div>
               <div style="text-align: center;">
             <button
@@ -68,13 +69,8 @@
       </div>
     </div>
   </section>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-      <script>
-        // if(typeof msg !== 'undefined'){
-        //   $('#erralert').show();
-        // }
-      </script>
     </body>
   </html>

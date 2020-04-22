@@ -34,8 +34,8 @@
   padding: 0%;
 }
 .product-info {
-  border: 1px solid rgba(156, 151, 151, 0.979);
-  border-width: 10%;
+  background-color: rgb(245, 239, 239);
+  border: none;
   border-radius: 10px;
   padding: 2%;
 }
@@ -71,7 +71,7 @@
   padding: 20px;
   height: 130px;
   width: 100%;
-  border: 1px solid #f2f2f2;
+  border: 1px solid #a3a1a1;
 }
 .added-comments{
   padding: 3%;

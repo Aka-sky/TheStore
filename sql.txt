@@ -1,3 +1,8 @@
+CREATE TABLE "tempmail" (
+    email character varying,
+    otp character varying
+)
+
 CREATE TABLE "user" (
     username character varying PRIMARY KEY,
     name character varying NOT NULL,

@@ -18,8 +18,8 @@
       src="https://kit.fontawesome.com/7cd5bd2715.js"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="../css/selllog.css" />
-    <title>TheVStore | Username's Sell Log</title>
+    <link rel="stylesheet" href="../css/ongoing.css" />
+    <title>TheVStore | <%= username %>'s Current Transactions</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg fixed-top bg-light">
@@ -50,13 +50,11 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >
-              Username <i class="fas fa-user-circle"></i>
+            ><%= username %> <i class="fas fa-user-circle"></i>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/profile/<%= username %>">Profile</a>
               <a class="dropdown-item" href="#">Buylist</a>
-              <a class="dropdown-item" href="#">SellList</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/logout">Log Out</a>
             </div>

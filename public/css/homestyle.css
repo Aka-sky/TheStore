@@ -70,7 +70,15 @@
   margin: 1% 1%;
 }
 .card{
-  border: 0.5px solid;
+  width: 90%;
+  background-color: rgb(245, 239, 239);
+  border: none;
+  box-shadow: -1px 2px 10px -3px rgba(0,0,0,0.75);
+}
+.card:hover{
+  -webkit-box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
+  -moz-box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
+  box-shadow: -1px 9px 40px -12px rgba(0,0,0,0.75);
 }
 .cat{
   background-color: rgb(196, 189, 189);
@@ -78,12 +86,22 @@
   padding: 1%;
   border-radius: 5px;
 }
+.info {
+  color: black;
+  text-decoration: none ;
+}
+.info:hover
+{
+  color: black;
+ text-decoration:none;
+ cursor:pointer;
+}
 
 
 .searchbar{
   margin: 2% 0% 1.5%;
   height: 60px;
-  background-image: linear-gradient(to bottom right,  rgb(226, 243, 247),rgb(112, 208, 224));
+  background-image: linear-gradient(to bottom left,  rgb(226, 243, 247),rgb(112, 208, 224));
   border-radius: 30px;
   padding: 10px;
   }
@@ -105,7 +123,10 @@
   caret-color:black;
   transition: width 0.4s linear;
   }
-
+  .searchbar:hover{
+    background-image: linear-gradient(to bottom right,  rgb(248, 250, 250),rgb(188, 236, 245));
+    border-width: 0px;
+  }
   .searchbar:hover > .search_icon{
   background: white;
   color: #0062e6;
@@ -136,5 +157,10 @@
   }
   .searchbar:hover > .search_input{
     width: 300px;
+  }
+}
+@media (max-width: 768px) {
+  .card{
+    width: 100%;
   }
 }
