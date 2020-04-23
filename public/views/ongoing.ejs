@@ -73,7 +73,9 @@
 
     <section id="picture">
       <section class="rad">
+        <div class="container" style="text-align: justify;">
         <%= typeof msg != 'undefined' ? msg : '' %>
+        </div>
         <% if (action == 'sale' ) { %>
         <label class="radio-inline"
           ><input name="optradio" onclick="document.location.href='/request/0'" type="radio" checked>For Sale</input></label

@@ -143,7 +143,7 @@ app.post("/verify", function (req, res) {
         });
         var mailOptions = {
           from: process.env.STORE_EMAIL,
-          to: email,
+          to: mail_id,
           subject: "Verfication of email on VStore",
           html:
             "<h4>Hello!</h4><p>Just one step away from email verfication!<br>Copy this OTP: " +
@@ -225,6 +225,7 @@ app.post("/verify/:mail_id", function (req, res) {
           console.log(error);
         } else {
           if (otpbyuser == OTP) {
+            req.session.otpVerify = 'yes'
             res.redirect("/signup/" + mail_id);
           } else {
             res.redirect("/verify");
@@ -244,41 +245,46 @@ app.post("/verify/:mail_id", function (req, res) {
 //----------------------------------------------------------------------------------------------------
 // showing registration page
 app.get("/signup/:mail_id", sessionChecker, function (req, res) {
-  res.render("signup", {
-    mail_id: req.params.mail_id,
-    msg: "Please Fill all the fields",
-    username: "",
-    name: "",
-    pas: "",
-    contact: "",
-    location: "",
-    year: "",
-  });
+  var sess = req.session;
+  if ( sess.otpVerify ) {
+    res.render("signup", {
+      mail_id: req.params.mail_id,
+      msg: "Please Fill all the fields",
+      username: "",
+      name: "",
+      pas: "",
+      contact: "",
+      location: "",
+      year: "",
+    });
+  } else {
+    res.redirect("/verify")
+  }
 });
 
 // handling submit on signup Page
 app.post("/signup/:mail_id", function (req, res) {
   var user = req.body;
+  console.log(req.body)
   var sess = req.session;
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
     var pass = hash;
     const query = {
       text:
-        'INSERT INTO "user"(username, name, email_id, password, contact, location, year) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        'INSERT INTO "user" (username, name, email_id, password, contact, location, year) VALUES ($1,$2,$3,$4,$5,$6,$7)',
       values: [
         user.username,
         user.name,
-        user.email,
+        req.params.mail_id,
         pass,
         user.contact,
         user.location,
-        user.branchYear,
+        user.branchYear
       ],
     };
 
-    db.query(query, function (err) {
-      if (err) {
-        console.log(err);
+    db.query(query, function (error) {
+      if (error) {
         res.render("signup", {
           mail_id: req.params.mail_id,
           msg: "Username not available. Try another username.",
@@ -290,7 +296,8 @@ app.post("/signup/:mail_id", function (req, res) {
           year: user.branchYear,
         });
       } else {
-        res.redirect("login");
+        delete req.session.otpVerify;
+        res.redirect("/login");
       }
     });
   });
@@ -320,7 +327,7 @@ app.post("/login", function (req, res) {
 
   // query definition
   const query = {
-    text: 'SELECT password,active FROM "user" WHERE username = $1 ',
+    text: 'SELECT password FROM "user" WHERE username = $1 ',
     values: [user.username],
     rowMode: "array",
   };
@@ -341,7 +348,6 @@ app.post("/login", function (req, res) {
         ) {
           if (result) {
             sess.username = user.username;
-            sess.active = resp.rows[0][1];
             if (sess.redirectURL) {
               //console.log(sess.redirectURL);
               res.redirect(sess.redirectURL);
@@ -376,8 +382,7 @@ app.get("/homepage", function (req, res) {
 
     const query = {
       text:
-        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"',
-      rowMode: "array",
+        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"'
     };
 
     db.query(query, function (err, resp) {
@@ -411,7 +416,6 @@ app.post("/homepage", function (req, res) {
         lowerproductname +
         "%'",
       //values: [lowerproductname],
-      rowMode: "array",
     };
     db.query(query, function (err, resp) {
       if (err) {
@@ -444,7 +448,6 @@ app.get("/homepage/:category", function (req, res) {
         'SELECT product_name,price,years_of_usage,product_image,product_id FROM "product" WHERE "product".product_id IN (SELECT product_id FROM ' +
         category +
         ");",
-      rowMode: "array",
     };
     var searchmsg = "";
     switch (category) {
@@ -517,8 +520,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
         };
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
@@ -534,8 +536,8 @@ app.post("/homepage/:category", function (req, res) {
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
+          
         };
         searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
@@ -547,8 +549,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "type") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
         };
         searchmsg = "Search by Name, Subject...";
         break;
@@ -560,8 +561,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
         };
         searchmsg = "Search by Name, Brand...";
         break;
@@ -573,8 +573,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
         };
         searchmsg = "Search by Name, Brand...";
         break;
@@ -588,8 +587,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "description") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
-          rowMode: "array",
+          values: [newstring]
         };
         searchmsg = "Search by Name, Type, Description...";
         break;
@@ -825,7 +823,7 @@ app.post("/editpro/:category&:id", function (req, res) {
           category: _.capitalize([(string = category)]),
           details: [[]],
         });
-      } else {
+      } else { 
         const imgPath = `../images/${req.file.filename}`;
         (async () => {
           const client = await db.connect();
@@ -980,7 +978,6 @@ app.get("/cart", function (req, res) {
       text:
         'SELECT * FROM "product" INNER JOIN "user" ON("product".product_id, "user".username) IN ( SELECT product_id, seller_id FROM "product" WHERE "product".product_id IN( SELECT "cart".product_id FROM "cart" WHERE username = $1 ))',
       values: [sess.username],
-      rowMode: "array",
     };
 
     db.query(query, function (err, resp) {
@@ -1005,7 +1002,6 @@ app.get("/cart/:action/:product", function (req, res) {
 
     if (action == 1) {
       // buy selected in cart on product_id
-      if (sess.active) {
         // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
         // first we need buyer details and then email id of seller
         (async () => {
@@ -1063,7 +1059,8 @@ app.get("/cart/:action/:product", function (req, res) {
               if (err) {
                 console.log(err);
               } else {
-                res.send("Request sent to seller!!");
+                sess.msg = "Request sent to seller! Once seller accepts the request you will receive a email and the product will appear here."
+                res.redirect('/request/1')
               }
             });
             await client.query("COMMIT");
@@ -1074,11 +1071,6 @@ app.get("/cart/:action/:product", function (req, res) {
             client.release();
           }
         })().catch((err) => console.log(err.stack));
-      } else {
-        res.render("verify", {
-          username: sess.username,
-        });
-      }
       // res.send("Request sent to seller!!");
     } else {
       // remove selected in cart on product_id
@@ -1267,13 +1259,24 @@ app.get("/request/:action", function (req, res) {
               "' ) ORDER BY product_id ASC",
           };
           const product = await client.query(productQuery);
-
-          res.render("ongoing", {
-            username: sess.username,
-            rProduct: sellerProduct.rows,
-            product: product.rows,
-            action: "purchase",
-          });
+          if (sess.msg){
+            var msg = sess.msg;
+            delete req.session.msg;
+            res.render("ongoing", {
+              username: sess.username,
+              rProduct: sellerProduct.rows,
+              product: product.rows,
+              action: "purchase",
+              msg: msg
+            });
+          } else {
+            res.render("ongoing", {
+              username: sess.username,
+              rProduct: sellerProduct.rows,
+              product: product.rows,
+              action: "purchase",
+            });
+          }
         }
       } catch (err) {
         console.log(err);
@@ -1306,10 +1309,20 @@ app.get("/sold/:productID", function (req, res) {
         res.send("Error");
         console.log(err);
       } else {
-        res.render("soldVerify", {
-          username: sess.username,
-          buyers: resp.rows,
-        });
+        if (sess.msg) {
+          var msg = sess.msg;
+          delete req.session.msg;
+          res.render("soldVerify",{
+            username: sess.username,
+            buyers: resp.rows,
+            msg: msg
+          })
+        } else {
+          res.render("soldVerify", {
+            username: sess.username,
+            buyers: resp.rows,
+          });
+        }
       }
     });
   } else {
@@ -1356,7 +1369,7 @@ app.post("/sold/:productID", function (req, res) {
           //    buyer_id,finalizedPrice from form post, product_name
           //    product_image from product table
           const insertTransQuery = {
-            text: 'INSERT INTO "transaction" VALUES ($1,$2,$3,$4,$5)',
+            text: 'INSERT INTO "transaction" (buyer_id,seller_id,product_name,finalized_price,product_image) VALUES ($1,$2,$3,$4,$5)',
             values: [
               content.buyerOptions,
               sess.username,
@@ -1382,7 +1395,9 @@ app.post("/sold/:productID", function (req, res) {
 
         await client.query("COMMIT");
       } catch (err) {
+        console.log(err)
         await client.query("ROLLBACK");
+        sess.msg = 'Pass Not Matched'
         res.redirect("/sold/" + req.params.productID);
       } finally {
         await client.release();
@@ -1412,8 +1427,7 @@ app.get("/profile/:username", function (req, res) {
       } else {
         res.render("profile", {
           currentuser: currentuser,
-          username: sess.username,
-          active: sess.active,
+          username: sess.username
         });
       }
     });
@@ -1483,15 +1497,9 @@ app.post("/editprofile", function (req, res) {
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    if (sess.active) {
       res.render("sellproduct", {
         user: sess.username,
       });
-    } else {
-      res.render("verify", {
-        username: sess.username,
-      });
-    }
   } else {
     res.redirect("/login");
   }
@@ -1699,6 +1707,45 @@ app.get("/history/:action", function (req, res) {
     res.redirect("/login");
   }
 });
+
+app.get("/deleteproduct/:productID",function(req,res) {
+  var sess = req.session;
+  if (sess.username) {
+    (async() => {
+      const client = await db.connect();
+
+      try{
+        await client.query("BEGIN");
+        const sellerQuery = {
+          text: 'SELECT seller_id FROM "product" WHERE product_id = $1',
+          values: [req.params.productID]
+        }
+        const seller = await client.query(sellerQuery);
+        if (seller.rows[0].seller_id == sess.username) {
+          // username is owner of the product can delete the product
+          const deleteQuery = {
+            text: 'DELETE FROM "product" WHERE product_id = $1',
+            values: [req.params.productID]
+          }
+          await client.query(deleteQuery);
+          res.redirect("/request/0")
+        } else {
+          res.redirect("/homepage")
+        }
+
+        await client.query("COMMIT")
+      } catch(err) {
+        console.log(err);
+        res.send("Go back and Try again.");
+        await client.query('ROLLBACK');
+      } finally {
+        client.release();
+      }
+    })().catch((err) => console.log(err.stack))
+  } else {
+    res.redirect("/login")
+  }
+})
 
 app.use(function (req, res) {
   res.sendStatus(404);

@@ -69,37 +69,37 @@
       details.length; i++) { -%>
       <div class="row product-info">
         <div class="pict col-lg-4 col-md-4">
-          <img src="<%= details[i][5] %>" alt="This is a image" />
+          <img src="<%= details[i].product_image %>" alt="This is a image" />
         </div>
         <div class="content col-lg-8 col-md-8">
-          <h3><%= details[i][1] %></h3>
-          <h5>Product Id : <span class="details"><%= details[i][0] %></span></h5>
-          <h5>Years of Usage : <span class="details"><%= details[i][2] %></span></h5>
-          <h5>Condition : <span class="details"><%= details[i][8] %></span></h5>
-          <h5>Price : <span class="details">Rs. <%= details[i][3] %></span></h5>
+          <h3><%= details[i].product_name %></h3>
+          <h5>Product Id : <span class="details"><%= details[i].product_id %></span></h5>
+          <h5>Years of Usage : <span class="details"><%= details[i].years_of_usage %></span></h5>
+          <h5>Condition : <span class="details"><%= details[i].condition %></span></h5>
+          <h5>Price : <span class="details">Rs. <%= details[i].price %></span></h5>
           <br />
           <h3>Seller Info</h3>
-          <h5>Username: <span class="details"><%= details[i][9] %></span></h5>
-          <h5>Name : <span class="details"><%= details[i][10] %></span></h5>
-          <h5>Contact No : <span class="details"><%= details[i][13] %></span></h5>
-          <h5>Email : <span class="details"><%= details[i][11] %></span></h5>
-          <h5>Preferred Location : <span class="details"><%= details[i][14] %></span></h5>
-          <h5>Branch/Year : <span class="details"><%= details[i][15] %></span></h5>
+          <h5>Username: <span class="details"><%= details[i].username %></span></h5>
+          <h5>Name : <span class="details"><%= details[i].name %></span></h5>
+          <h5>Contact No : <span class="details"><%= details[i].contact %></span></h5>
+          <h5>Email : <span class="details"><%= details[i].email_id %></span></h5>
+          <h5>Preferred Location : <span class="details"><%= details[i].location %></span></h5>
+          <h5>Branch/Year : <span class="details"><%= details[i].year %></span></h5>
         </div>
         <a
           class="col-lg-4 buy-button btn btn-success"
-          href="/cart/1/<%= details[i][0] %>"
+          href="/cart/1/<%= details[i].product_id %>"
         >
           Buy
         </a>
         <a
           class="col-lg-4 buy-button btn btn-danger"
-          href="/cart/0/<%= details[i][0] %>"
+          href="/cart/0/<%= details[i].product_id %>"
         >
           Remove from Cart
         </a>
       </div>
-      <% total = total + details[i][3]; } -%> 
+      <% total = total + details[i].price; } -%> 
       <div class="footer">
       <p>Total Cost : Rs. <%= total %></p>
     </div>
