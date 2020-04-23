@@ -67,6 +67,16 @@ label {
 .details{
   font-weight: 350;
 }
+.info {
+  color: black;
+  text-decoration: none ;
+}
+.info:hover
+{
+  color: black;
+ text-decoration:none;
+ cursor:pointer;
+}
 
 @media (max-width: 991px) {
   .collapse {

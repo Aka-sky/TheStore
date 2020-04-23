@@ -28,10 +28,10 @@
   margin: 110px 15% 2%;
 }
 .pict img {
-  width: 100%;
   border-radius: 10px;
-  margin: 0%;
-  padding: 0%;
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
 }
 .product-info {
   background-color: rgb(245, 239, 239);

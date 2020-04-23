@@ -93,11 +93,22 @@
 
         <!-- edit form column -->
         <div class="col-md-9 personal-info">
-          <div class="alert alert-info alert-dismissable">
-            <a class="panel-close close" data-dismiss="alert">×</a>
-            <i class="fa fa-coffee"></i>
-            <%= typeof msg != 'undefined' ? msg : 'Fill out all fields for successful entry'%>
-          </div>
+          <% if(msg != "" && msg != "Successfully added the product"){ %>
+            <div id="erralert" class="alert alert-warning alert-dismissible fade show" role="alert">
+              <%= typeof msg != 'undefined' ? msg : "" %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          <% } %>
+          <% if(msg == "Successfully added the product"){ %>
+            <div id="erralert" class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= typeof msg != 'undefined' ? msg : "" %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          <% } %>
           <h3>Product info</h3>
 
           <!-- <form class="form-horizontal" role="form" method="POST"> -->
@@ -105,13 +116,13 @@
             <div class="form-group">
               <label class="col-lg-3 control-label">Product Name:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="text" placeholder="name" id="name" name="name" required/>
+                <input class="form-control" type="text" placeholder="name" id="name" name="name" value="<%=pname%>" required/>
               </div>
             </div>
             <div class="form-group">
               <label class="col-lg-3 control-label">Years of Usage:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="number" placeholder="usage" id="years" name="years" required/>
+                <input class="form-control" type="number" placeholder="usage" id="years" name="years" value="<%=pyear%>" required/>
               </div>
             </div>
             <div class="form-group">
@@ -122,6 +133,7 @@
                   type="text"
                   placeholder="condition"
                   name="condition"
+                  value="<%=pcondition%>"
                   required
                 />
               </div>
@@ -129,7 +141,7 @@
             <div class="form-group">
               <label class="col-lg-3 control-label">Price:</label>
               <div class="col-lg-8">
-                <input class="form-control" type="number" placeholder="price" id="price" name="price" required/>
+                <input class="form-control" type="number" placeholder="price" id="price" value="<%=price%>" name="price" required/>
               </div>
             </div>
             <div class="form-group">

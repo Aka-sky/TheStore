@@ -92,11 +92,14 @@
   
           <!-- edit form column -->
           <div class="col-md-9 personal-info">
-            <div class="alert alert-info alert-dismissable">
-              <a class="panel-close close" data-dismiss="alert">×</a>
-              <i class="fa fa-coffee"></i>
-              <%= typeof msg != 'undefined' ? msg : 'Fill out all fields for successful entry'%>
-            </div>
+            <% if(msg != ""){ %>
+              <div id="erralert" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <%= typeof msg != 'undefined' ? msg : "" %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <% } %>
             <h3>Product info</h3>
   
             <!-- <form class="form-horizontal" role="form" method="POST"> -->

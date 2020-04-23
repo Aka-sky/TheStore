@@ -105,7 +105,7 @@
         </div>
         <div class="content col-lg-8">
           <h3><%= transaction[i].product_name %></h3>
-          <h5>Finalized Price : <span class="details">Rs. <%= transaction[i].price %></span></h5>
+          <h5>Finalized Price : <span class="details">Rs. <%= transaction[i].finalized_price %></span></h5>
           <% if (action == 'sold') { %>
           <h4>Buyer</h4>
           <h5><a href = "/profile/<%= transaction[i].buyer_id %>"><%= transaction[i].buyer_id %></a></h5>
@@ -117,7 +117,7 @@
       </div>
     <% } %>
   <% } else { %>
-      <h3 style="text-align: center; margin-top: 300px;"> No Results </h3>
+      <h3 style="text-align: center; margin-top: 200px;"> No Results </h3>
     <% } %>
     </section>
 
