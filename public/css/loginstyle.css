@@ -1,11 +1,15 @@
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .navbar {
-  height: 120px;
+  height: 15%;
   padding: 0% 10%;
 }
 .navbar-brand {
   background-color: #0062e6;
   border-radius: 20px;
-  font-size: 270%;
+  font-size: 250%;
   padding: 5px;
   color: white;
   margin-top: auto;
@@ -35,7 +39,7 @@
 }
 
 #main {
-  margin: 0% 3%;
+  margin: 3% 0% 3%;
 }
 :root {
   --input-padding-x: 1.5rem;
@@ -43,10 +47,10 @@
 }
 
 .card-signin {
-  width: 80%;
+  width: 70%;
   border: 0;
   border-radius: 1rem;
-  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1rem 0.5rem rgba(0, 0, 0, 0.1);
   margin-left: auto;
   margin-right: auto;
 }
@@ -149,15 +153,6 @@
   font-size: 12px;
   color: #777;
 }
-
-.btn-google {
-  color: #ea4335;
-}
-
-.btn-facebook {
-  color: #3b5998;
-}
-
 .last {
   text-align: center;
   margin-top: 10px;
@@ -184,5 +179,24 @@
   }
   .form-label-group input:-ms-input-placeholder {
     color: #777;
+  }
+}
+@media (max-width: 768px) {
+  .navbar {
+    height: 13%;
+    padding: 0% 7%;
+  }
+  .navbar-brand {
+    font-size: 220%;
+  }
+  .nav-item{
+    font-size: 110%;
+  }
+  #main {
+    margin: 10% 0% 0%;
+  }
+  .card-signin {
+    width: 92%;
+    margin-left: 4%;
   }
 }

@@ -122,7 +122,7 @@ app.post("/verify", function (req, res) {
       const email = emailResp.rows[0];
       if (email) {
         res.render("verify", {
-          msg: "Email account is already registered",
+          msg: "Email ID is already in use",
         });
       } else {
         const queryDelete = {
@@ -228,13 +228,13 @@ app.post("/verify/:mail_id", function (req, res) {
         await client.query(queryStorage);
         res.redirect("/signup/" + mail_id);
       }
-      else{
+      else {
         res.render("verifyotp", {
           text:
             "Welcome, " +
             mail_id +
             " check the mail we just sent to you & enter the OTP below",
-            msg: "Wrong OTP!",
+          msg: "Wrong OTP!",
         });
       }
       await client.query("COMMIT");
@@ -252,7 +252,7 @@ app.post("/verify/:mail_id", function (req, res) {
 // showing registration page
 app.get("/signup/:mail_id", sessionChecker, function (req, res) {
   var sess = req.session;
-  if ( sess.otpVerify ) {
+  if (sess.otpVerify) {
     res.render("signup", {
       mail_id: req.params.mail_id,
       msg: "",
@@ -303,7 +303,14 @@ app.post("/signup/:mail_id", function (req, res) {
         });
       } else {
         delete req.session.otpVerify;
-        res.redirect("/login");
+        sess.username = user.username;
+        if (sess.redirectURL) {
+          console.log(sess.redirectURL);
+          res.redirect(sess.redirectURL);
+        } else {
+          res.redirect("/homepage");
+        }
+        // res.redirect("/login");
       }
     });
   });
@@ -458,10 +465,10 @@ app.get("/homepage/:category", function (req, res) {
     var searchmsg = "";
     switch (category) {
       case "book":
-        searchmsg = "Search Book by Name, Author, Subject...";
+        searchmsg = "Search by Name, Author, Subject...";
         break;
       case "notes":
-        searchmsg = "Search Notes by Subject, Professor, Topic...";
+        searchmsg = "Search by Subject, Professor, Topic...";
         break;
       case "clothing":
         searchmsg = "Search by Name, Subject...";
@@ -543,7 +550,7 @@ app.post("/homepage/:category", function (req, res) {
             "$1" +
             "))",
           values: [newstring]
-          
+
         };
         searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
@@ -830,7 +837,7 @@ app.post("/editpro/:category&:id", function (req, res) {
           category: _.capitalize([(string = category)]),
           details: [[]],
         });
-      } else { 
+      } else {
         const imgPath = `../images/${req.file.filename}`;
         (async () => {
           const client = await db.connect();
@@ -1009,75 +1016,75 @@ app.get("/cart/:action/:product", function (req, res) {
 
     if (action == 1) {
       // buy selected in cart on product_id
-        // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
-        // first we need buyer details and then email id of seller
-        (async () => {
-          const client = await db.connect();
+      // maybe send buy request to seller with buyer(i.e. user details) via email. And notify Buyer that request is sent.
+      // first we need buyer details and then email id of seller
+      (async () => {
+        const client = await db.connect();
 
-          try {
-            await client.query("BEGIN");
-            const buyerQuery = {
-              text:
-                'SELECT username, name, email_id, contact, location,year, image FROM "user" WHERE username = $1',
-              values: [sess.username],
-            };
-            var buyerDetails = await client.query(buyerQuery);
+        try {
+          await client.query("BEGIN");
+          const buyerQuery = {
+            text:
+              'SELECT username, name, email_id, contact, location,year, image FROM "user" WHERE username = $1',
+            values: [sess.username],
+          };
+          var buyerDetails = await client.query(buyerQuery);
 
-            const emailQuery = {
-              text:
-                'SELECT username,email_id FROM "user" WHERE username IN ( SELECT seller_id FROM "product" WHERE product_id = $1)',
-              values: [product_id],
-            };
-            var seller = await client.query(emailQuery);
-            console.log(seller.rows[0].email_id);
-            var transporter = nodemailer.createTransport({
-              service: "gmail",
-              auth: {
-                user: process.env.STORE_EMAIL,
-                pass: process.env.STORE_PASS,
-              },
-            });
+          const emailQuery = {
+            text:
+              'SELECT username,email_id FROM "user" WHERE username IN ( SELECT seller_id FROM "product" WHERE product_id = $1)',
+            values: [product_id],
+          };
+          var seller = await client.query(emailQuery);
+          console.log(seller.rows[0].email_id);
+          var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: process.env.STORE_EMAIL,
+              pass: process.env.STORE_PASS,
+            },
+          });
 
-            var cipherKey = crypto.createCipheriv(
-              "aes128",
-              process.env.CRYPTO_KEY,
-              process.env.CRYPTO_IV
-            );
-            var str = cipherKey.update(seller.rows[0].username, "utf8", "hex");
-            str += cipherKey.final("hex");
+          var cipherKey = crypto.createCipheriv(
+            "aes128",
+            process.env.CRYPTO_KEY,
+            process.env.CRYPTO_IV
+          );
+          var str = cipherKey.update(seller.rows[0].username, "utf8", "hex");
+          str += cipherKey.final("hex");
 
-            const data = await ejs.renderFile(
-              __dirname + "/public/views/buyMail.ejs",
-              {
-                user: buyerDetails.rows[0],
-                product_id: product_id,
-                seller_id: str,
-              }
-            );
+          const data = await ejs.renderFile(
+            __dirname + "/public/views/buyMail.ejs",
+            {
+              user: buyerDetails.rows[0],
+              product_id: product_id,
+              seller_id: str,
+            }
+          );
 
-            var mailOptions = {
-              from: process.env.STORE_EMAIL,
-              to: seller.rows[0].email_id,
-              subject: "Someone is interested in your product.",
-              html: data,
-            };
+          var mailOptions = {
+            from: process.env.STORE_EMAIL,
+            to: seller.rows[0].email_id,
+            subject: "Someone is interested in your product.",
+            html: data,
+          };
 
-            transporter.sendMail(mailOptions, function (err, info) {
-              if (err) {
-                console.log(err);
-              } else {
-                sess.msg = "Request sent to seller! Once seller accepts the request you will receive a email and the product will appear here."
-                res.redirect('/request/1')
-              }
-            });
-            await client.query("COMMIT");
-          } catch (err) {
-            console.log(err);
-            res.send("error sending Email");
-          } finally {
-            client.release();
-          }
-        })().catch((err) => console.log(err.stack));
+          transporter.sendMail(mailOptions, function (err, info) {
+            if (err) {
+              console.log(err);
+            } else {
+              sess.msg = "Request sent to seller! Once seller accepts the request you will receive a email and the product will appear here."
+              res.redirect('/request/1')
+            }
+          });
+          await client.query("COMMIT");
+        } catch (err) {
+          console.log(err);
+          res.send("error sending Email");
+        } finally {
+          client.release();
+        }
+      })().catch((err) => console.log(err.stack));
       // res.send("Request sent to seller!!");
     } else {
       // remove selected in cart on product_id
@@ -1266,7 +1273,7 @@ app.get("/request/:action", function (req, res) {
               "' ) ORDER BY product_id ASC",
           };
           const product = await client.query(productQuery);
-          if (sess.msg){
+          if (sess.msg) {
             var msg = sess.msg;
             delete req.session.msg;
             res.render("ongoing", {
@@ -1319,7 +1326,7 @@ app.get("/sold/:productID", function (req, res) {
         if (sess.msg) {
           var msg = sess.msg;
           delete req.session.msg;
-          res.render("soldVerify",{
+          res.render("soldVerify", {
             username: sess.username,
             buyers: resp.rows,
             msg: msg
@@ -1506,14 +1513,14 @@ app.post("/editprofile", function (req, res) {
 app.get("/sellproduct", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-      res.render("sellproduct", {
-        user: sess.username,
-        msg: "",
-        pname: "",
-        pyear: "",
-        pcondition: "",
-        price: "",
-      });
+    res.render("sellproduct", {
+      user: sess.username,
+      msg: "",
+      pname: "",
+      pyear: "",
+      pcondition: "",
+      price: "",
+    });
   } else {
     res.redirect("/login");
   }
@@ -1703,7 +1710,7 @@ app.get("/ongoing", function (req, res) {
 app.get("/history/:action", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    var query,action;
+    var query, action;
     if (req.params.action == 0) {
       // sold products by sess.username
       query = {
@@ -1729,7 +1736,7 @@ app.get("/history/:action", function (req, res) {
         res.render("history", {
           username: sess.username,
           transaction: resp.rows,
-          action:action
+          action: action
         });
       }
     });
@@ -1738,13 +1745,13 @@ app.get("/history/:action", function (req, res) {
   }
 });
 
-app.get("/deleteproduct/:productID",function(req,res) {
+app.get("/deleteproduct/:productID", function (req, res) {
   var sess = req.session;
   if (sess.username) {
-    (async() => {
+    (async () => {
       const client = await db.connect();
 
-      try{
+      try {
         await client.query("BEGIN");
         const sellerQuery = {
           text: 'SELECT seller_id FROM "product" WHERE product_id = $1',
@@ -1764,7 +1771,7 @@ app.get("/deleteproduct/:productID",function(req,res) {
         }
 
         await client.query("COMMIT")
-      } catch(err) {
+      } catch (err) {
         console.log(err);
         res.send("Go back and Try again.");
         await client.query('ROLLBACK');

@@ -100,14 +100,16 @@
       <% for (var i=0; i<product.length;i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4">
+          <a href="/product/<%= product[i].product_id %>" class="info">
           <img src= "<%= product[i].product_image %>"/>
+          </a>
         </div>
         <div class="content col-lg-8">
           <a href="/product/<%= product[i].product_id %>" class="info">
           <h3><%= product[i].product_name %></h3>
-        </a>
           <h5>Product Id : <span class="details"><%= product[i].product_id %></span></h5>
           <h5>Price : <span class="details">Rs. <%= product[i].price %></span></h5>
+        </a>
           <% if (typeof rProduct[j] != 'undefined') { %>
           <% if (rProduct[j].product_id == product[i].product_id) { %>
           <h4>Buyers Interested</h4>

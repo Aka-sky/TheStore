@@ -76,6 +76,20 @@
   }
 }
 @media (max-width: 768px) {
+  .navbar {
+    height: 12%;
+    padding: 0% 3%;
+  }
+  .navbar-brand {
+    font-size: 170%;
+    margin-right: 0%;
+  }
+  .nav-item{
+    font-size: 100%;
+  }
+  #main{
+    margin: 110px 8% 2%;
+  }
   .product-info,
   .pict {
     padding: 0%;
@@ -83,6 +97,12 @@
   }
   .product-info {
     margin-bottom: 13%;
+  }
+  .product-info h3{
+    font-size: 145%;
+  }
+  .product-info h5{
+    font-size: 105%;
   }
   .pict img{
     border-radius: 10px 10px 0px 0px;

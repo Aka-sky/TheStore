@@ -49,6 +49,9 @@
     margin: 2% 1%;
     display : none;
   }
+  .card{
+    width: 90%;
+  }
   .card img {
     height: 220px;
     width: 100%;
@@ -81,6 +84,9 @@
    text-decoration:none;
    cursor:pointer;
   }
+  .mob-link{
+    display: none;
+  }
   
   @media (max-width: 991px) {
     .collapse {
@@ -95,10 +101,40 @@
     }
   }
   @media (max-width: 768px) {
+    .navbar {
+      height: 14%;
+      padding: 0% 2%;
+    }
+    .navbar-brand {
+      font-size: 170%;
+      margin-right: 0%;
+    }
+    .nav-item{
+      font-size: 100%;
+    }
+    .search-bar{
+      margin: auto;
+      margin-left: 2%;
+    }
     .card{
       width: 100%;
     }
     #products{
-      margin-top: 16%;
+      margin: 18% 0% 0%;
+      padding: 8% 7% 2%;
+    }
+    #products h1{
+      font-size: 170%;
+    }
+    .custom-nav{
+      background-color: white;
+      color: #0062e6;
+      font-size: 100%;
+    }
+    .mob-dropdown{
+      display: none;
+    }
+    .mob-link{
+      display: block;
     }
   }

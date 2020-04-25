@@ -86,3 +86,31 @@
     border-radius: 10px 10px 0px 0px;
   }
 }
+@media (max-width: 768px) {
+  .navbar {
+    height: 12%;
+    padding: 0% 3%;
+  }
+  .navbar-brand {
+    font-size: 170%;
+    margin-right: 0%;
+  }
+  .nav-item{
+    font-size: 100%;
+  }
+  #picture{
+    margin: 120px 8% 2%;
+  }
+  #comments {
+    margin: 0% 8% 2%;
+  }
+  .product-info h3{
+    font-size: 145%;
+  }
+  .product-info h5{
+    font-size: 105%;
+  }
+  #comments h2{
+    font-size: 150%;
+  }
+}

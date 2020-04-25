@@ -35,20 +35,39 @@
                       <a class="dropdown-item" href="/homepage/other">others</a>
                     </div>
                   </li>
-                  <li class="nav-item dropdown">
+                  <li class="mob-dropdown nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <%= username %>  <i class="fas fa-user-circle"></i>  
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <a class="dropdown-item" href="/profile/<%=username%>">Profile</a>
-                      <a class="dropdown-item" href="/history/0">My History</a>
                       <a class="dropdown-item" href="/request/0">My Deals</a>
+                      <a class="dropdown-item" href="/history/0">My History</a>
                       <a class="dropdown-item" href="/sellproduct">Sell</a>
                       <a class="dropdown-item" href="/cart">Cart</a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="/logout">Log Out</a>
                     </div>
                   </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/profile/<%=username%>"><i class="fas fa-user-circle"></i> <%= username %>'s Profile</a>
+                  </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/request/0">My Deals</a>
+                  </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/history/0">My History</a>
+                  </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/sellproduct">Sell</a>
+                  </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/cart">Cart</a>
+                  </li>
+                  <li class="nav-item mob-link">
+                    <a class="nav-link" href="/logout">Log Out</a>
+                  </li>
+                  
               </ul>
             </div>
             <form class="search-bar w-100" method="POST">
@@ -64,7 +83,7 @@
       <% for(var i=0; i< product.length; i++) { %>
         <a href="/product/<%= product[i].product_id %>" class="info">
       <div class="col-lg-4 col-md-6 center-block">
-        <div class="card" style="width: 90%;">
+        <div class="card">
           <img class="card-img-top" src="<%= product[i].product_image %>" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title"><%= product[i].product_name %></h5>

@@ -1,3 +1,7 @@
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .navbar {
     height: 90px;
     padding: 0% 5%;
@@ -170,6 +174,26 @@
     }
     .form-label-group input:-ms-input-placeholder {
       color: #777;
+    }
+  }
+  @media (max-width: 768px) {
+    .navbar {
+      height: 12%;
+      padding: 0% 3%;
+    }
+    .navbar-brand {
+      font-size: 170%;
+      margin-right: 0%;
+    }
+    .nav-item{
+      font-size: 100%;
+    }
+    #main {
+      margin: 10% 0% 0%;
+    }
+    .card-signin {
+      width: 92%;
+      margin-left: 4%;
     }
   }
   

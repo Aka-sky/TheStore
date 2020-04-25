@@ -1,21 +1,22 @@
+
 .navbar {
-  height: 120px;
+  height: 15%;
   padding: 0%;
 }
 .navbar-brand {
   background-color: #0062e6;
   border-radius: 20px;
-  font-size: 270%;
+  font-size: 250%;
   padding: 5px;
   color: white;
   margin-top: auto;
   margin-bottom: auto;
 }
+.nav-item{
+  font-size: 130%;
+}
 .cart {
   color: #0062e6;
-}
-.nav-item {
-  font-size: 130%;
 }
 .custom-toggler.navbar-toggler {
   border-color: #0062e6;
@@ -23,35 +24,61 @@
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
-@media (max-width: 991px) {
+/* @media (max-width: 991px) {
   .fixed-top {
     top: -0px;
     position: static;
   }
-}
+} */
 
 #head {
   padding: 0% 10% 2%;
 }
 .main {
-  padding-top: 50px;
+  padding-top: 60px;
 }
 .main-text {
-  padding: 10% 5% 10%;
+  padding:2.5% 5% 10%;
   font-size: 50px;
-}
-.main-img {
-  text-align: right;
-}
-@media (max-width: 768px) {
-  .main,
-  .main .main-img {
-    text-align: center;
-  }
 }
 .main-text button {
   margin-top: 10px;
   padding: 4px;
-  font-size: 30px;
+  font-size: 60%;
   border-radius: 10px;
+}
+.main-img {
+  padding-top: 2.5%;
+  text-align: right;
+}
+@media (max-width: 768px) {
+  .collapse{
+    z-index: 1;
+  }
+  .navbar {
+    height: 13%;
+  }
+  .navbar-brand {
+    font-size: 220%;
+  }
+  .nav-item{
+    font-size: 110%;
+  }
+  .main{
+    text-align: center;
+    margin-top: 3%;
+  }
+  .main .main-img {
+    text-align: center;
+  }
+  .main-text {
+    padding: 2.5% 5% 10%;
+    font-size: 40px;
+  }
+  .main-text h1{
+    font-size: 70%;
+  }
+  .main-text h2{
+    font-size: 60%;
+  }
 }
