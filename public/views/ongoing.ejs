@@ -97,16 +97,19 @@
         <% var j=0; %>
       <h1>Products you added for sale</h1>
       <hr width="100%" />
-      <!--product for sale template-->
       <% for (var i=0; i<product.length;i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4">
+          <a href="/product/<%= product[i].product_id %>" class="info">
           <img src= "<%= product[i].product_image %>"/>
+          </a>
         </div>
         <div class="content col-lg-8">
+          <a href="/product/<%= product[i].product_id %>" class="info">
           <h3><%= product[i].product_name %></h3>
           <h5>Product Id : <span class="details"><%= product[i].product_id %></span></h5>
           <h5>Price : <span class="details">Rs. <%= product[i].price %></span></h5>
+        </a>
           <% if (typeof rProduct[j] != 'undefined') { %>
           <% if (rProduct[j].product_id == product[i].product_id) { %>
           <h4>Buyers Interested</h4>
@@ -123,14 +126,12 @@
           <a href="/sold/<%= product[i].product_id %>" class=" btn btn-primary atc">Mark Sold</a>
           <a href="/editproduct/<%= product[i].category %>&<%= product[i].product_id %>" class=" btn btn-primary atc">Edit Info</a>
           </div>
-
         </div>
       </div>
     <% } %>
     <% } else { %>
       <h1>Products you requested for purchase</h1>
       <hr width="100%" />
-      <!--product for sale template-->
       <% for (var i=0; i<product.length;i++) { %>
       <div class="row product-info">
         <div class="pict col-lg-4">
@@ -143,15 +144,15 @@
           <h3><%= product[i].product_name %></h3>
           <h5>Product Id : <span class="details"><%= product[i].product_id %></span></h5>
           <h5>Price : <span class="details">Rs. <%= product[i].price %></span></h5>
-          <br>
           <h3>Seller</h3>
-          <h4><a href = "/profile/<%= rProduct[i].seller_id %>"><%= rProduct[i].seller_id %></a></h4>
+          <h5><a href = "/profile/<%= rProduct[i].seller_id %>"><%= rProduct[i].seller_id %></a></h5>
+          <h5>Note: For transaction validation & receipt, Give this pass to seller only after receiving product</h5>
         </div>
       </div>
     <% } %>
     <% } %> 
   <% } else { %>
-       <h3 style="text-align: center; margin-top: 300px;"> No Results </h3>
+       <h3 style="text-align: center; margin-top: 250px;"> No Results </h3>
     <% } %>
       <!--Sold product template-->
      <!--  <div class="row product-info">

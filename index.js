@@ -105,7 +105,7 @@ app.get("/", sessionChecker, function (req, res) {
 //------------------------------------------------------------------------------------------------
 //Page to check if mail id is already in use
 app.get("/verify", sessionChecker, function (req, res) {
-  res.render("verify", { msg: "Please enter valid Email ID" });
+  res.render("verify", { msg: "" });
 });
 //On entering email
 app.post("/verify", function (req, res) {
@@ -123,9 +123,14 @@ app.post("/verify", function (req, res) {
       const email = emailResp.rows[0];
       if (email) {
         res.render("verify", {
-          msg: "Email account is already registered, Try Log In",
+          msg: "Email ID is already in use",
         });
       } else {
+        const queryDelete = {
+          text: 'DELETE FROM "tempmail" WHERE email = $1',
+          values: [mail_id],
+        };
+        await client.query(queryDelete);
         function generateotp() {
           var digits = "0123456789";
           let OTP = "";
@@ -197,7 +202,7 @@ app.get("/verify/:mail_id", function (req, res) {
       "Welcome, " +
       mail_id +
       " check the mail we just sent to you & enter the OTP below",
-    msg: "Please copy the 6 digit OTP",
+    msg: "",
   });
 });
 //After entering OTP
@@ -215,24 +220,25 @@ app.post("/verify/:mail_id", function (req, res) {
       };
       const otpResp = await client.query(queryOtp);
       const OTP = otpResp.rows[0].otp;
-
-      const queryStorage = {
-        text: 'DELETE FROM "tempmail" where email = $1',
-        values: [mail_id],
-      };
-      await client.query(queryStorage);
-      await client.query("COMMIT", function (error, response) {
-        if (error) {
-          console.log(error);
-        } else {
-          if (otpbyuser == OTP) {
-            req.session.otpVerify = "yes";
-            res.redirect("/signup/" + mail_id);
-          } else {
-            res.redirect("/verify");
-          }
-        }
-      });
+      if (otpbyuser == OTP) {
+        req.session.otpVerify = 'yes'
+        const queryStorage = {
+          text: 'DELETE FROM "tempmail" where email = $1',
+          values: [mail_id],
+        };
+        await client.query(queryStorage);
+        res.redirect("/signup/" + mail_id);
+      }
+      else {
+        res.render("verifyotp", {
+          text:
+            "Welcome, " +
+            mail_id +
+            " check the mail we just sent to you & enter the OTP below",
+          msg: "Wrong OTP!",
+        });
+      }
+      await client.query("COMMIT");
     } catch (err) {
       console.log(err);
       res.render("verify/" + mail_id, {
@@ -250,7 +256,7 @@ app.get("/signup/:mail_id", sessionChecker, function (req, res) {
   if (sess.otpVerify) {
     res.render("signup", {
       mail_id: req.params.mail_id,
-      msg: "Please Fill all the fields",
+      msg: "",
       username: "",
       name: "",
       pas: "",
@@ -259,14 +265,14 @@ app.get("/signup/:mail_id", sessionChecker, function (req, res) {
       year: "",
     });
   } else {
-    res.redirect("/verify");
+    res.redirect("/verify")
   }
 });
 
 // handling submit on signup Page
 app.post("/signup/:mail_id", function (req, res) {
   var user = req.body;
-  console.log(req.body);
+  console.log(req.body)
   var sess = req.session;
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
     var pass = hash;
@@ -280,7 +286,7 @@ app.post("/signup/:mail_id", function (req, res) {
         pass,
         user.contact,
         user.location,
-        user.branchYear,
+        user.branchYear
       ],
     };
 
@@ -288,7 +294,7 @@ app.post("/signup/:mail_id", function (req, res) {
       if (error) {
         res.render("signup", {
           mail_id: req.params.mail_id,
-          msg: "Username not available. Try another username.",
+          msg: "Username not available",
           username: user.username,
           name: user.name,
           pas: user.password,
@@ -298,7 +304,14 @@ app.post("/signup/:mail_id", function (req, res) {
         });
       } else {
         delete req.session.otpVerify;
-        res.redirect("/login");
+        sess.username = user.username;
+        if (sess.redirectURL) {
+          console.log(sess.redirectURL);
+          res.redirect(sess.redirectURL);
+        } else {
+          res.redirect("/homepage");
+        }
+        // res.redirect("/login");
       }
     });
   });
@@ -307,7 +320,7 @@ app.post("/signup/:mail_id", function (req, res) {
 // displaying login page
 app.get("/login", sessionChecker, function (req, res) {
   res.render("login", {
-    msg: "Please Enter Username & Password",
+    msg: "",
     id: "",
     pas: "",
   });
@@ -383,7 +396,7 @@ app.get("/homepage", function (req, res) {
 
     const query = {
       text:
-        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"',
+        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product"'
     };
 
     db.query(query, function (err, resp) {
@@ -453,10 +466,10 @@ app.get("/homepage/:category", function (req, res) {
     var searchmsg = "";
     switch (category) {
       case "book":
-        searchmsg = "Search Book by Name, Author, Subject...";
+        searchmsg = "Search by Name, Author, Subject...";
         break;
       case "notes":
-        searchmsg = "Search Notes by Subject, Professor, Topic...";
+        searchmsg = "Search by Subject, Professor, Topic...";
         break;
       case "clothing":
         searchmsg = "Search by Name, Subject...";
@@ -521,7 +534,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
         };
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
@@ -537,7 +550,8 @@ app.post("/homepage/:category", function (req, res) {
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
+
         };
         searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
@@ -549,7 +563,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "type") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
         };
         searchmsg = "Search by Name, Subject...";
         break;
@@ -561,7 +575,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
         };
         searchmsg = "Search by Name, Brand...";
         break;
@@ -573,7 +587,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
         };
         searchmsg = "Search by Name, Brand...";
         break;
@@ -587,7 +601,7 @@ app.post("/homepage/:category", function (req, res) {
             ' || "description") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring],
+          values: [newstring]
         };
         searchmsg = "Search by Name, Type, Description...";
         break;
@@ -791,6 +805,7 @@ app.get("/editproduct/:category&:id", function (req, res) {
           username: sess.username,
           category: _.capitalize([(string = category)]),
           details: details,
+          msg: ""
         });
       }
     });
@@ -1490,7 +1505,6 @@ app.get("/receipt/:email1/:email2",function(req,res) {
     res.redirect("/login")
   }
 })
- 
 
 //----------------------------------------------------------------------------------------------------
 //display profile of any user
@@ -1549,21 +1563,31 @@ app.get("/editprofile", function (req, res) {
 //Updating values in database
 app.post("/editprofile", function (req, res) {
   var sess = req.session;
-  //var details = req.body;
   if (sess.username) {
     // somone is logged in thus can access
     upload(req, res, function (err) {
+      var details = req.body;
       if (err) {
         console.log("Error Try Again!");
         res.redirect("/editprofile");
       } else {
         var imgPath;
+        var query;
         if (req.file == undefined) {
-          imgPath = "../images/studentprofile.svg";
+          query = {
+          text:
+            'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4 WHERE username = $5',
+          values: [
+            details.name,
+            details.contact,
+            details.location,
+            details.year,
+            sess.username,
+          ],
+        };
         } else {
           imgPath = `../images/${req.file.filename}`;
-        }
-        const query = {
+          query = {
           text:
             'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4,image = $5 WHERE username = $6',
           values: [
@@ -1574,7 +1598,8 @@ app.post("/editprofile", function (req, res) {
             imgPath,
             sess.username,
           ],
-        };
+          }; 
+        }
         db.query(query, function (err, resp) {
           if (err) {
             res.send("Error");
@@ -1597,6 +1622,11 @@ app.get("/sellproduct", function (req, res) {
   if (sess.username) {
     res.render("sellproduct", {
       user: sess.username,
+      msg: "",
+      pname: "",
+      pyear: "",
+      pcondition: "",
+      price: "",
     });
   } else {
     res.redirect("/login");
@@ -1611,6 +1641,10 @@ app.post("/productUpload", function (req, res) {
       res.render("sellproduct", {
         msg: err,
         user: sess.username,
+        pname: product.name,
+        pyear: product.years,
+        pcondition: product.condition,
+        price: product.price,
       });
     } else {
       (async () => {
@@ -1707,8 +1741,12 @@ app.post("/productUpload", function (req, res) {
 
           await client.query(query);
           res.render("sellproduct", {
-            msg: "Successfully added the product.",
+            msg: "Successfully added the product",
             user: sess.username,
+            pname: "",
+            pyear: "",
+            pcondition: "",
+            price: "",
           });
           await client.query("COMMIT");
         } catch (err) {
@@ -1725,6 +1763,10 @@ app.post("/productUpload", function (req, res) {
           res.render("sellproduct", {
             msg: "Please fill out all fields!!",
             user: sess.username,
+            pname: product.name,
+            pyear: product.years,
+            pcondition: product.condition,
+            price: product.price,
           });
         } finally {
           client.release();

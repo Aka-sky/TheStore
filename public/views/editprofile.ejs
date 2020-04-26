@@ -72,12 +72,13 @@
     <div class="container">
       <h1>Edit Profile</h1>
       <hr />
+      <form class="form-horizontal" role="form" action="/editprofile" method="POST" enctype="multipart/form-data">
       <div class="row">
         <!-- left column -->
         <div class="col-md-3">
           <div class="text-center">
             <img
-              src="../images/studentprofile.svg"
+              src="<%= currentuser[0][7] %>"
               class="avatar img-circle"
               alt="avatar"
             />
@@ -91,7 +92,6 @@
         <div class="col-md-9 personal-info">
           <h3><%= username %>'s Profile</h3>
 
-          <form class="form-horizontal" role="form" method="POST">
             <div class="form-group">
               <label class="col-lg-3 control-label">Name:</label>
               <div class="col-lg-8">
@@ -129,6 +129,8 @@
                 </div>
               </div>
               <button class="btn btn-primary" type="submit">Confirm</button>
+              </div>
+              </div>
           </form>
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

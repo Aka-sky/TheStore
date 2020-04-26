@@ -1,207 +1,242 @@
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/homestyle.css">
-    <link rel="stylesheet" href="../css/animate.css">
-    <title>TheVStore | Home | VJTI's own store </title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg fixed-top bg-light">
-      <p class="navbar-brand">TheVStore</p>
-      <div class="nav-item dropdown" style="color: #0062e6; padding-right: 0%; margin-right: 0%; cursor: pointer;">
-        <div class="nav-link dropdown-toggle  custom-nav" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Search All 
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/7cd5bd2715.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../css/homestyle.css">
+  <link rel="stylesheet" href="../css/animate.css">
+  <title>TheVStore | Home | VJTI's own store </title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg fixed-top bg-light">
+    <p class="navbar-brand">TheVStore</p>
+    <div class="nav-item dropdown" style="color: #0062e6; padding-right: 0%; margin-right: 0%; cursor: pointer;">
+      <div class="nav-link dropdown-toggle  custom-nav" id="navbarDropdown" role="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Category
+      </div>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" href="#srch">All Categories</a>
+        <a class="dropdown-item" href="/homepage/book">Books</a>
+        <a class="dropdown-item" href="/homepage/notes">Notes</a>
+        <a class="dropdown-item" href="/homepage/clothing">Clothing</a>
+        <a class="dropdown-item" href="/homepage/calculator">Calculators</a>
+        <a class="dropdown-item" href="/homepage/pc">PCs</a>
+        <a class="dropdown-item" href="/homepage/other">others</a>
+      </div>
+    </div>
+    <a href="#srch" class="btn s btn-primary" style="border-radius: 50%; padding: 0.5%;"><i
+        class="fas fa-search"></i></a>
+    <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse"
+      data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown mob-dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Welcome, <%= username %> <i class="fas fa-user-circle"></i>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/profile/<%=username%>">Profile</a>
+            <a class="dropdown-item" href="/request/0">My Deals</a>
+            <a class="dropdown-item" href="/history/0">My History</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout">Log Out</a>
+          </div>
+        </li>
+        <li class="nav-item mob-link">
+          <a class="nav-link" href="/profile/<%=username%>"><i class="fas fa-user-circle"></i> <%= username %>'s Profile</a>
+        </li>
+        <li class="nav-item mob-link">
+          <a class="nav-link" href="/request/0">My Deals</a>
+        </li>
+        <li class="nav-item mob-link">
+          <a class="nav-link" href="/history/0">My History</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/sellproduct">Sell </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link cart" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
+        </li>
+        <li class="nav-item mob-link">
+          <a class="nav-link" href="/logout">Log Out</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <section id="head"></section>
+  <section id="aftersearch">
+    <h1 class="describe">Get Items from your Seniors</h1>
+    <h4 style="text-align: center; padding-bottom: 1%;">Search by following categories for better experience</h4>
+    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel" data-interval="2000"
+      data-pause="hover">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+        <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
+        <li data-target="#carouselExampleCaptions" data-slide-to="3"></li>
+        <li data-target="#carouselExampleCaptions" data-slide-to="4"></li>
+        <li data-target="#carouselExampleCaptions" data-slide-to="5"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="carousel-item active">
+          <a href='/homepage/book'>
+            <img src="../images/book1.jfif" class="d-block w-100" alt="..." />
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">Books</h5>
+            </div>
+          </a>
         </div>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#srch">All Categories</a>
-          <a class="dropdown-item" href="/homepage/book">Books</a>
-          <a class="dropdown-item" href="/homepage/notes">Notes</a>
-          <a class="dropdown-item" href="/homepage/clothing">Clothing</a>
-          <a class="dropdown-item" href="/homepage/calculator">Calculators</a>
-          <a class="dropdown-item" href="/homepage/pc">PCs</a>
-          <a class="dropdown-item" href="/homepage/other">others</a>
+        <div class="carousel-item">
+          <a href='/homepage/notes'>
+            <img src="../images/notes.jpg" class="d-block w-100" alt="..." />
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">Notes</h5>
+            </div>
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href='/homepage/clothing'>
+            <img src="../images/lab.jpg" class="d-block w-100" alt="..." />
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">Lab Coats</h5>
+            </div>
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href='/homepage/calculator'>
+            <img src="../images/calc.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">Calculators</h5>
+            </div>
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href='/homepage/pc'>
+            <img src="../images/lap.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">PCs</h5>
+            </div>
+          </a>
+        </div>
+        <div class="carousel-item">
+          <a href='/homepage/other'>
+            <img src="../images/others.jfif" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+              <h5 style="color: white;">Others</h5>
+            </div>
+          </a>
         </div>
       </div>
-      <a href="#srch" class="btn s btn-primary" style="border-radius: 50%; padding: 0.5%;"><i class="fas fa-search"></i></a>
-            <button class="navbar-toggler custom-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Welcome, <%= username %>  <i class="fas fa-user-circle"></i>  
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="/profile/<%=username%>">Profile</a>
-                    <a class="dropdown-item" href="/request/0">My Deals</a>
-                    <a class="dropdown-item" href="/history/0">My History</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout">Log Out</a>
-                  </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sellproduct">Sell  </a>
-                  </li>
-                <li class="nav-item">
-                  <a class="nav-link cart" href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
-                </li>
-              </ul>
-            </div>
-          </nav>
-          <section id="head"></section>
-          <h1 class="describe">Get Items from your Seniors</h1>
-          <h4 style="text-align: center; padding-bottom: 1%;">Search by following categories for better experience</h4>
-          <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel" data-interval="2000" data-pause="hover">
-            <ol class="carousel-indicators">
-              <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
-              <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
-              <li data-target="#carouselExampleCaptions" data-slide-to="2"></li>
-              <li data-target="#carouselExampleCaptions" data-slide-to="3"></li>
-              <li data-target="#carouselExampleCaptions" data-slide-to="4"></li>
-              <li data-target="#carouselExampleCaptions" data-slide-to="5"></li>
-            </ol>
-            <div class="carousel-inner" role="listbox">
-              <div class="carousel-item active">
-                <a href='/homepage/book'>
-                <img src="../images/book1.jfif" class="d-block w-100" alt="..."/>
-                <div class="carousel-caption d-none d-md-block">
-                  <h5 style="color: white;">Books</h5>
-                </div>
-              </a>
-              </div>
-              <div class="carousel-item">
-                <a href='/homepage/notes'>
-                <img src="../images/notes.jpg" class="d-block w-100" alt="..."/>
-                <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">Notes</h5>
-                </div>
-              </a>
-              </div>
-              <div class="carousel-item">
-                <a href='/homepage/clothing'>
-                <img src="../images/lab.jpg" class="d-block w-100" alt="..."/>
-                <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">Lab Coats</h5>
-                </div>
-              </a>
-              </div>
-              <div class="carousel-item">
-                <a href='/homepage/calculator'>
-                <img src="../images/calc.jpg" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">Calculators</h5>
-                </div>
-              </a>
-              </div>
-              <div class="carousel-item">
-                <a href='/homepage/pc'>
-                <img src="../images/lap.jpg" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">PCs</h5>
-                </div>
-              </a>
-              </div>
-              <div class="carousel-item">
-                <a href='/homepage/other'>
-                <img src="../images/others.jfif" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                   <h5 style="color: white;">Others</h5>
-                </div>
-              </a>
-              </div>
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
-          </div>
-    </section>
-    <section id="srch" style="height: 50px;"></section>
-    <hr width="90%">
-    <div class="container">
-      <form method="POST">
+      <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </section>
+  <section id="srch" style="height:50px;">
+    <div class="mob" style="text-align: center;">Books, PCs, Lab Coats & much more
+  </section>
+  <hr width="90%">
+  <div class="container">
+    <form method="POST">
       <div class="d-flex justify-content-center">
         <div class="searchbar">
-          <input class="search_input" type="text" name="productname" placeholder="Search for Anything..." value="<%= searchvalue %>" autocomplete="off">
+          <input class="search_input" type="text" name="productname" placeholder="Search for Anything..."
+            value="<%= searchvalue %>" autocomplete="off">
           <button class=" btn search_icon" type="submit"><i class="fas fa-search"></i></button>
         </div>
       </div>
-      </form>
-    </div>
-    <section id="products">
-      <% if (product.length > 0) { %>
-      <h1><%= searchmsg %></h1>
-      
+    </form>
+  </div>
+  <section id="products">
+    <% if (product.length > 0) { %>
+    <h1><%= searchmsg %></h1>
+
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
-        <a href="/product/<%= product[i].product_id %>" class="info">
-      <div class="col-lg-4 col-md-6 center-block">
-        <div class="card">
-          <img class="card-img-top" src="<%= product[i].product_image %>" alt="Card image cap">
-          <div class="card-body">
-            <h5 class="card-title"><%= product[i].product_name %></h5>
-            <p class="card-text"><span class="cat"><%= product[i].category %></span></p>
-            <p class="card-text">Years of Usage: <%= product[i].years_of_usage %></p>
-            <p class="card-text">Rs. <%= product[i].price %></p>
-            <!-- <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a> -->
-            <a href="/cart/<%= product[i].product_id %>" class="btn btn-primary">Add to Cart</a>
+      <a href="/product/<%= product[i].product_id %>" class="info">
+        <div class="col-lg-4 col-md-6 center-block">
+          <div class="card">
+            <img class="card-img-top" src="<%= product[i].product_image %>" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title"><%= product[i].product_name %></h5>
+              <p class="card-text"><span class="cat"><%= product[i].category %></span></p>
+              <p class="card-text">Years of Usage: <%= product[i].years_of_usage %></p>
+              <p class="card-text">Rs. <%= product[i].price %></p>
+              <!-- <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a> -->
+              <a href="/cart/<%= product[i].product_id %>" class="btn btn-primary">Add to Cart</a>
+            </div>
           </div>
         </div>
-      </div>
       </a>
       <% } %>
     </div>
-    <div style="text-align: center; margin-top: 5%;"><div id="loadmore" class="btn btn-primary">More</div></div>
-  <% } else { %>
+    <div style="text-align: center; margin-top: 5%;">
+      <div id="loadmore" class="btn btn-primary">More</div>
+    </div>
+    <% } else { %>
     <h4 style="text-align: center;">No Results</h4>
-  <% } %>
-    </section>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script>
-      $('.card').hover(
-        function(){
-          $(this).animate({
-            marginTop: "-1%",
-          },200);
-        },
-        function(){
-          $(this).animate({
-            marginTop: "0%",
-          },200);
-        }
-      );
-      $('#products .card').slice(0,3).show();
-      if( $('#products .card:hidden').length === 0 ){
-          $('#loadmore').hide();
-        }
-      $('#loadmore').on('click', function(){
-        $('#products .card:hidden').slice(0,3).show();
-        if( $('#products .card:hidden').length === 0 ){
-          $('#loadmore').hide();
-        }
-      });
+    <% } %>
+  </section>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <script>
+    $('.card').hover(
+      function () {
+        $(this).animate({
+          marginTop: "-1%",
+        }, 200);
+      },
+      function () {
+        $(this).animate({
+          marginTop: "0%",
+        }, 200);
+      }
+    );
+    $('#products .card').slice(0, 3).show();
+    if ($('#products .card:hidden').length === 0) {
+      $('#loadmore').hide();
+    }
+    $('#loadmore').on('click', function () {
+      $('#products .card:hidden').slice(0, 3).show();
+      if ($('#products .card:hidden').length === 0) {
+        $('#loadmore').hide();
+      }
+    });
 
-      $(".s").on("click",function(){
-        $(".searchbar").addClass("animated heartBeat slow").one("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(){
-          $(this).removeClass('animated heartBeat slow');
-        });
+    $(".s").on("click", function () {
+      $(".searchbar").addClass("animated heartBeat slow").one("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function () {
+        $(this).removeClass('animated heartBeat slow');
       });
-      $(".navbar-brand").addClass("animated rubberBand")
-    </script>
-    </body>
+    });
+    $(".navbar-brand").addClass("animated rubberBand")
+    if (searchmsg == "Search Results") {
+      $('#aftersearch').hide();
+    }
+  </script>
+</body>
+
 </html>

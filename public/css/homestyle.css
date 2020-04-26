@@ -34,7 +34,7 @@
   padding-bottom: 0%;
   font-family: monospace;
   font-weight: bolder;
-  font-size: 50px;
+  font-size: 400%;
 }
 #carouselExampleCaptions {
   margin: 0% 15%;
@@ -43,9 +43,6 @@
   height: 490px;
   width: 100%;
   object-fit: cover;
-}
-.carousel-caption {
-  margin-top: 300px;
 }
 
 #products {
@@ -96,10 +93,15 @@
  text-decoration:none;
  cursor:pointer;
 }
-
+.mob{
+  display: none;
+}
+.mob-link{
+  display: none;
+}
 
 .searchbar{
-  margin: 2% 0% 1.5%;
+  margin: 2% 0% 0.5%;
   height: 60px;
   background-image: linear-gradient(to bottom left,  rgb(226, 243, 247),rgb(112, 208, 224));
   border-radius: 30px;
@@ -116,7 +118,7 @@
   line-height: 40px;
   transition: width 0.4s linear;
   }
-
+@media (min-width: 768px){
   .searchbar:hover > .search_input{
   padding: 0 10px;
   width: 650px;
@@ -131,6 +133,7 @@
   background: white;
   color: #0062e6;
   }
+}
 
   .search_icon{
   height: 40px;
@@ -155,12 +158,89 @@
   #head {
     text-align: center;
   }
-  .searchbar:hover > .search_input{
-    width: 300px;
-  }
 }
 @media (max-width: 768px) {
+  .navbar {
+    height: 12%;
+    padding: 0% 2%;
+  }
+  .navbar-brand {
+    font-size: 170%;
+    margin-right: 0%;
+  }
+  .nav-item{
+    font-size: 100%;
+  }
   .card{
     width: 100%;
+  }
+  .describe {
+    font-size: 270%;
+  }
+  #aftersearch{
+    margin: 0% 5%;
+  }
+  #aftersearch h4{
+    font-size: 130%;
+  }
+  #carouselExampleCaptions {
+    margin: 0% 5%;
+  }
+  .carousel-item img {
+    height: 240px;
+    width: 100%;
+    object-fit: cover;
+  }
+  #products h1{
+    font-size: 150%;
+  }
+  #products {
+    padding: 0.5% 9% 2%;
+  }
+  .searchbar{
+    margin: 2% 0% 0.5%;
+    height: 60px;
+    background-image: linear-gradient(to bottom right,  rgb(248, 250, 250),rgb(188, 236, 245));
+    border-width: 0px;
+    border-radius: 30px;
+    padding: 10px;
+  }
+  .search_input{
+    color: black;
+    border: 0;
+    outline: 0;
+    background: none;
+    width: 0;
+    caret-color:transparent;
+    line-height: 40px;
+    padding: 0 10px;
+    width: 250px;
+    caret-color:black;
+    transition: width 0.4s linear;
+  }
+  .search_icon{
+    height: 40px;
+    width: 40px;
+    float: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color:rgb(12, 15, 168);
+    text-decoration:none;
+    background: white;
+    color: #0062e6;
+  }
+  #srch{
+    margin-bottom: 0rem;
+  }
+  .mob{
+    display: block;
+  }
+  .mob-dropdown{
+    display: none;
+  }
+  .mob-link{
+    display: block;
   }
 }

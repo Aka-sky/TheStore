@@ -59,12 +59,14 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Sign In</h5>
+              <% if(msg != ""){ %>
               <div id="erralert" class="alert alert-warning alert-dismissible fade show" role="alert">
                 <%= typeof msg != 'undefined' ? msg : "" %>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
+              <% } %>
               <form class="form-signin" method="POST">
                 <div class="form-label-group">
                   <input

@@ -53,3 +53,22 @@
         margin-top: 2%;
     }
   }
+  @media (max-width: 768px) {
+    .navbar {
+      height: 12%;
+      padding: 0% 3%;
+    }
+    .navbar-brand {
+      font-size: 170%;
+      margin-right: 0%;
+    }
+    .nav-item{
+      font-size: 100%;
+    }
+    .container h1{
+      font-size: 200%;
+    }
+    .container .row h3{
+      font-size: 140%;
+    }
+  }

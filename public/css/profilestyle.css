@@ -107,3 +107,22 @@ body {
     margin-bottom: 5%;
   }
 }
+@media (max-width: 768px) {
+  .navbar {
+    height: 12%;
+    padding: 0% 3%;
+  }
+  .navbar-brand {
+    font-size: 170%;
+    margin-right: 0%;
+  }
+  .nav-item{
+    font-size: 100%;
+  }
+  .container h3{
+    font-size: 140%;
+  }
+  .container .row h4{
+    font-size: 110%;
+  }
+}

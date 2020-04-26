@@ -67,6 +67,16 @@ label {
 .details{
   font-weight: 350;
 }
+.info {
+  color: black;
+  text-decoration: none ;
+}
+.info:hover
+{
+  color: black;
+ text-decoration:none;
+ cursor:pointer;
+}
 
 @media (max-width: 991px) {
   .collapse {
@@ -74,7 +84,7 @@ label {
     z-index: 1;
   }
   #picture {
-    margin: 120px 15% 2%;
+    margin: 100px 15% 2%;
   }
   .product-info{
     margin-bottom: 3%;
@@ -93,5 +103,39 @@ label {
   }
   .tp{
     text-align: center;
+  }
+}
+@media (max-width: 768px) {
+  .navbar {
+    height: 12%;
+    padding: 0% 3%;
+  }
+  .navbar-brand {
+    font-size: 170%;
+    margin-right: 0%;
+  }
+  .nav-item{
+    font-size: 100%;
+  }
+  .radio-inline{
+    font-size: 80%;
+  }
+  #picture{
+    margin: 105px 8% 2%;
+  }
+  #picture h1{
+    font-size: 175%;
+  }
+  .product-info{
+    margin: 2%;
+  }
+  .content h3{
+    font-size: 145%;
+  }
+  .content h4{
+    font-size: 125%;
+  }
+  .content h5{
+    font-size: 105%;
   }
 }
