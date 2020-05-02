@@ -1,7 +1,62 @@
+
+CREATE OR REPLACE FUNCTION insertuser()
+RETURNS trigger AS
+$BODY$
+DECLARE 
+	t_row "product"%rowtype;
+BEGIN
+	FOR t_row in SELECT "product_id" FROM "product" LOOP
+        	INSERT INTO "recommender" VALUES(new."username",t_row."product_id",'0');
+        END LOOP;
+	RETURN new;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER user_t
+  AFTER INSERT
+  ON "user"
+  FOR EACH ROW
+  EXECUTE PROCEDURE insertuser();
+
+insert into "user" values('a','a','a','a','a','a','a','a');
+DROP TRIGGER user_t
+ON "user";
+
+CREATE OR REPLACE FUNCTION insertproduct()
+RETURNS trigger AS
+$BODY$
+DECLARE 
+	t_row "user"%rowtype;
+BEGIN
+	FOR t_row in SELECT "username" FROM "user" LOOP
+        	INSERT INTO "recommender" VALUES(t_row."username",new."product_id",'0');
+        END LOOP;
+	RETURN new;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER product_t
+  AFTER INSERT
+  ON "product"
+  FOR EACH ROW
+  EXECUTE PROCEDURE insertproduct();
+
 CREATE TABLE "tempmail" (
     email character varying,
     otp character varying
 );
+insert into "product" values('2','a','2','2','a','a','a');
+
+CREATE TABLE "recommender" (
+	username character varying NOT NULL,
+	product_id int NOT NULL,
+	prioity int DEFAULT '0',
+    	PRIMARY KEY (username, product_id),
+    	FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
+    	FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+); 
 
 CREATE TABLE "requests" (
     buyer_id character varying NOT NULL,
@@ -56,10 +111,6 @@ CREATE TABLE "cart" (
     FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
 ); 
 
-INSERT INTO cart VALUES ('akashkamble0730',3);
-INSERT INTO cart VALUES ('someone1',1);
-INSERT INTO cart VALUES ('someone1',2);
-
 CREATE TABLE "book"(
 	  product_id int,
 	  publication character varying NOT NULL,
@@ -99,9 +150,6 @@ CREATE TABLE "calculator"(
  )
 	);
 
-INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('CASIO ES 991',2,250,'../images/booksvg.svg','Scientific calculator for all.','someone4');
-
-INSERT INTO "calculator" VALUES (8, 'CASIO', 'EX-991 PLUS', '1000 functions');
 
 CREATE TABLE "clothing"
 	(
@@ -117,16 +165,11 @@ CREATE TABLE "clothing"
             OR
         ( type IS NULL  OR  type = '' )
             OR
-        ( color IS NULL OR color = '' )
-            OR
-        ( detailedcondition IS NULL OR detailedcondition = '' )    
+        ( color IS NULL OR color = '' )   
    )
  )
-	);
+);
 
-INSERT INTO "clothing" VALUES (2,'XL','Cotton','White','1 acid mark on upper pocket.');
-
-SELECT * FROM product;
 
 CREATE TABLE "notes"(
 	  "product_id" serial,
@@ -168,10 +211,6 @@ CREATE TABLE "other"
  )
 	);
 
-INSERT INTO "product" (name,years_of_usage,price,image,description,seller_id) VALUES ('Something',2,460,'../images/booksvg.svg','some item not belonging to any of the categories specified.','someone2');
-
-INSERT INTO "other" VALUES (9, 'What to say about this product as type not known.', 'Unknown');
-
 CREATE TABLE "pc"
 	(
 	  "product_id" int,
@@ -197,7 +236,6 @@ CREATE TABLE "pc"
  )
 );
 
-INSERT INTO "pc" VALUES (3, 'Windows 10',4,500, 'HP','Intel Pentium');
 
 CREATE table "comments" (
 comment_id SERIAL PRIMARY KEY,
