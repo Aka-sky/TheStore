@@ -1,3 +1,6 @@
+SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' ORDER BY "priority" DESC;
+
+SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' WHERE "product".product_id IN (SELECT product_id FROM "book") ORDER BY "priority" DESC;
 
 CREATE OR REPLACE FUNCTION insertuser()
 RETURNS trigger AS
@@ -52,7 +55,7 @@ insert into "product" values('2','a','2','2','a','a','a');
 CREATE TABLE "recommender" (
 	username character varying NOT NULL,
 	product_id int NOT NULL,
-	prioity int DEFAULT '0',
+	priority int DEFAULT '0',
     	PRIMARY KEY (username, product_id),
     	FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
     	FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
