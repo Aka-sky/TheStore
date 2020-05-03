@@ -81,14 +81,14 @@
       <hr width="100%">
     <div class="row">
       <% for(var i=0; i< product.length; i++) { %>
-        <a href="/product/<%= product[i].product_id %>" class="info">
+        <a href="/product/<%= product[i][4] %>" class="info">
       <div class="col-lg-4 col-md-6 center-block">
         <div class="card">
-          <img class="card-img-top" src="<%= product[i].product_image %>" alt="Card image cap">
+          <img class="card-img-top" src="<%= product[i][3] %>" alt="Card image cap">
           <div class="card-body">
-            <h5 class="card-title"><%= product[i].product_name %></h5>
-            <p class="card-text">Years of Usage: <%= product[i].years_of_usage %></p>
-            <p class="card-text">Rs. <%= product[i].price %></p>
+            <h5 class="card-title"><%= product[i][0] %></h5>
+            <p class="card-text">Years of Usage: <%= product[i][2] %></p>
+            <p class="card-text">Rs. <%= product[i][1] %></p>
             <!-- <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a> -->
             <% if (username != product[i][5]) { %>
             <a href="/cart/<%= product[i][4] %>" class="btn btn-primary" >Add to Cart</a>

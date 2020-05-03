@@ -1747,9 +1747,9 @@ app.post("/sold/:productID", function (req, res) {
                 // str2 += cipherKey2.final("hex")
                 res.redirect(
                   "/receipt/" +
-                  sellerBuyer.rows[0].email_id +
-                  "/" +
-                  sellerBuyer.rows[1].email_id
+                    sellerBuyer.rows[0].email_id +
+                    "/" +
+                    sellerBuyer.rows[1].email_id
                 );
               }
             });

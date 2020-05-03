@@ -1,0 +1,13 @@
+1. Create two accounts with different email address as same email for two accounts is not acceptable.
+2. Add a product for sale by any of the accounts.
+3. From the other account Add the product to the cart and select buy.
+4. Email is now sent to the seller's email address.
+5. Close the tab to end session or logout.
+6. Check the seller's email for the email sent.
+7. Click on accept inside the email.
+8. Now log in into the website using seller's details (username, password)
+9. Once logged in OTP is sent to the buyer's email.
+10. To mark product as sold select mark sold on the product on the page that you where directed on step 8 or go to My Deals by expanding the dropdown with username on the top right hand side and mark as sold.
+11. Now after clicking mark sold select buyer's name, add finalized amount, and 
+OTP sent on buyer's email and submit/verify.
+12. A pdf will be sent on both buyer's and seller's email containing the details/receipt of the transaction.     
