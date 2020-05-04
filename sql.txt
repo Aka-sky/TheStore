@@ -45,6 +45,13 @@ CREATE TRIGGER product_t
   ON "product"
   FOR EACH ROW
   EXECUTE PROCEDURE insertproduct();
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ALTER TABLE "product" ADD COLUMN "document_with_idx" tsvector;
+CREATE INDEX document_idx
+  ON "product"
+  USING GIN (document_with_idx);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE "tempmail" (
     email character varying,

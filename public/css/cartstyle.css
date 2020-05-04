@@ -3,6 +3,7 @@
   padding: 0% 5%;
 }
 .navbar-brand {
+  font-family: Monsterrat;
   background-color: #0062e6;
   border-radius: 20px;
   font-size: 230%;
@@ -57,6 +58,22 @@
 }
 .footer p{
   margin-bottom: 0rem;
+}
+#snackbar{
+  background: #555;
+  color: white;
+  padding: 0.5%;
+  display: inline-block;
+  position: fixed;
+  bottom: 2.5%;
+  font-size: 110%;
+  left: 46%;
+  border-radius: 5px;
+  transform: translateY(200px);
+  transition: all 300ms;
+}
+#snackbar.show{
+  transform: translateY(0);
 }
 @media (min-width: 991px) {
   .buy-button {

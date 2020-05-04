@@ -4,6 +4,7 @@
   padding: 0%;
 }
 .navbar-brand {
+  font-family: Monsterrat;
   background-color: #0062e6;
   border-radius: 20px;
   font-size: 250%;
@@ -24,12 +25,17 @@
 .custom-toggler .navbar-toggler-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 98, 238, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
 }
-/* @media (max-width: 991px) {
-  .fixed-top {
-    top: -0px;
-    position: static;
-  }
-} */
+.main-text h1{
+  font-family: serif;
+}
+.main-text p{
+  font-family: sans-serif;
+  font-size: 45%;
+  color: rgb(32, 32, 32);
+}
+.main-text .t{
+  font-family: serif;
+}
 
 #head {
   padding: 0% 10% 2%;

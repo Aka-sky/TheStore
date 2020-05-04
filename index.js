@@ -368,15 +368,15 @@ app.post("/login", function (req, res) {
             res.render("login", {
               msg: "Wrong password",
               id: user.username,
-              pas: user.password,
+              pas: '',
             });
           }
         });
       } catch (e) {
         res.render("Login", {
           msg: "Invalid Username",
-          id: user.username,
-          pas: user.password,
+          id: '',
+          pas: '',
         });
       }
     }
@@ -499,6 +499,7 @@ app.get("/homepage/:category", function (req, res) {
     }
     db.query(query, function (err, resp) {
       var product = resp.rows;
+      // console.log(product);
       if (err) {
         res.send("Error");
       } else {
@@ -538,94 +539,45 @@ app.post("/homepage/:category", function (req, res) {
     var searchmsg = "";
     switch (category) {
       case "book":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' || "author" || ' +
-            "' '" +
-            ' || "subject") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
       case "notes":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' ||"topic" || ' +
-            "' '" +
-            ' || "professor" || ' +
-            "' '" +
-            ' || "subject") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
       case "clothing":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' || "type") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search by Name, Subject...";
         break;
       case "calculator":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' || "brand") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search by Name, Brand...";
         break;
       case "pc":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' || "brand") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search by Name, Brand...";
         break;
       case "other":
-        var searchquery = {
-          text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' +
-            "' '" +
-            ' || "type" || ' +
-            "' '" +
-            ' || "description") @@ to_tsquery(' +
-            "$1" +
-            "))",
-          values: [newstring],
-        };
         searchmsg = "Search by Name, Type, Description...";
         break;
     }
+    var searchquery = {
+      text:
+        'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product" where document_with_idx @@ to_tsquery(' +
+        "$1" +
+        ') and "product".product_id IN (SELECT product_id FROM ' +
+        category +
+        ')',
+      values: [newstring],
+    };
     db.query(searchquery, function (err, resp) {
       if (err) {
         res.send("Error");
         console.log(err);
       } else {
         var product = resp.rows;
+        var response = product.map(function(item) {
+          return Object.values(item);
+        });
+        // console.log(response);
         res.render("search", {
-          product: product,
+          product: response,
           category: _.capitalize([(string = category)]),
           username: sess.username,
           heading: "Search Results",
@@ -946,11 +898,26 @@ app.post("/productUpload", function (req, res) {
                   product.author,
                 ],
               };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                values: [
+                  product.name,
+                  product.subject,
+                  product.author,
+                ],
+              };
               break;
             case "clothing":
               query = {
                 text: 'INSERT INTO "clothing" VALUES ($1,$2,$3,$4)',
                 values: [product_id, product.size, product.type, product.color],
+              };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2)",
+                values: [
+                  product.name,
+                  product.type
+                ],
               };
               break;
             case "notes":
@@ -964,11 +931,26 @@ app.post("/productUpload", function (req, res) {
                   product.year,
                 ],
               };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3 || ' ' || $4)",
+                values: [
+                  product.name,
+                  product.n_subject,
+                  product.topic,
+                  product.professor,
+                ],
+              };
               break;
             case "other":
               query = {
                 text: 'INSERT INTO "other" VALUES ($1,$2,$3)',
                 values: [product_id, product.description, product.cate],
+              };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                values: [
+                  product.name, product.description, product.cate
+                ],
               };
               break;
             case "calculators":
@@ -979,6 +961,14 @@ app.post("/productUpload", function (req, res) {
                   product.calcibrand,
                   product.model,
                   product.features,
+                ],
+              };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                values: [
+                  product.name,
+                  product.calcibrand,
+                  product.model,
                 ],
               };
               break;
@@ -994,10 +984,18 @@ app.post("/productUpload", function (req, res) {
                   product.processor,
                 ],
               };
+              query2 = {
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2)",
+                values: [
+                  product.name,
+                  product.pcbrand,
+                ],
+              };
               break;
           }
 
           await client.query(query);
+          await client.query(query2);
           res.render("sellproduct", {
             msg: "Successfully added the product",
             user: sess.username,
@@ -1046,6 +1044,11 @@ app.get("/cart/:id", function (req, res) {
     };
 
     db.query(query, function (err, resp) {
+      if(err){
+        sess.cartaction = 2;
+      }else{
+        sess.cartaction = 1;
+      }
       res.redirect("/cart");
     });
   } else {
@@ -1056,6 +1059,13 @@ app.get("/cart/:id", function (req, res) {
 // get the cart page
 app.get("/cart", function (req, res) {
   var sess = req.session;
+  var cartmsg = ''
+  if(sess.cartaction == 1){
+    cartmsg = "Added to Cart";
+  }else if(sess.cartaction == 2){
+    cartmsg = "Product already in Cart";
+  }
+  delete req.session.cartaction;
   if (sess.username) {
     const query = {
       text:
@@ -1068,7 +1078,7 @@ app.get("/cart", function (req, res) {
       if (err) {
         res.send("Error");
       } else {
-        res.render("cart", { details: details, user: sess.username });
+        res.render("cart", { details: details, user: sess.username,cartmsg: cartmsg });
       }
     });
   } else {
