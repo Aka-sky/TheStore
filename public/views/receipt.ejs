@@ -6,6 +6,19 @@
    
 </head>
 <body>
+    <p
+      style="
+        background-color: #0062e6;
+        border-radius: 20px;
+        font-size: 230%;
+        padding: 5px;
+        color: white;
+        margin-top: auto;
+        margin-bottom: auto;
+      "
+    >
+      TheVStore
+    </p>
     <h2 style="text-align: center;display: inline-block;">Receipt</h2>
     <div style="width: 80%; margin-top: 15%; border: 2px solid lightgrey;text-align: justify;">
         <ul>
@@ -13,26 +26,29 @@
             <% var i = 0, j = 1; %>
             <% if (sellerBuyer[i].username != seller_id) { %>
                 <% i = 1; j = 0; } %>
-            <li>Name              <%= sellerBuyer[i].name %></li>
-            <li>Email             <%= sellerBuyer[i].email_id %></li>
-            <li>Contact           <%= sellerBuyer[i].contact %></li>
+            <li>Name:              <%= sellerBuyer[i].name %></li>
+            <li>Email:             <%= sellerBuyer[i].email_id %></li>
+            <li>Contact:           <%= sellerBuyer[i].contact %></li>
             <br>
             <h4>Product Details</h4>
-            <li>Name              <%= product[0].product_name %></li>
-            <li>Years of Usage    <%= product[0].years_of_usage %></li>
+            <li>Name:              <%= product[0].product_name %></li>
+            <li>Years of Usage:    <%= product[0].years_of_usage %></li>
 
-            <li>Price             Rs. <%= product[0].price %></li>
+            <li>Price:             Rs. <%= product[0].price %></li>
 
-            <li>Condition         <%= product[0].condition %></li>
+            <li>Condition:         <%= product[0].condition %></li>
             <br>
             <h4>Buyer Details</h4>
-            <li>Name              <%= sellerBuyer[j].name %></li>
-            <li>Email             <%= sellerBuyer[j].email_id %></li>
-            <li>Contact           <%= sellerBuyer[j].contact %></li>
+            <li>Name:              <%= sellerBuyer[j].name %></li>
+            <li>Email:             <%= sellerBuyer[j].email_id %></li>
+            <li>Contact:           <%= sellerBuyer[j].contact %></li>
             <br>
             <br>
-            <li>Finalized Price   Rs. <%= finalizedPrice %></li>
+            <li>Finalized Price:   Rs. <%= finalizedPrice %></li>
             </ul>
+            <p>
+                Date: <%= date %>
+            </p>
     </div>
 </body>
 </html>

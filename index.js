@@ -218,15 +218,14 @@ app.post("/verify/:mail_id", function (req, res) {
       const otpResp = await client.query(queryOtp);
       const OTP = otpResp.rows[0].otp;
       if (otpbyuser == OTP) {
-        req.session.otpVerify = 'yes'
+        req.session.otpVerify = "yes";
         const queryStorage = {
           text: 'DELETE FROM "tempmail" where email = $1',
           values: [mail_id],
         };
         await client.query(queryStorage);
         res.redirect("/signup/" + mail_id);
-      }
-      else {
+      } else {
         res.render("verifyotp", {
           text:
             "Welcome, " +
@@ -262,14 +261,14 @@ app.get("/signup/:mail_id", sessionChecker, function (req, res) {
       year: "",
     });
   } else {
-    res.redirect("/verify")
+    res.redirect("/verify");
   }
 });
 
 // handling submit on signup Page
 app.post("/signup/:mail_id", function (req, res) {
   var user = req.body;
-  console.log(req.body)
+  console.log(req.body);
   var sess = req.session;
   bcrypt.hash(user.password, saltRounds, function (err, hash) {
     var pass = hash;
@@ -283,7 +282,7 @@ app.post("/signup/:mail_id", function (req, res) {
         pass,
         user.contact,
         user.location,
-        user.branchYear
+        user.branchYear,
       ],
     };
 
@@ -393,7 +392,7 @@ app.get("/homepage", function (req, res) {
 
     const query = {
       text:
-        'SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".category,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = $1 ORDER BY "priority" DESC;',
+        'SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".category,"product".product_id,"product".seller_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = $1 ORDER BY "priority" DESC;',
       values: [sess.username],
       rowMode: "array",
     };
@@ -419,16 +418,29 @@ app.get("/homepage", function (req, res) {
 //search among all products from homepage
 app.post("/homepage", function (req, res) {
   var sess = req.session;
-  var lowerproductname = _.lowerCase([(string = req.body.productname)]);
-  //console.log(lowerproductname);
+  var searchkeywords = req.body.productname.split(" ");
+  for (var i = 0; i < searchkeywords.length; i++) {
+    searchkeywords[i] = _.lowerCase([(string = searchkeywords[i])]);
+  }
+  // console.log(searchkeywords);
+  var st = '';
+  searchkeywords.map(function (keyword, index) {
+    var index = index + 1;
+    st += "'%" + keyword + "%'";
+    if (index == searchkeywords.length) {
+      st += '';
+    }
+    else {
+      st += " OR LOWER(product_name) LIKE "
+    }
+  });
+  // console.log(st);
   if (sess.username) {
     // somone is logged in thus can access
     const query = {
       text:
-        'SELECT product_name,price,years_of_usage,product_image,product_id,category FROM "product" WHERE LOWER(product_name) LIKE \'%' +
-        lowerproductname +
-        "%'",
-      //values: [lowerproductname],
+        "SELECT product_name,price,years_of_usage,product_image,category,product_id,seller_id FROM product WHERE LOWER(product_name) LIKE "+st,
+      rowMode: "array",
     };
     db.query(query, function (err, resp) {
       if (err) {
@@ -458,11 +470,11 @@ app.get("/homepage/:category", function (req, res) {
   if (sess.username) {
     query = {
       text:
-        'SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = $1 WHERE "product".product_id IN (SELECT product_id FROM ' +
+        'SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = $1 WHERE "product".product_id IN (SELECT product_id FROM ' +
         category +
         ') ORDER BY "priority" DESC',
-        values: [sess.username],
-        rowMode: "array",
+      values: [sess.username],
+      rowMode: "array",
     };
     var searchmsg = "";
     switch (category) {
@@ -528,21 +540,21 @@ app.post("/homepage/:category", function (req, res) {
       case "book":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' || "author" || ' +
             "' '" +
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
+          values: [newstring],
         };
         searchmsg = "Search Book by Name, Author, Subject...";
         break;
       case "notes":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","notes" where ("product".product_id = "notes".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' ||"topic" || ' +
             "' '" +
@@ -551,58 +563,57 @@ app.post("/homepage/:category", function (req, res) {
             ' || "subject") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
-
+          values: [newstring],
         };
         searchmsg = "Search Notes by Subject, Professor, Topic...";
         break;
       case "clothing":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","clothing" where ("product".product_id = "clothing".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' || "type") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
+          values: [newstring],
         };
         searchmsg = "Search by Name, Subject...";
         break;
       case "calculator":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","calculator" where ("product".product_id = "calculator".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
+          values: [newstring],
         };
         searchmsg = "Search by Name, Brand...";
         break;
       case "pc":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","pc" where ("product".product_id = "pc".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' || "brand") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
+          values: [newstring],
         };
         searchmsg = "Search by Name, Brand...";
         break;
       case "other":
         var searchquery = {
           text:
-            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' +
+            'select "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id,"product".seller_id from "product","other" where ("product".product_id = "other".product_id) and (to_tsvector("product_name" || ' +
             "' '" +
             ' || "type" || ' +
             "' '" +
             ' || "description") @@ to_tsquery(' +
             "$1" +
             "))",
-          values: [newstring]
+          values: [newstring],
         };
         searchmsg = "Search by Name, Type, Description...";
         break;
@@ -640,8 +651,9 @@ app.get("/product/:id", function (req, res) {
       try {
         await client.query("BEGIN");
         const recommenderQuery = {
-          text: 'UPDATE "recommender" SET priority = priority + 1 WHERE username = $1 AND product_id = $2',
-          values: [sess.username, product_id]
+          text:
+            'UPDATE "recommender" SET priority = priority + 1 WHERE username = $1 AND product_id = $2',
+          values: [sess.username, product_id],
         };
         await client.query(recommenderQuery);
         const productCategoryQuery = {
@@ -820,30 +832,30 @@ app.post("/editprofile", function (req, res) {
         var query;
         if (req.file == undefined) {
           query = {
-          text:
-            'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4 WHERE username = $5',
-          values: [
-            details.name,
-            details.contact,
-            details.location,
-            details.year,
-            sess.username,
-          ],
-        };
+            text:
+              'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4 WHERE username = $5',
+            values: [
+              details.name,
+              details.contact,
+              details.location,
+              details.year,
+              sess.username,
+            ],
+          };
         } else {
           imgPath = `../images/${req.file.filename}`;
           query = {
-          text:
-            'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4,image = $5 WHERE username = $6',
-          values: [
-            details.name,
-            details.contact,
-            details.location,
-            details.year,
-            imgPath,
-            sess.username,
-          ],
-          }; 
+            text:
+              'UPDATE "user" SET name = $1, contact = $2, location = $3, year = $4,image = $5 WHERE username = $6',
+            values: [
+              details.name,
+              details.contact,
+              details.location,
+              details.year,
+              imgPath,
+              sess.username,
+            ],
+          };
         }
         db.query(query, function (err, resp) {
           if (err) {
@@ -1397,7 +1409,7 @@ app.get("/editproduct/:category&:id", function (req, res) {
           username: sess.username,
           category: _.capitalize([(string = category)]),
           details: details,
-          msg: ""
+          msg: "",
         });
       }
     });
@@ -1636,7 +1648,7 @@ app.get("/sold/:productID", function (req, res) {
           res.render("soldVerify", {
             username: sess.username,
             buyers: resp.rows,
-            msg: ''
+            msg: "",
           });
         }
       }
@@ -1682,9 +1694,10 @@ app.post("/sold/:productID", function (req, res) {
           const product = await client.query(productQuery);
 
           const buyerSellerQuery = {
-            text: 'SELECT username, name, email_id, contact FROM "user" WHERE username IN ($1, $2)',
-            values: [sess.username, content.buyerOptions]
-          }
+            text:
+              'SELECT username, name, email_id, contact FROM "user" WHERE username IN ($1, $2)',
+            values: [sess.username, content.buyerOptions],
+          };
 
           const sellerBuyer = await client.query(buyerSellerQuery);
 
@@ -1711,40 +1724,48 @@ app.post("/sold/:productID", function (req, res) {
             values: [req.params.productID],
           };
           await client.query(deleteQuery);
-
+          var date = new Date();
           const html = await ejs.renderFile(
             __dirname + "/public/views/receipt.ejs",
             {
               product: product.rows,
               seller_id: sess.username,
               sellerBuyer: sellerBuyer.rows,
-              finalizedPrice: content.finalPrice
+              finalizedPrice: content.finalPrice,
+              date: date,
             }
           );
 
           //console.log(html);
-          pdf.create(html,{format:'A4'}).toFile('./receipt.pdf',function(err,resp) {
-            if (err) {
-              throw err;
-            } else {
-          //     var cipherKey1 = crypto.createCipheriv(
-          //   "aes128",
-          //   process.env.CRYPTO_KEY,
-          //   process.env.CRYPTO_IV
-          // );
-          // var str1 = cipherKey1.update(sellerBuyer.rows[0].email_id, "utf8", "hex");
-          // str1 += cipherKey1.final("hex");
-          
-          //  var cipherKey2 = crypto.createCipheriv(
-          //    "aes128",
-          //    process.env.CRYPTO_KEY,
-          //    process.env.CRYPTO_IV
-          //  );
-          // var str2 = cipherKey2.update(sellerBuyer.rows[1].email_id);
-          // str2 += cipherKey2.final("hex")
-              res.redirect("/receipt/" + sellerBuyer.rows[0].email_id + "/" + sellerBuyer.rows[1].email_id);
-            }
-          })
+          pdf
+            .create(html, { format: "A4" })
+            .toFile("./receipt.pdf", function (err, resp) {
+              if (err) {
+                throw err;
+              } else {
+                //     var cipherKey1 = crypto.createCipheriv(
+                //   "aes128",
+                //   process.env.CRYPTO_KEY,
+                //   process.env.CRYPTO_IV
+                // );
+                // var str1 = cipherKey1.update(sellerBuyer.rows[0].email_id, "utf8", "hex");
+                // str1 += cipherKey1.final("hex");
+
+                //  var cipherKey2 = crypto.createCipheriv(
+                //    "aes128",
+                //    process.env.CRYPTO_KEY,
+                //    process.env.CRYPTO_IV
+                //  );
+                // var str2 = cipherKey2.update(sellerBuyer.rows[1].email_id);
+                // str2 += cipherKey2.final("hex")
+                res.redirect(
+                  "/receipt/" +
+                    sellerBuyer.rows[0].email_id +
+                    "/" +
+                    sellerBuyer.rows[1].email_id
+                );
+              }
+            });
         } else {
           throw "OTP Not Match!";
         }
@@ -1764,52 +1785,54 @@ app.post("/sold/:productID", function (req, res) {
 });
 
 //For sending receipt to both buyer and seller through mail
-app.get("/receipt/:email1/:email2",function(req,res) {
+app.get("/receipt/:email1/:email2", function (req, res) {
   var sess = req.session;
-  if ( sess.username ){
-      // var decipherKey1 = crypto.createDecipheriv("aes128",process.env.CRYPTO_KEY,process.env.CRYPTO_IV);
-      // var email1 = decipherKey1.update(req.params.email1,'hex','utf8');
-      // email1 += decipherKey1.final("utf8");
+  if (sess.username) {
+    // var decipherKey1 = crypto.createDecipheriv("aes128",process.env.CRYPTO_KEY,process.env.CRYPTO_IV);
+    // var email1 = decipherKey1.update(req.params.email1,'hex','utf8');
+    // email1 += decipherKey1.final("utf8");
 
-      // var decipherKey2 = crypto.createDecipheriv(
-      //   "aes128",
-      //   process.env.CRYPTO_KEY,
-      //   process.env.CRYPTO_IV
-      // );
-      // var email2 = decipherKey2.update(req.params.email2,'hex','utf8');
-      // email2 += decipherKey2.final('utf8');
-        var transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.STORE_EMAIL,
-            pass: process.env.STORE_PASS,
-          },
-        });
-         var mailOptions = {
-          from: process.env.STORE_EMAIL,
-          to: [req.params.email1, req.params.email2],
-          subject: "Receipt.",
-          text: 'Please find attachment for the receipt.',
-          attachments: [{
-            filename: 'receipt.pdf',
-            path: __dirname + "/receipt.pdf",
-            contentType: 'application/pdf'
-          }]
-        };
+    // var decipherKey2 = crypto.createDecipheriv(
+    //   "aes128",
+    //   process.env.CRYPTO_KEY,
+    //   process.env.CRYPTO_IV
+    // );
+    // var email2 = decipherKey2.update(req.params.email2,'hex','utf8');
+    // email2 += decipherKey2.final('utf8');
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.STORE_EMAIL,
+        pass: process.env.STORE_PASS,
+      },
+    });
+    var mailOptions = {
+      from: process.env.STORE_EMAIL,
+      to: [req.params.email1, req.params.email2],
+      subject: "Receipt.",
+      text: "Please find attachment for the receipt.",
+      attachments: [
+        {
+          filename: "receipt.pdf",
+          path: __dirname + "/receipt.pdf",
+          contentType: "application/pdf",
+        },
+      ],
+    };
 
-        transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            res.redirect("/history/0");
-        }
-      });
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        res.redirect("/history/0");
+      }
+    });
   } else {
-    res.redirect("/login")
+    res.redirect("/login");
   }
-})
+});
 
- //-----------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------
 
 app.get("/history/:action", function (req, res) {
   var sess = req.session;

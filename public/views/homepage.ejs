@@ -181,7 +181,11 @@
               <p class="card-text">Years of Usage: <%= product[i][2] %></p>
               <p class="card-text">Rs. <%= product[i][1] %></p>
               <!-- <a href="/product/<%= product[i][4] %>" class="btn btn-primary">More Info</a> -->
+              <% if (username != product[i][6])  { %>
               <a href="/cart/<%= product[i][5] %>" class="btn btn-primary">Add to Cart</a>
+              <% } else { %>
+              <a href="/cart/<%= product[i][5] %>" class="btn btn-primary" style="visibility: hidden;">Add to Cart</a>
+            <% } %>
             </div>
           </div>
         </div>

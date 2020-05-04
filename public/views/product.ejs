@@ -49,7 +49,11 @@
               <div class="pict col-lg-4">
                 <img src="<%= details[0][4] %>">
                 <div class="atc">
+                  <% if (user != details[0][7]) { %>
                   <a href="/cart/<%= details[0][0] %>" class="btn btn-primary">Add to Cart</a>
+                  <% } else { %>
+                  <a href="/cart/<%= details[0][0] %>" class="btn btn-primary" style="visibility: hidden;">Add to Cart</a>
+                    <% } %>
                 </div>
               </div>
               <div class="content col-lg-8">
