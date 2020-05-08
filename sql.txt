@@ -1,3 +1,6 @@
+"C:\Program Files\MongoDB\Server\4.2\bin\mongo.exe"
+
+
 SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' ORDER BY "priority" DESC;
 
 SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' WHERE "product".product_id IN (SELECT product_id FROM "book") ORDER BY "priority" DESC;

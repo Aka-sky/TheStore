@@ -532,7 +532,6 @@ app.post("/homepage/:category", function (req, res) {
       newstring += input[i];
     }
   }
-  console.log(newstring);
 
   if (sess.username) {
     // somone is logged in thus can access
@@ -899,11 +898,12 @@ app.post("/productUpload", function (req, res) {
                 ],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3) WHERE product_id = $4",
                 values: [
                   product.name,
                   product.subject,
                   product.author,
+                  product_id,
                 ],
               };
               break;
@@ -913,10 +913,11 @@ app.post("/productUpload", function (req, res) {
                 values: [product_id, product.size, product.type, product.color],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2) WHERE product_id = $3",
                 values: [
                   product.name,
-                  product.type
+                  product.type,
+                  product_id,
                 ],
               };
               break;
@@ -932,12 +933,13 @@ app.post("/productUpload", function (req, res) {
                 ],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3 || ' ' || $4)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3 || ' ' || $4) WHERE product_id = $5",
                 values: [
                   product.name,
                   product.n_subject,
                   product.topic,
                   product.professor,
+                  product_id,
                 ],
               };
               break;
@@ -947,9 +949,10 @@ app.post("/productUpload", function (req, res) {
                 values: [product_id, product.description, product.cate],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3) WHERE product_id = $4",
                 values: [
-                  product.name, product.description, product.cate
+                  product.name, product.description, product.cate,
+                  product_id,
                 ],
               };
               break;
@@ -964,11 +967,12 @@ app.post("/productUpload", function (req, res) {
                 ],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2 || ' ' || $3) WHERE product_id = $4",
                 values: [
                   product.name,
                   product.calcibrand,
                   product.model,
+                  product_id,
                 ],
               };
               break;
@@ -985,10 +989,11 @@ app.post("/productUpload", function (req, res) {
                 ],
               };
               query2 = {
-                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2)",
+                text: "UPDATE product SET document_with_idx = to_tsvector($1 || ' ' || $2) WHERE product_id = $3",
                 values: [
                   product.name,
                   product.pcbrand,
+                  product_id,
                 ],
               };
               break;

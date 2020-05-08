@@ -122,12 +122,12 @@
           },200);
         }
       );
-      $('#products .card').slice(0,3).show();
+      $('#products .card').slice(0,12).show();
       if( $('#products .card:hidden').length === 0 ){
           $('#loadmore').hide();
         }
       $('#loadmore').on('click', function(){
-        $('#products .card:hidden').slice(0,3).show();
+        $('#products .card:hidden').slice(0,12).show();
         if( $('#products .card:hidden').length === 0 ){
           $('#loadmore').hide();
         }

@@ -1,4 +1,7 @@
-
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .navbar {
   height: 15%;
   padding: 0%;
@@ -57,6 +60,19 @@
   padding-top: 2.5%;
   text-align: right;
 }
+
+#aboutus{
+  margin: 0% 20%;
+  padding-bottom: 5%;
+}
+.devimg{
+  border-radius: 50%;
+  height: 200px;
+}
+.devname{
+  padding: 3%;
+}
+
 @media (max-width: 768px) {
   .collapse{
     z-index: 1;
@@ -86,5 +102,8 @@
   }
   .main-text h2{
     font-size: 60%;
+  }
+  #aboutus{
+    margin: 0% 3%;
   }
 }
