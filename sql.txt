@@ -1,97 +1,7 @@
-"C:\Program Files\MongoDB\Server\4.2\bin\mongo.exe"
-
-
-SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' ORDER BY "priority" DESC;
-
-SELECT "product".product_name,"product".price,"product".years_of_usage,"product".product_image,"product".product_id, priority from "product" INNER JOIN "recommender" ON "product".product_id = "recommender".product_id AND "recommender".username = 'akash' WHERE "product".product_id IN (SELECT product_id FROM "book") ORDER BY "priority" DESC;
-
-CREATE OR REPLACE FUNCTION insertuser()
-RETURNS trigger AS
-$BODY$
-DECLARE 
-	t_row "product"%rowtype;
-BEGIN
-	FOR t_row in SELECT "product_id" FROM "product" LOOP
-        	INSERT INTO "recommender" VALUES(new."username",t_row."product_id",'0');
-        END LOOP;
-	RETURN new;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER user_t
-  AFTER INSERT
-  ON "user"
-  FOR EACH ROW
-  EXECUTE PROCEDURE insertuser();
-
-insert into "user" values('a','a','a','a','a','a','a','a');
-DROP TRIGGER user_t
-ON "user";
-
-CREATE OR REPLACE FUNCTION insertproduct()
-RETURNS trigger AS
-$BODY$
-DECLARE 
-	t_row "user"%rowtype;
-BEGIN
-	FOR t_row in SELECT "username" FROM "user" LOOP
-        	INSERT INTO "recommender" VALUES(t_row."username",new."product_id",'0');
-        END LOOP;
-	RETURN new;
-END;
-$BODY$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER product_t
-  AFTER INSERT
-  ON "product"
-  FOR EACH ROW
-  EXECUTE PROCEDURE insertproduct();
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ALTER TABLE "product" ADD COLUMN "document_with_idx" tsvector;
-CREATE INDEX document_idx
-  ON "product"
-  USING GIN (document_with_idx);
+//Mongo cmd "C:\Program Files\MongoDB\Server\4.2\bin\mongo.exe"
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-CREATE TABLE "tempmail" (
-    email character varying,
-    otp character varying
-);
-insert into "product" values('2','a','2','2','a','a','a');
-
-CREATE TABLE "recommender" (
-	username character varying NOT NULL,
-	product_id int NOT NULL,
-	priority int DEFAULT '0',
-    	PRIMARY KEY (username, product_id),
-    	FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
-    	FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
-); 
-
-CREATE TABLE "requests" (
-    buyer_id character varying NOT NULL,
-    seller_id character varying NOT NULL,
-    product_id int NOT NULL,
-    otp int NOT NULL,
-    PRIMARY KEY (buyer_id,seller_id,product_id),
-    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
-    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
-);
-
-CREATE TABLE "transaction" (
-    transaction_id SERIAL PRIMARY KEY,
-    buyer_id character varying,
-    seller_id character varying,
-    product_name character varying NOT NULL,
-    finalized_price int NOT NULL,
-    product_image character varying NOT NULL,
-    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
-    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
-);
+//Tables
 
 CREATE TABLE "user" (
     username character varying PRIMARY KEY,
@@ -123,6 +33,51 @@ CREATE TABLE "cart" (
     FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
 ); 
+
+CREATE table "comments" (
+comment_id SERIAL PRIMARY KEY,
+username character varying,
+product_id int,
+content character varying NOT NULL,
+FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
+FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE
+);
+
+CREATE TABLE "tempmail" (
+    email character varying,
+    otp character varying
+);
+
+CREATE TABLE "recommender" (
+	username character varying NOT NULL,
+	product_id int NOT NULL,
+	priority int DEFAULT '0',
+    	PRIMARY KEY (username, product_id),
+    	FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE,
+    	FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+); 
+
+CREATE TABLE "requests" (
+    buyer_id character varying NOT NULL,
+    seller_id character varying NOT NULL,
+    product_id int NOT NULL,
+    otp int NOT NULL,
+    PRIMARY KEY (buyer_id,seller_id,product_id),
+    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE
+);
+
+CREATE TABLE "transaction" (
+    transaction_id SERIAL PRIMARY KEY,
+    buyer_id character varying,
+    seller_id character varying,
+    product_name character varying NOT NULL,
+    finalized_price int NOT NULL,
+    product_image character varying NOT NULL,
+    FOREIGN KEY (buyer_id) REFERENCES "user" (username) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES "user" (username) ON DELETE CASCADE
+);
 
 CREATE TABLE "book"(
 	  product_id int,
@@ -205,9 +160,6 @@ CREATE TABLE "notes"(
  )
 	);
 
-INSERT INTO "notes" VALUES (5, 'DATA STRUCTURES', 'Sorting And Searching', 'Sir. Ranjit', '2020');
-INSERT INTO "notes" VALUES (6, 'DBMS', 'Sequencing', 'Mayuri More', '2020');
-
 CREATE TABLE "other"
 	(
 	  "product_id" int ,
@@ -249,45 +201,53 @@ CREATE TABLE "pc"
  )
 );
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Triggers 
 
-CREATE table "comments" (
-comment_id SERIAL PRIMARY KEY,
-username character varying,
-product_id int,
-content character varying NOT NULL,
-FOREIGN KEY (product_id) REFERENCES "product" (product_id) ON DELETE CASCADE,
-FOREIGN KEY (username) REFERENCES "user" (username) ON DELETE CASCADE
-);
+CREATE OR REPLACE FUNCTION insertuser()
+RETURNS trigger AS
+$BODY$
+DECLARE 
+	t_row "product"%rowtype;
+BEGIN
+	FOR t_row in SELECT "product_id" FROM "product" LOOP
+        	INSERT INTO "recommender" VALUES(new."username",t_row."product_id",'0');
+        END LOOP;
+	RETURN new;
+END;
+$BODY$
+LANGUAGE plpgsql;
 
-INSERT INTO "comments" (username, product_id, content) VALUES ('akashkamble0730',1,'This is great product. A must buy for anyone who is interested in understanding data structures and analysis.');
-INSERT INTO "comments" (username, product_id, content) VALUES ('someone1',1,'Great product. Good Condition. A few drawings on some pages but thats acceptable.');
-INSERT INTO "comments" (username, product_id, content) VALUES ('someone2',2,'A perfect fit. Condition was also great. The seller is a trustworthy person.');
-INSERT INTO "comments" (username, product_id, content) VALUES ('someone3',3,'Worst product. PC not working properly the seller tried to cheat.');
+CREATE TRIGGER user_t
+  AFTER INSERT
+  ON "user"
+  FOR EACH ROW
+  EXECUTE PROCEDURE insertuser();
 
-ALTER TABLE "product"
-  ADD COLUMN "doc_with_weights" tsvector;
 
-update "product"
-set "doc_with_weights" = setweight(to_tsvector("name"), 'A') ||
-  setweight(to_tsvector("description"), 'B');
 
-CREATE INDEX "doc_weights_idx"
+CREATE OR REPLACE FUNCTION insertproduct()
+RETURNS trigger AS
+$BODY$
+DECLARE 
+	t_row "user"%rowtype;
+BEGIN
+	FOR t_row in SELECT "username" FROM "user" LOOP
+        	INSERT INTO "recommender" VALUES(t_row."username",new."product_id",'0');
+        END LOOP;
+	RETURN new;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER product_t
+  AFTER INSERT
   ON "product"
-  USING GIN ("doc_with_weights");
-
-select *
-from "product"
-where "doc_with_weights" @@ plainto_tsquery('Computer')
-order by ts_rank("doc_with_weights", plainto_tsquery('Computer')) desc;
-
-select * from "product","book" where ("product".product_id = "book".product_id) and (to_tsvector("product_name" || ' ' || "author" || ' ' || "subject") @@ to_tsquery('jamnadaas'));
+  FOR EACH ROW
+  EXECUTE PROCEDURE insertproduct();
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-alter table "user" rename column "branchYear" to "year";
-alter table "product" rename column "image" to "product_image";
-alter table "product" rename column "name" to "product_name";
-alter table "notes" rename column "professor Name" to "professor";
-alter table"notes" rename column "year" to "noteyear";
+//views
 
 CREATE VIEW bookview AS
 select "product".product_id,"product".product_name,"product".years_of_usage,"product".price,"product".product_image,"product".condition,"product".category,
