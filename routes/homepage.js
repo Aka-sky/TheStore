@@ -38,6 +38,7 @@ router.get("/", function (req, res) {
 router.post("/", function (req, res) {
     var sess = req.session;
     var searchkeywords = req.body.productname.split(" ");
+    if(searchkeywords[searchkeywords.length - 1] == '' && searchkeywords.length > 1){searchkeywords.pop()}
     for (var i = 0; i < searchkeywords.length; i++) {
         searchkeywords[i] = _.lowerCase([(string = searchkeywords[i])]);
     }
