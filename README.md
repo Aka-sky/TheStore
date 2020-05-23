@@ -33,7 +33,7 @@ You will have to use your own crypto key & iv and also your own database credent
 8. Seller can either accept request or just ignore (Note : He should be logged in while accepting)
 9. Once seller accepts, a pass is sent to buyer (Note : Deal is not completed)
 10. In order to verify transaction & generate receipt, Seller should mark product as sold to a buyer by entering pass provided by him.
-11. If pass matches, transaction is confirmed, a receipt is geerated & mailed to both parties and product shifts to History.
+11. If pass matches, transaction is confirmed, a receipt is generated & mailed to both parties and product shifts to History.
 
 
 
@@ -42,3 +42,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 
 ## License
+
+[![license](https://img.shields.io/github/license/DAVFoundation/captain-n3m0.svg?style=flat-square)](https://github.com/DAVFoundation/captain-n3m0/blob/master/LICENSE)
