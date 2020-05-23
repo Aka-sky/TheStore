@@ -17,7 +17,10 @@ This portal connects freshers with their seniors who are interested in selling t
 4. Run 'npm install' in working directory to install all the dependencies required.
 5. Create a postgres daatabase with all DDL statements provided in sql.txt file OR import thevstore.sql file.
 6. Set up a .env file in working directory as follows:
-![Alt text](public/images/env.jpg?raw=true "Title")
+![Alt text](public/images/env.png?raw=true "Title")
+You will have to use your own crypto key & iv and also your own database credentials
+
+-This app is hosted on heroku https://thevstore.herokuapp.com (Note: You can use AWS bucket for storing images permanently)
 
 ## How it Works
 1. User first has to register with valid mail id
