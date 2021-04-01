@@ -3,8 +3,10 @@ This website is for VJTI students especially freshers who find it difficult to g
 Seniors can post ads for products which they have used in previous semester. Basically a user can sell as well as buy products here.
 This portal connects freshers with their seniors who are interested in selling their used study material.
 
-## Technologies
-- HTML 5, CSS 3, Bootstrap 4
+## Frameworks
+- HTML 5
+- CSS 3
+- Bootstrap 4
 - EJS
 - Express
 - NodeJS
@@ -17,8 +19,8 @@ This portal connects freshers with their seniors who are interested in selling t
 4. Run 'npm install' in working directory to install all the dependencies required.
 5. Create a postgres daatabase with all DDL statements provided in sql.txt file OR import thevstore.sql file.
 6. Set up a .env file in working directory as follows:
-![Alt text](public/images/env.png?raw=true "Title")
-You will have to use your own crypto key & iv and also your own database credentials
+![Alt text](public/images/env.png?raw=true "Title") 
+7. You will have to use your own crypto key & iv and also your own database credentials
 
 -This app is hosted on heroku https://thevstore.herokuapp.com (Note: You can use AWS bucket for storing images permanently)
 
@@ -34,12 +36,6 @@ You will have to use your own crypto key & iv and also your own database credent
 9. Once seller accepts, a pass is sent to buyer (Note : Deal is not completed)
 10. In order to verify transaction & generate receipt, Seller should mark product as sold to a buyer by entering pass provided by him.
 11. If pass matches, transaction is confirmed, a receipt is generated & mailed to both parties and product shifts to History.
-
-
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
 
 ## License
 
