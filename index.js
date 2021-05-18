@@ -49,7 +49,7 @@ const upload = multer({
 }).single("upImg");
 
 //Check File type
-function checkFileType(file, cb) {
+function checkFileType(file, cb) { 
   // allowed ext
   const fileTypes = /jpeg|jpg|png|gif/;
   //Check ext
@@ -63,6 +63,7 @@ function checkFileType(file, cb) {
     cb("Error : Images only!!!!!!");
   }
 }
+
 
 app.set("view engine", "ejs");
 app.set("views", "./public/views");
