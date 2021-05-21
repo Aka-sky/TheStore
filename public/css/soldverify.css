@@ -7,6 +7,7 @@ html, body {
     padding: 0% 5%;
   }
   .navbar-brand {
+    font-family: Monsterrat;
     background-color: #0062e6;
     border-radius: 20px;
     font-size: 230%;
