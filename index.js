@@ -18,7 +18,7 @@ var _ = require("lodash");
 var db = require('./database');
 var upload = require('./imgupload');
 
-//Store cookies containing session id on client's browser
+//Storing Client's Browser cookies
 app.use(cookieParser());
 
 //Session
